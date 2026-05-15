@@ -220,71 +220,28 @@ export default function PublicLanding() {
                           </div>
                         </div>
 
-                        <div className="mt-4 grid gap-3">
-                          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <div className="flex items-start gap-3">
-                              <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C5D932]/15 text-[#C5D932]">
-                                <MessageSquareText className="h-5 w-5" />
-                              </div>
-                              <div className="min-w-0">
-                                <div className="text-sm font-black text-white">Último comunicado</div>
-                                <div className="mt-1 text-xs font-medium leading-relaxed text-white/65">
-                                  Avisos oficiais e fixados. Sem depender do grupo.
-                                </div>
-                              </div>
-                            </div>
+                        <figure className="mt-4 overflow-hidden rounded-[1.25rem] border border-white/10 bg-white/5">
+                          <div className="relative aspect-[16/10] w-full">
+                            <img
+                              src="/tela-inicial-portal.jpg"
+                              alt="Tela inicial do portal do condomínio"
+                              className="h-full w-full object-cover"
+                              loading="eager"
+                              fetchPriority="high"
+                              decoding="async"
+                              sizes="(min-width: 1024px) 420px, 90vw"
+                            />
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,17,13,0.22),rgba(7,17,13,0.72))]" />
+                            <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_0_60px_rgba(0,0,0,0.55)]" />
                           </div>
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
-                                  <FileText className="h-5 w-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Arquivos</div>
-                                  <div className="mt-1 text-[11px] font-medium text-white/60">Atas e PDFs</div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-400/10 text-sky-300">
-                                  <Globe className="h-5 w-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Guia</div>
-                                  <div className="mt-1 text-[11px] font-medium text-white/60">Contatos úteis</div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-300">
-                                  <Gift className="h-5 w-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Vantagens</div>
-                                  <div className="mt-1 text-[11px] font-medium text-white/60">Parceiros</div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/10 text-amber-300">
-                                  <CalendarIcon className="h-5 w-5" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Eventos</div>
-                                  <div className="mt-1 text-[11px] font-medium text-white/60">Agenda</div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                          <figcaption className="flex items-center justify-between gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
+                            <span className="truncate">Portal real (captura)</span>
+                            <span className="inline-flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
+                              Mobile-first
+                            </span>
+                          </figcaption>
+                        </figure>
                       </div>
                     </div>
                   </div>
