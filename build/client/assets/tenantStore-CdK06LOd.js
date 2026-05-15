@@ -1,0 +1,1 @@
+import{c as s}from"./react-CZlzZnH1.js";const n=s(t=>({tenant:null,isMasterMode:!1,isLoading:!0,setTenant:e=>t({tenant:e}),setIsMasterMode:e=>t({isMasterMode:e}),setIsLoading:e=>t({isLoading:e})}));export{n as u};
