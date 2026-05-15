@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router"
+import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import { supabase } from "../../lib/supabase"
 import { Button } from "../../components/ui/button"
@@ -15,7 +15,6 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const { tenant } = useTenantStore()
   const navigate = useNavigate()
-  const location = useLocation()
   const tenantSlug = tenant?.slug || null
 
   useEffect(() => {
