@@ -88,7 +88,7 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
   const firstPart = pathParts[0]
 
   // 1. Lógica do Tenant Baseada em Hostname ou Path (localhost)
-  const hostname = window.location.hostname
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
   const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
   const hasSub = hostname.includes('.') && !isLocalhost
   const slugFromHost = hasSub ? hostname.split('.')[0] : null
@@ -195,7 +195,7 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
                         profileData?.role === 'super_admin' || 
                         user?.app_metadata?.role === 'super_admin'
   const isSindico = profileData?.role === 'sindico' || user?.app_metadata?.role === 'sindico'
-  const currentPath = window.location.pathname
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : location.pathname
   const isAuthRoute = currentPath.includes('/login') || currentPath.includes('/auth/callback')
   const isInternalPath = currentPath.includes('/painel') || 
                         currentPath.includes('/moradores') ||

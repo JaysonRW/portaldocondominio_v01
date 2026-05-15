@@ -1,0 +1,1 @@
+import{p as o}from"./chunk-UVKPFVEO-PAWFLjOp.js";import{c as s}from"./utils-DNkBhPXc.js";function r({className:t,...e}){return o.jsx("div",{"data-slot":"skeleton",className:s("animate-pulse rounded-md bg-accent",t),...e})}export{r as S};

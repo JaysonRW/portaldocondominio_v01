@@ -1,0 +1,1258 @@
+{
+  "buildManifest": {
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "layout": {
+        "id": "layout",
+        "parentId": "root",
+        "file": "layout.tsx"
+      },
+      "login-global": {
+        "id": "login-global",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": "login"
+      },
+      "callback-global": {
+        "id": "callback-global",
+        "parentId": "layout",
+        "file": "(auth)/callback.tsx",
+        "path": "auth/callback"
+      },
+      "master-gateway": {
+        "id": "master-gateway",
+        "parentId": "layout",
+        "file": "(auth)/master-gateway.tsx",
+        "path": "master"
+      },
+      "reset-password-global": {
+        "id": "reset-password-global",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": "reset-password"
+      },
+      "set-password-global": {
+        "id": "set-password-global",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": "set-password"
+      },
+      "login-tenant": {
+        "id": "login-tenant",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": ":tenantSlug/login"
+      },
+      "callback-tenant": {
+        "id": "callback-tenant",
+        "parentId": "layout",
+        "file": "(auth)/callback.tsx",
+        "path": ":tenantSlug/auth/callback"
+      },
+      "reset-password-tenant": {
+        "id": "reset-password-tenant",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": ":tenantSlug/reset-password"
+      },
+      "set-password-tenant": {
+        "id": "set-password-tenant",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": ":tenantSlug/set-password"
+      },
+      "../components/layout/ProtectedRoute": {
+        "id": "../components/layout/ProtectedRoute",
+        "parentId": "layout",
+        "file": "../components/layout/ProtectedRoute.tsx"
+      },
+      "../components/layout/DashboardLayout": {
+        "id": "../components/layout/DashboardLayout",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "../components/layout/DashboardLayout.tsx"
+      },
+      "tenant-admin-servicos": {
+        "id": "tenant-admin-servicos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/index.tsx",
+        "path": ":tenantSlug/painel/servicos"
+      },
+      "tenant-admin-servicos-nova": {
+        "id": "tenant-admin-servicos-nova",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/nova.tsx",
+        "path": ":tenantSlug/painel/servicos/nova"
+      },
+      "tenant-admin-servicos-agenda": {
+        "id": "tenant-admin-servicos-agenda",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/agenda.tsx",
+        "path": ":tenantSlug/painel/servicos/agenda"
+      },
+      "tenant-admin-servicos-relatorios": {
+        "id": "tenant-admin-servicos-relatorios",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/relatorios.tsx",
+        "path": ":tenantSlug/painel/servicos/relatorios"
+      },
+      "tenant-admin-servicos-detalhe": {
+        "id": "tenant-admin-servicos-detalhe",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/[id].tsx",
+        "path": ":tenantSlug/painel/servicos/:id"
+      },
+      "tenant-admin-zeladores": {
+        "id": "tenant-admin-zeladores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/zeladores/index.tsx",
+        "path": ":tenantSlug/painel/zeladores"
+      },
+      "tenant-admin-moradores": {
+        "id": "tenant-admin-moradores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/moradores/index.tsx",
+        "path": ":tenantSlug/painel/moradores"
+      },
+      "tenant-admin-comunicados": {
+        "id": "tenant-admin-comunicados",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/avisos/index.tsx",
+        "path": ":tenantSlug/painel/comunicados"
+      },
+      "tenant-admin-assembleias": {
+        "id": "tenant-admin-assembleias",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/assembleias/index.tsx",
+        "path": ":tenantSlug/painel/assembleias"
+      },
+      "tenant-admin-eventos": {
+        "id": "tenant-admin-eventos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/eventos/index.tsx",
+        "path": ":tenantSlug/painel/eventos"
+      },
+      "tenant-admin-galeria": {
+        "id": "tenant-admin-galeria",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/galeria/index.tsx",
+        "path": ":tenantSlug/painel/galeria"
+      },
+      "tenant-admin-clube": {
+        "id": "tenant-admin-clube",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/clube/index.tsx",
+        "path": ":tenantSlug/painel/clube"
+      },
+      "tenant-admin-guia": {
+        "id": "tenant-admin-guia",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/guia-morador/index.tsx",
+        "path": ":tenantSlug/painel/guia"
+      },
+      "tenant-admin-faq": {
+        "id": "tenant-admin-faq",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/faq/index.tsx",
+        "path": ":tenantSlug/painel/faq"
+      },
+      "tenant-admin-docs": {
+        "id": "tenant-admin-docs",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/documentos/index.tsx",
+        "path": ":tenantSlug/painel/arquivos"
+      },
+      "tenant-admin-canal-morador": {
+        "id": "tenant-admin-canal-morador",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/canal-morador/index.tsx",
+        "path": ":tenantSlug/painel/canal-morador"
+      },
+      "tenant-admin-settings": {
+        "id": "tenant-admin-settings",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/configuracoes/index.tsx",
+        "path": ":tenantSlug/painel/configuracoes"
+      },
+      "tenant-admin-home": {
+        "id": "tenant-admin-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/home.tsx",
+        "path": ":tenantSlug/painel"
+      },
+      "tenant-zelador-home": {
+        "id": "tenant-zelador-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(zelador)/index.tsx",
+        "path": ":tenantSlug/zelador"
+      },
+      "admin-servicos": {
+        "id": "admin-servicos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/index.tsx",
+        "path": "painel/servicos"
+      },
+      "admin-servicos-nova": {
+        "id": "admin-servicos-nova",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/nova.tsx",
+        "path": "painel/servicos/nova"
+      },
+      "admin-servicos-agenda": {
+        "id": "admin-servicos-agenda",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/agenda.tsx",
+        "path": "painel/servicos/agenda"
+      },
+      "admin-servicos-relatorios": {
+        "id": "admin-servicos-relatorios",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/relatorios.tsx",
+        "path": "painel/servicos/relatorios"
+      },
+      "admin-servicos-detalhe": {
+        "id": "admin-servicos-detalhe",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/[id].tsx",
+        "path": "painel/servicos/:id"
+      },
+      "admin-zeladores": {
+        "id": "admin-zeladores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/zeladores/index.tsx",
+        "path": "painel/zeladores"
+      },
+      "admin-moradores": {
+        "id": "admin-moradores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/moradores/index.tsx",
+        "path": "painel/moradores"
+      },
+      "admin-comunicados": {
+        "id": "admin-comunicados",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/avisos/index.tsx",
+        "path": "painel/comunicados"
+      },
+      "admin-assembleias": {
+        "id": "admin-assembleias",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/assembleias/index.tsx",
+        "path": "painel/assembleias"
+      },
+      "admin-eventos": {
+        "id": "admin-eventos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/eventos/index.tsx",
+        "path": "painel/eventos"
+      },
+      "admin-galeria": {
+        "id": "admin-galeria",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/galeria/index.tsx",
+        "path": "painel/galeria"
+      },
+      "admin-clube": {
+        "id": "admin-clube",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/clube/index.tsx",
+        "path": "painel/clube"
+      },
+      "admin-guia": {
+        "id": "admin-guia",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/guia-morador/index.tsx",
+        "path": "painel/guia"
+      },
+      "admin-faq": {
+        "id": "admin-faq",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/faq/index.tsx",
+        "path": "painel/faq"
+      },
+      "admin-docs": {
+        "id": "admin-docs",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/documentos/index.tsx",
+        "path": "painel/arquivos"
+      },
+      "admin-canal-morador": {
+        "id": "admin-canal-morador",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/canal-morador/index.tsx",
+        "path": "painel/canal-morador"
+      },
+      "admin-settings": {
+        "id": "admin-settings",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/configuracoes/index.tsx",
+        "path": "painel/configuracoes"
+      },
+      "admin-home": {
+        "id": "admin-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/home.tsx",
+        "path": "painel"
+      },
+      "zelador-home": {
+        "id": "zelador-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(zelador)/index.tsx",
+        "path": "zelador"
+      },
+      "painel-master": {
+        "id": "painel-master",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/master-dashboard.tsx",
+        "path": "painel-master"
+      },
+      "tenant-onboarding": {
+        "id": "tenant-onboarding",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "(dashboard)/onboarding/index.tsx",
+        "path": ":tenantSlug/onboarding"
+      },
+      "onboarding": {
+        "id": "onboarding",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "(dashboard)/onboarding/index.tsx",
+        "path": "onboarding"
+      },
+      "tenant-public-comunicados": {
+        "id": "tenant-public-comunicados",
+        "parentId": "layout",
+        "file": "(public)/comunicados.tsx",
+        "path": ":tenantSlug/portal/comunicados"
+      },
+      "tenant-public-clube": {
+        "id": "tenant-public-clube",
+        "parentId": "layout",
+        "file": "(public)/clube.tsx",
+        "path": ":tenantSlug/portal/clube"
+      },
+      "tenant-public-guia": {
+        "id": "tenant-public-guia",
+        "parentId": "layout",
+        "file": "(public)/guia.tsx",
+        "path": ":tenantSlug/portal/guia"
+      },
+      "tenant-public-eventos": {
+        "id": "tenant-public-eventos",
+        "parentId": "layout",
+        "file": "(public)/eventos.tsx",
+        "path": ":tenantSlug/portal/eventos"
+      },
+      "tenant-public-galeria": {
+        "id": "tenant-public-galeria",
+        "parentId": "layout",
+        "file": "(public)/galeria.tsx",
+        "path": ":tenantSlug/portal/galeria"
+      },
+      "tenant-public-docs": {
+        "id": "tenant-public-docs",
+        "parentId": "layout",
+        "file": "(public)/documentos.tsx",
+        "path": ":tenantSlug/portal/arquivos"
+      },
+      "tenant-public-faq": {
+        "id": "tenant-public-faq",
+        "parentId": "layout",
+        "file": "(public)/faq.tsx",
+        "path": ":tenantSlug/portal/faq"
+      },
+      "public-comunicados": {
+        "id": "public-comunicados",
+        "parentId": "layout",
+        "file": "(public)/comunicados.tsx",
+        "path": "portal/comunicados"
+      },
+      "public-clube": {
+        "id": "public-clube",
+        "parentId": "layout",
+        "file": "(public)/clube.tsx",
+        "path": "portal/clube"
+      },
+      "public-guia": {
+        "id": "public-guia",
+        "parentId": "layout",
+        "file": "(public)/guia.tsx",
+        "path": "portal/guia"
+      },
+      "public-eventos": {
+        "id": "public-eventos",
+        "parentId": "layout",
+        "file": "(public)/eventos.tsx",
+        "path": "portal/eventos"
+      },
+      "public-galeria": {
+        "id": "public-galeria",
+        "parentId": "layout",
+        "file": "(public)/galeria.tsx",
+        "path": "portal/galeria"
+      },
+      "public-docs": {
+        "id": "public-docs",
+        "parentId": "layout",
+        "file": "(public)/documentos.tsx",
+        "path": "portal/arquivos"
+      },
+      "public-faq": {
+        "id": "public-faq",
+        "parentId": "layout",
+        "file": "(public)/faq.tsx",
+        "path": "portal/faq"
+      },
+      "tenant-login": {
+        "id": "tenant-login",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": ":tenantSlug/login"
+      },
+      "tenant-join": {
+        "id": "tenant-join",
+        "parentId": "layout",
+        "file": "(public)/join.tsx",
+        "path": ":tenantSlug/join"
+      },
+      "tenant-landing": {
+        "id": "tenant-landing",
+        "parentId": "layout",
+        "file": "(public)/landing.tsx",
+        "path": ":tenantSlug"
+      },
+      "global-landing": {
+        "id": "global-landing",
+        "parentId": "layout",
+        "file": "(public)/landing.tsx",
+        "index": true
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "C:/Users/jayso/Documents/Antigravity/Saas Condominio/src/app",
+    "basename": "/",
+    "buildDirectory": "C:/Users/jayso/Documents/Antigravity/Saas Condominio/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "unstable_passThroughRequests": false,
+      "unstable_subResourceIntegrity": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "prerender": [
+      "/"
+    ],
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "layout": {
+        "id": "layout",
+        "parentId": "root",
+        "file": "layout.tsx"
+      },
+      "login-global": {
+        "id": "login-global",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": "login"
+      },
+      "callback-global": {
+        "id": "callback-global",
+        "parentId": "layout",
+        "file": "(auth)/callback.tsx",
+        "path": "auth/callback"
+      },
+      "master-gateway": {
+        "id": "master-gateway",
+        "parentId": "layout",
+        "file": "(auth)/master-gateway.tsx",
+        "path": "master"
+      },
+      "reset-password-global": {
+        "id": "reset-password-global",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": "reset-password"
+      },
+      "set-password-global": {
+        "id": "set-password-global",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": "set-password"
+      },
+      "login-tenant": {
+        "id": "login-tenant",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": ":tenantSlug/login"
+      },
+      "callback-tenant": {
+        "id": "callback-tenant",
+        "parentId": "layout",
+        "file": "(auth)/callback.tsx",
+        "path": ":tenantSlug/auth/callback"
+      },
+      "reset-password-tenant": {
+        "id": "reset-password-tenant",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": ":tenantSlug/reset-password"
+      },
+      "set-password-tenant": {
+        "id": "set-password-tenant",
+        "parentId": "layout",
+        "file": "(auth)/reset-password.tsx",
+        "path": ":tenantSlug/set-password"
+      },
+      "../components/layout/ProtectedRoute": {
+        "id": "../components/layout/ProtectedRoute",
+        "parentId": "layout",
+        "file": "../components/layout/ProtectedRoute.tsx"
+      },
+      "../components/layout/DashboardLayout": {
+        "id": "../components/layout/DashboardLayout",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "../components/layout/DashboardLayout.tsx"
+      },
+      "tenant-admin-servicos": {
+        "id": "tenant-admin-servicos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/index.tsx",
+        "path": ":tenantSlug/painel/servicos"
+      },
+      "tenant-admin-servicos-nova": {
+        "id": "tenant-admin-servicos-nova",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/nova.tsx",
+        "path": ":tenantSlug/painel/servicos/nova"
+      },
+      "tenant-admin-servicos-agenda": {
+        "id": "tenant-admin-servicos-agenda",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/agenda.tsx",
+        "path": ":tenantSlug/painel/servicos/agenda"
+      },
+      "tenant-admin-servicos-relatorios": {
+        "id": "tenant-admin-servicos-relatorios",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/relatorios.tsx",
+        "path": ":tenantSlug/painel/servicos/relatorios"
+      },
+      "tenant-admin-servicos-detalhe": {
+        "id": "tenant-admin-servicos-detalhe",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/[id].tsx",
+        "path": ":tenantSlug/painel/servicos/:id"
+      },
+      "tenant-admin-zeladores": {
+        "id": "tenant-admin-zeladores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/zeladores/index.tsx",
+        "path": ":tenantSlug/painel/zeladores"
+      },
+      "tenant-admin-moradores": {
+        "id": "tenant-admin-moradores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/moradores/index.tsx",
+        "path": ":tenantSlug/painel/moradores"
+      },
+      "tenant-admin-comunicados": {
+        "id": "tenant-admin-comunicados",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/avisos/index.tsx",
+        "path": ":tenantSlug/painel/comunicados"
+      },
+      "tenant-admin-assembleias": {
+        "id": "tenant-admin-assembleias",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/assembleias/index.tsx",
+        "path": ":tenantSlug/painel/assembleias"
+      },
+      "tenant-admin-eventos": {
+        "id": "tenant-admin-eventos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/eventos/index.tsx",
+        "path": ":tenantSlug/painel/eventos"
+      },
+      "tenant-admin-galeria": {
+        "id": "tenant-admin-galeria",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/galeria/index.tsx",
+        "path": ":tenantSlug/painel/galeria"
+      },
+      "tenant-admin-clube": {
+        "id": "tenant-admin-clube",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/clube/index.tsx",
+        "path": ":tenantSlug/painel/clube"
+      },
+      "tenant-admin-guia": {
+        "id": "tenant-admin-guia",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/guia-morador/index.tsx",
+        "path": ":tenantSlug/painel/guia"
+      },
+      "tenant-admin-faq": {
+        "id": "tenant-admin-faq",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/faq/index.tsx",
+        "path": ":tenantSlug/painel/faq"
+      },
+      "tenant-admin-docs": {
+        "id": "tenant-admin-docs",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/documentos/index.tsx",
+        "path": ":tenantSlug/painel/arquivos"
+      },
+      "tenant-admin-canal-morador": {
+        "id": "tenant-admin-canal-morador",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/canal-morador/index.tsx",
+        "path": ":tenantSlug/painel/canal-morador"
+      },
+      "tenant-admin-settings": {
+        "id": "tenant-admin-settings",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/configuracoes/index.tsx",
+        "path": ":tenantSlug/painel/configuracoes"
+      },
+      "tenant-admin-home": {
+        "id": "tenant-admin-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/home.tsx",
+        "path": ":tenantSlug/painel"
+      },
+      "tenant-zelador-home": {
+        "id": "tenant-zelador-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(zelador)/index.tsx",
+        "path": ":tenantSlug/zelador"
+      },
+      "admin-servicos": {
+        "id": "admin-servicos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/index.tsx",
+        "path": "painel/servicos"
+      },
+      "admin-servicos-nova": {
+        "id": "admin-servicos-nova",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/nova.tsx",
+        "path": "painel/servicos/nova"
+      },
+      "admin-servicos-agenda": {
+        "id": "admin-servicos-agenda",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/agenda.tsx",
+        "path": "painel/servicos/agenda"
+      },
+      "admin-servicos-relatorios": {
+        "id": "admin-servicos-relatorios",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/relatorios.tsx",
+        "path": "painel/servicos/relatorios"
+      },
+      "admin-servicos-detalhe": {
+        "id": "admin-servicos-detalhe",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/servicos/[id].tsx",
+        "path": "painel/servicos/:id"
+      },
+      "admin-zeladores": {
+        "id": "admin-zeladores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/zeladores/index.tsx",
+        "path": "painel/zeladores"
+      },
+      "admin-moradores": {
+        "id": "admin-moradores",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/moradores/index.tsx",
+        "path": "painel/moradores"
+      },
+      "admin-comunicados": {
+        "id": "admin-comunicados",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/avisos/index.tsx",
+        "path": "painel/comunicados"
+      },
+      "admin-assembleias": {
+        "id": "admin-assembleias",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/assembleias/index.tsx",
+        "path": "painel/assembleias"
+      },
+      "admin-eventos": {
+        "id": "admin-eventos",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/eventos/index.tsx",
+        "path": "painel/eventos"
+      },
+      "admin-galeria": {
+        "id": "admin-galeria",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/galeria/index.tsx",
+        "path": "painel/galeria"
+      },
+      "admin-clube": {
+        "id": "admin-clube",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/clube/index.tsx",
+        "path": "painel/clube"
+      },
+      "admin-guia": {
+        "id": "admin-guia",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/guia-morador/index.tsx",
+        "path": "painel/guia"
+      },
+      "admin-faq": {
+        "id": "admin-faq",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/faq/index.tsx",
+        "path": "painel/faq"
+      },
+      "admin-docs": {
+        "id": "admin-docs",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/documentos/index.tsx",
+        "path": "painel/arquivos"
+      },
+      "admin-canal-morador": {
+        "id": "admin-canal-morador",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/canal-morador/index.tsx",
+        "path": "painel/canal-morador"
+      },
+      "admin-settings": {
+        "id": "admin-settings",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/configuracoes/index.tsx",
+        "path": "painel/configuracoes"
+      },
+      "admin-home": {
+        "id": "admin-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/home.tsx",
+        "path": "painel"
+      },
+      "zelador-home": {
+        "id": "zelador-home",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(zelador)/index.tsx",
+        "path": "zelador"
+      },
+      "painel-master": {
+        "id": "painel-master",
+        "parentId": "../components/layout/DashboardLayout",
+        "file": "(dashboard)/master-dashboard.tsx",
+        "path": "painel-master"
+      },
+      "tenant-onboarding": {
+        "id": "tenant-onboarding",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "(dashboard)/onboarding/index.tsx",
+        "path": ":tenantSlug/onboarding"
+      },
+      "onboarding": {
+        "id": "onboarding",
+        "parentId": "../components/layout/ProtectedRoute",
+        "file": "(dashboard)/onboarding/index.tsx",
+        "path": "onboarding"
+      },
+      "tenant-public-comunicados": {
+        "id": "tenant-public-comunicados",
+        "parentId": "layout",
+        "file": "(public)/comunicados.tsx",
+        "path": ":tenantSlug/portal/comunicados"
+      },
+      "tenant-public-clube": {
+        "id": "tenant-public-clube",
+        "parentId": "layout",
+        "file": "(public)/clube.tsx",
+        "path": ":tenantSlug/portal/clube"
+      },
+      "tenant-public-guia": {
+        "id": "tenant-public-guia",
+        "parentId": "layout",
+        "file": "(public)/guia.tsx",
+        "path": ":tenantSlug/portal/guia"
+      },
+      "tenant-public-eventos": {
+        "id": "tenant-public-eventos",
+        "parentId": "layout",
+        "file": "(public)/eventos.tsx",
+        "path": ":tenantSlug/portal/eventos"
+      },
+      "tenant-public-galeria": {
+        "id": "tenant-public-galeria",
+        "parentId": "layout",
+        "file": "(public)/galeria.tsx",
+        "path": ":tenantSlug/portal/galeria"
+      },
+      "tenant-public-docs": {
+        "id": "tenant-public-docs",
+        "parentId": "layout",
+        "file": "(public)/documentos.tsx",
+        "path": ":tenantSlug/portal/arquivos"
+      },
+      "tenant-public-faq": {
+        "id": "tenant-public-faq",
+        "parentId": "layout",
+        "file": "(public)/faq.tsx",
+        "path": ":tenantSlug/portal/faq"
+      },
+      "public-comunicados": {
+        "id": "public-comunicados",
+        "parentId": "layout",
+        "file": "(public)/comunicados.tsx",
+        "path": "portal/comunicados"
+      },
+      "public-clube": {
+        "id": "public-clube",
+        "parentId": "layout",
+        "file": "(public)/clube.tsx",
+        "path": "portal/clube"
+      },
+      "public-guia": {
+        "id": "public-guia",
+        "parentId": "layout",
+        "file": "(public)/guia.tsx",
+        "path": "portal/guia"
+      },
+      "public-eventos": {
+        "id": "public-eventos",
+        "parentId": "layout",
+        "file": "(public)/eventos.tsx",
+        "path": "portal/eventos"
+      },
+      "public-galeria": {
+        "id": "public-galeria",
+        "parentId": "layout",
+        "file": "(public)/galeria.tsx",
+        "path": "portal/galeria"
+      },
+      "public-docs": {
+        "id": "public-docs",
+        "parentId": "layout",
+        "file": "(public)/documentos.tsx",
+        "path": "portal/arquivos"
+      },
+      "public-faq": {
+        "id": "public-faq",
+        "parentId": "layout",
+        "file": "(public)/faq.tsx",
+        "path": "portal/faq"
+      },
+      "tenant-login": {
+        "id": "tenant-login",
+        "parentId": "layout",
+        "file": "(auth)/login.tsx",
+        "path": ":tenantSlug/login"
+      },
+      "tenant-join": {
+        "id": "tenant-join",
+        "parentId": "layout",
+        "file": "(public)/join.tsx",
+        "path": ":tenantSlug/join"
+      },
+      "tenant-landing": {
+        "id": "tenant-landing",
+        "parentId": "layout",
+        "file": "(public)/landing.tsx",
+        "path": ":tenantSlug"
+      },
+      "global-landing": {
+        "id": "global-landing",
+        "parentId": "layout",
+        "file": "(public)/landing.tsx",
+        "index": true
+      }
+    },
+    "routeDiscovery": {
+      "mode": "initial"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": false,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "layout.tsx",
+            "children": [
+              {
+                "file": "(auth)/login.tsx",
+                "path": "login",
+                "id": "login-global"
+              },
+              {
+                "file": "(auth)/callback.tsx",
+                "path": "auth/callback",
+                "id": "callback-global"
+              },
+              {
+                "file": "(auth)/master-gateway.tsx",
+                "path": "master",
+                "id": "master-gateway"
+              },
+              {
+                "file": "(auth)/reset-password.tsx",
+                "path": "reset-password",
+                "id": "reset-password-global"
+              },
+              {
+                "file": "(auth)/reset-password.tsx",
+                "path": "set-password",
+                "id": "set-password-global"
+              },
+              {
+                "file": "(auth)/login.tsx",
+                "path": ":tenantSlug/login",
+                "id": "login-tenant"
+              },
+              {
+                "file": "(auth)/callback.tsx",
+                "path": ":tenantSlug/auth/callback",
+                "id": "callback-tenant"
+              },
+              {
+                "file": "(auth)/reset-password.tsx",
+                "path": ":tenantSlug/reset-password",
+                "id": "reset-password-tenant"
+              },
+              {
+                "file": "(auth)/reset-password.tsx",
+                "path": ":tenantSlug/set-password",
+                "id": "set-password-tenant"
+              },
+              {
+                "file": "../components/layout/ProtectedRoute.tsx",
+                "children": [
+                  {
+                    "file": "../components/layout/DashboardLayout.tsx",
+                    "children": [
+                      {
+                        "file": "(dashboard)/servicos/index.tsx",
+                        "path": ":tenantSlug/painel/servicos",
+                        "id": "tenant-admin-servicos"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/nova.tsx",
+                        "path": ":tenantSlug/painel/servicos/nova",
+                        "id": "tenant-admin-servicos-nova"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/agenda.tsx",
+                        "path": ":tenantSlug/painel/servicos/agenda",
+                        "id": "tenant-admin-servicos-agenda"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/relatorios.tsx",
+                        "path": ":tenantSlug/painel/servicos/relatorios",
+                        "id": "tenant-admin-servicos-relatorios"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/[id].tsx",
+                        "path": ":tenantSlug/painel/servicos/:id",
+                        "id": "tenant-admin-servicos-detalhe"
+                      },
+                      {
+                        "file": "(dashboard)/zeladores/index.tsx",
+                        "path": ":tenantSlug/painel/zeladores",
+                        "id": "tenant-admin-zeladores"
+                      },
+                      {
+                        "file": "(dashboard)/moradores/index.tsx",
+                        "path": ":tenantSlug/painel/moradores",
+                        "id": "tenant-admin-moradores"
+                      },
+                      {
+                        "file": "(dashboard)/avisos/index.tsx",
+                        "path": ":tenantSlug/painel/comunicados",
+                        "id": "tenant-admin-comunicados"
+                      },
+                      {
+                        "file": "(dashboard)/assembleias/index.tsx",
+                        "path": ":tenantSlug/painel/assembleias",
+                        "id": "tenant-admin-assembleias"
+                      },
+                      {
+                        "file": "(dashboard)/eventos/index.tsx",
+                        "path": ":tenantSlug/painel/eventos",
+                        "id": "tenant-admin-eventos"
+                      },
+                      {
+                        "file": "(dashboard)/galeria/index.tsx",
+                        "path": ":tenantSlug/painel/galeria",
+                        "id": "tenant-admin-galeria"
+                      },
+                      {
+                        "file": "(dashboard)/clube/index.tsx",
+                        "path": ":tenantSlug/painel/clube",
+                        "id": "tenant-admin-clube"
+                      },
+                      {
+                        "file": "(dashboard)/guia-morador/index.tsx",
+                        "path": ":tenantSlug/painel/guia",
+                        "id": "tenant-admin-guia"
+                      },
+                      {
+                        "file": "(dashboard)/faq/index.tsx",
+                        "path": ":tenantSlug/painel/faq",
+                        "id": "tenant-admin-faq"
+                      },
+                      {
+                        "file": "(dashboard)/documentos/index.tsx",
+                        "path": ":tenantSlug/painel/arquivos",
+                        "id": "tenant-admin-docs"
+                      },
+                      {
+                        "file": "(dashboard)/canal-morador/index.tsx",
+                        "path": ":tenantSlug/painel/canal-morador",
+                        "id": "tenant-admin-canal-morador"
+                      },
+                      {
+                        "file": "(dashboard)/configuracoes/index.tsx",
+                        "path": ":tenantSlug/painel/configuracoes",
+                        "id": "tenant-admin-settings"
+                      },
+                      {
+                        "file": "(dashboard)/home.tsx",
+                        "path": ":tenantSlug/painel",
+                        "id": "tenant-admin-home"
+                      },
+                      {
+                        "file": "(zelador)/index.tsx",
+                        "path": ":tenantSlug/zelador",
+                        "id": "tenant-zelador-home"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/index.tsx",
+                        "path": "painel/servicos",
+                        "id": "admin-servicos"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/nova.tsx",
+                        "path": "painel/servicos/nova",
+                        "id": "admin-servicos-nova"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/agenda.tsx",
+                        "path": "painel/servicos/agenda",
+                        "id": "admin-servicos-agenda"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/relatorios.tsx",
+                        "path": "painel/servicos/relatorios",
+                        "id": "admin-servicos-relatorios"
+                      },
+                      {
+                        "file": "(dashboard)/servicos/[id].tsx",
+                        "path": "painel/servicos/:id",
+                        "id": "admin-servicos-detalhe"
+                      },
+                      {
+                        "file": "(dashboard)/zeladores/index.tsx",
+                        "path": "painel/zeladores",
+                        "id": "admin-zeladores"
+                      },
+                      {
+                        "file": "(dashboard)/moradores/index.tsx",
+                        "path": "painel/moradores",
+                        "id": "admin-moradores"
+                      },
+                      {
+                        "file": "(dashboard)/avisos/index.tsx",
+                        "path": "painel/comunicados",
+                        "id": "admin-comunicados"
+                      },
+                      {
+                        "file": "(dashboard)/assembleias/index.tsx",
+                        "path": "painel/assembleias",
+                        "id": "admin-assembleias"
+                      },
+                      {
+                        "file": "(dashboard)/eventos/index.tsx",
+                        "path": "painel/eventos",
+                        "id": "admin-eventos"
+                      },
+                      {
+                        "file": "(dashboard)/galeria/index.tsx",
+                        "path": "painel/galeria",
+                        "id": "admin-galeria"
+                      },
+                      {
+                        "file": "(dashboard)/clube/index.tsx",
+                        "path": "painel/clube",
+                        "id": "admin-clube"
+                      },
+                      {
+                        "file": "(dashboard)/guia-morador/index.tsx",
+                        "path": "painel/guia",
+                        "id": "admin-guia"
+                      },
+                      {
+                        "file": "(dashboard)/faq/index.tsx",
+                        "path": "painel/faq",
+                        "id": "admin-faq"
+                      },
+                      {
+                        "file": "(dashboard)/documentos/index.tsx",
+                        "path": "painel/arquivos",
+                        "id": "admin-docs"
+                      },
+                      {
+                        "file": "(dashboard)/canal-morador/index.tsx",
+                        "path": "painel/canal-morador",
+                        "id": "admin-canal-morador"
+                      },
+                      {
+                        "file": "(dashboard)/configuracoes/index.tsx",
+                        "path": "painel/configuracoes",
+                        "id": "admin-settings"
+                      },
+                      {
+                        "file": "(dashboard)/home.tsx",
+                        "path": "painel",
+                        "id": "admin-home"
+                      },
+                      {
+                        "file": "(zelador)/index.tsx",
+                        "path": "zelador",
+                        "id": "zelador-home"
+                      },
+                      {
+                        "file": "(dashboard)/master-dashboard.tsx",
+                        "path": "painel-master",
+                        "id": "painel-master"
+                      }
+                    ]
+                  },
+                  {
+                    "file": "(dashboard)/onboarding/index.tsx",
+                    "path": ":tenantSlug/onboarding",
+                    "id": "tenant-onboarding"
+                  },
+                  {
+                    "file": "(dashboard)/onboarding/index.tsx",
+                    "path": "onboarding",
+                    "id": "onboarding"
+                  }
+                ]
+              },
+              {
+                "file": "(public)/comunicados.tsx",
+                "path": ":tenantSlug/portal/comunicados",
+                "id": "tenant-public-comunicados"
+              },
+              {
+                "file": "(public)/clube.tsx",
+                "path": ":tenantSlug/portal/clube",
+                "id": "tenant-public-clube"
+              },
+              {
+                "file": "(public)/guia.tsx",
+                "path": ":tenantSlug/portal/guia",
+                "id": "tenant-public-guia"
+              },
+              {
+                "file": "(public)/eventos.tsx",
+                "path": ":tenantSlug/portal/eventos",
+                "id": "tenant-public-eventos"
+              },
+              {
+                "file": "(public)/galeria.tsx",
+                "path": ":tenantSlug/portal/galeria",
+                "id": "tenant-public-galeria"
+              },
+              {
+                "file": "(public)/documentos.tsx",
+                "path": ":tenantSlug/portal/arquivos",
+                "id": "tenant-public-docs"
+              },
+              {
+                "file": "(public)/faq.tsx",
+                "path": ":tenantSlug/portal/faq",
+                "id": "tenant-public-faq"
+              },
+              {
+                "file": "(public)/comunicados.tsx",
+                "path": "portal/comunicados",
+                "id": "public-comunicados"
+              },
+              {
+                "file": "(public)/clube.tsx",
+                "path": "portal/clube",
+                "id": "public-clube"
+              },
+              {
+                "file": "(public)/guia.tsx",
+                "path": "portal/guia",
+                "id": "public-guia"
+              },
+              {
+                "file": "(public)/eventos.tsx",
+                "path": "portal/eventos",
+                "id": "public-eventos"
+              },
+              {
+                "file": "(public)/galeria.tsx",
+                "path": "portal/galeria",
+                "id": "public-galeria"
+              },
+              {
+                "file": "(public)/documentos.tsx",
+                "path": "portal/arquivos",
+                "id": "public-docs"
+              },
+              {
+                "file": "(public)/faq.tsx",
+                "path": "portal/faq",
+                "id": "public-faq"
+              },
+              {
+                "file": "(auth)/login.tsx",
+                "path": ":tenantSlug/login",
+                "id": "tenant-login"
+              },
+              {
+                "file": "(public)/join.tsx",
+                "path": ":tenantSlug/join",
+                "id": "tenant-join"
+              },
+              {
+                "file": "(public)/landing.tsx",
+                "path": ":tenantSlug",
+                "id": "tenant-landing"
+              },
+              {
+                "file": "(public)/landing.tsx",
+                "index": true,
+                "id": "global-landing"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}
