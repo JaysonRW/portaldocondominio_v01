@@ -1,1 +1,0 @@
-import{a}from"./utils-DNkBhPXc.js";const t=a((s,i)=>({user:null,session:null,perfil:void 0,isLoading:!0,isPerfilLoading:!0,setUser:e=>s({user:e}),setSession:e=>s({session:e}),setPerfil:e=>s({perfil:e,isPerfilLoading:!1}),setIsLoading:e=>s({isLoading:e}),setIsPerfilLoading:e=>s({isPerfilLoading:e}),getClaim:e=>{const{user:r}=i();return r?.app_metadata?.[e]}}));export{t as u};

@@ -1,1 +1,0 @@
-import{a}from"./utils-DNkBhPXc.js";const n=a(t=>({tenant:null,isMasterMode:!1,isLoading:!0,setTenant:e=>t({tenant:e}),setIsMasterMode:e=>t({isMasterMode:e}),setIsLoading:e=>t({isLoading:e})}));export{n as u};
