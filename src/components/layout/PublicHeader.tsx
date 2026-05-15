@@ -191,18 +191,14 @@ export function PublicHeader() {
                 </AcessoRestritoModal>
               ) : (
                 <div className="flex items-center gap-3">
-                  <Button
-                    className="bg-white/5 text-white hover:bg-white/10 font-black px-5 py-2 rounded-lg text-xs uppercase tracking-wider border border-white/10"
-                    asChild
-                  >
-                    <Link to="/master">Entrar</Link>
-                  </Button>
-                  <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-5 py-2 rounded-lg text-xs uppercase tracking-wider shadow-lg shadow-lime-900/20">
-                        Acessar condomínio
-                      </Button>
-                    </DialogTrigger>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Já é cliente?</span>
+                    <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-5 py-2 rounded-lg text-xs uppercase tracking-wider shadow-lg shadow-lime-900/20">
+                          Acessar condomínio
+                        </Button>
+                      </DialogTrigger>
                     <DialogContent className="sm:max-w-[480px]">
                       <DialogHeader>
                         <DialogTitle className="text-base font-black uppercase tracking-widest">
@@ -240,6 +236,7 @@ export function PublicHeader() {
                       </div>
                     </DialogContent>
                   </Dialog>
+                  </div>
                 </div>
               )
             )}
@@ -248,12 +245,14 @@ export function PublicHeader() {
 
         {!tenant ? (
           <div className="flex items-center gap-2 md:hidden">
-            <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider">
-                  Entrar
-                </Button>
-              </DialogTrigger>
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Já é cliente?</span>
+              <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider">
+                    Acessar
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                   <DialogTitle className="text-base font-black uppercase tracking-widest">
@@ -286,6 +285,7 @@ export function PublicHeader() {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
             <button className="text-white p-2 rounded-xl hover:bg-white/10 transition-colors" onClick={() => setMobileMenuOpen(true)} type="button" aria-label="Abrir menu">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
@@ -399,15 +399,7 @@ export function PublicHeader() {
                         Acesse seu portal
                       </Button>
                     </AcessoRestritoModal>
-                  ) : (
-                    <Button
-                      className="w-full bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black py-6 rounded-2xl text-xs uppercase tracking-widest"
-                      onClick={() => setMobileMenuOpen(false)}
-                      asChild
-                    >
-                      <Link to="/master">Acessar Painel</Link>
-                    </Button>
-                  )
+                  ) : null
                 )}
               </div>
             </div>

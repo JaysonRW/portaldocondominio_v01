@@ -19,7 +19,11 @@ import {
   ShieldCheck,
   Building2,
   Users,
-  Sparkles,
+  Megaphone,
+  ClipboardList,
+  UsersRound,
+  Shield,
+  PieChart,
 } from "lucide-react"
 import { AcessoRestritoModal } from "../../components/layout/AcessoRestritoModal"
 import { useState } from "react"
@@ -112,36 +116,42 @@ export default function PublicLanding() {
         
         <main className="flex-1">
           <section className="relative overflow-hidden">
-            <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(197,217,50,0.22),transparent_55%),radial-gradient(1000px_circle_at_90%_30%,rgba(16,185,129,0.18),transparent_50%),radial-gradient(700px_circle_at_60%_100%,rgba(59,130,246,0.14),transparent_55%)]" />
-              <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
+                                    <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-[radial-gradient(1000px_circle_at_50%_50%,rgba(197,217,50,0.05),transparent_70%)]" />
             </div>
 
-            <div className="container mx-auto max-w-7xl px-4 pt-10 pb-14 sm:pt-16 sm:pb-20">
-              <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-                <div className="lg:col-span-7">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/80">
-                    <Sparkles className="h-4 w-4 text-[#C5D932]" />
-                    Portal Condomínio Smart
+            <div className="container relative z-10 mx-auto max-w-[1400px] px-4">
+              <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
+                
+                {/* ESQUERDA - TEXTOS E CTAS */}
+                <div className="flex flex-col items-start lg:pr-8">
+                  <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#C5D932]">
+                    <span className="h-2 w-2 rounded-full bg-[#C5D932]" />
+                    Prévia do Portal
                   </div>
 
-                  <h1 className="mt-6 text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-[2.35rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-[3.25rem] lg:text-[3.75rem]">
-                    Seu condomínio ainda depende de grupos de WhatsApp para informar os moradores?
+                  <h1 className="mt-6 text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] sm:text-5xl lg:text-[4rem] text-white">
+                    Seu condomínio<br className="hidden lg:block" />
+                    ainda depende<br className="hidden lg:block" />
+                    de grupos de<br className="hidden lg:block" />
+                    WhatsApp para<br className="hidden lg:block" />
+                    informar os<br className="hidden lg:block" />
+                    <span className="text-[#C5D932]">moradores?</span>
                   </h1>
 
-                  <p className="mt-5 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/70 sm:text-lg">
+                  <p className="mt-6 max-w-xl text-pretty text-lg font-medium leading-relaxed text-white/70">
                     Organize comunicados, documentos, guia do morador, clube de vantagens e informações importantes em um portal simples, moderno e acessível pelo celular.
                   </p>
 
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <Button asChild className="h-12 rounded-2xl bg-[#C5D932] px-6 font-black text-[#0b1411] hover:bg-[#b3c62d]">
+                  <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <Button asChild className="h-14 rounded-full bg-[#C5D932] px-8 text-[15px] font-bold text-[#0b1411] hover:bg-[#b3c62d] transition-all hover:scale-[1.02]">
                       <a
                         href="https://wa.me/5541995343245?text=Ol%C3%A1!%20Quero%20uma%20demonstra%C3%A7%C3%A3o%20do%20Condom%C3%ADnio%20Smart."
                         target="_blank"
                         rel="noreferrer"
                         aria-label="Solicitar demonstração no WhatsApp"
                       >
-                        Solicitar demonstração <ArrowRight className="ml-2 h-4 w-4" />
+                        Solicitar demonstração <ArrowRight className="ml-2 h-5 w-5" />
                       </a>
                     </Button>
 
@@ -149,7 +159,7 @@ export default function PublicLanding() {
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
-                          className="h-12 rounded-2xl border-white/15 bg-white/5 px-6 font-black text-white hover:bg-white/10"
+                          className="h-14 rounded-full border-white/20 bg-transparent px-8 text-[15px] font-bold text-white hover:bg-white/5 transition-all hover:scale-[1.02]"
                           type="button"
                         >
                           Acessar meu condomínio
@@ -189,71 +199,116 @@ export default function PublicLanding() {
                     </Dialog>
                   </div>
 
-                  <div className="mt-8 flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                      <ShieldCheck className="h-4 w-4 text-white/70" />
-                      Acesso por perfil
+                  <div className="mt-12 flex flex-wrap items-center gap-6 sm:gap-8 text-sm font-medium text-white/70">
+                    <span className="flex items-center gap-2">
+                      <ShieldCheck className="h-6 w-6 text-[#C5D932]" />
+                      Acesso<br/>por perfil
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                      <Globe className="h-4 w-4 text-white/70" />
-                      Multi-tenant
+                    <span className="flex items-center gap-2">
+                      <Globe className="h-6 w-6 text-[#C5D932]" />
+                      Multi-<br/>tenant
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                      <MessageCircle className="h-4 w-4 text-white/70" />
-                      Comunicação oficial
+                    <span className="flex items-center gap-2">
+                      <MessageSquareText className="h-6 w-6 text-[#C5D932]" />
+                      Comunicação<br/>oficial
                     </span>
                   </div>
                 </div>
 
-                <div className="lg:col-span-5">
-                  <div className="relative mx-auto w-full max-w-[560px]">
-                    <div className="absolute -inset-6 rounded-[3rem] bg-white/5 blur-2xl" />
-                    <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/5 shadow-[0_40px_120px_-80px_rgba(0,0,0,0.95)]">
+                {/* DIREITA - IMAGEM E ÍCONES ORBITAIS */}
+                <div className="relative w-full flex items-center justify-center lg:justify-end">
+                  
+                  {/* Container da Imagem com ícones */}
+                  <div className="relative w-full max-w-[700px] aspect-[4/3] flex items-center justify-center">
+                    
+                    {/* Fundo Glow da Imagem */}
+                    <div className="absolute inset-0 bg-[radial-gradient(500px_circle_at_50%_50%,rgba(197,217,50,0.1),transparent_70%)]" />
+
+                    {/* Imagem Central */}
+                    <div className="relative z-20 w-[90%] sm:w-[85%] perspective-1000 rotate-[-2deg] transition-transform duration-500 hover:rotate-0 hover:scale-105">
                       <img
-                        src="/banner-SaaSCondominio.jpg"
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover opacity-45 blur-[1px] scale-110"
+                        src="/imagem%20banner%20mockup..png"
+                        alt="Painel do Condomínio Smart"
+                        className="relative z-10 w-full rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover"
                         loading="eager"
                         fetchPriority="high"
                         decoding="async"
+                        draggable={false}
                       />
-                      <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_65%_20%,rgba(197,217,50,0.18),transparent_55%),radial-gradient(700px_circle_at_40%_85%,rgba(16,185,129,0.16),transparent_52%)]" />
-                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,17,13,0.35),rgba(7,17,13,0.92))]" />
+                    </div>
 
-                      <div className="relative p-6 sm:p-8">
-                        <div className="flex items-center justify-between">
-                          <div className="text-xs font-black uppercase tracking-[0.18em] text-white/70">
-                            Prévia do Portal
-                          </div>
-                          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
-                            Ao vivo
-                          </div>
+                    {/* Ícones em Órbita */}
+                    <div className="absolute inset-0 z-30 pointer-events-none">
+                      {/* Comunicados (Top Left) */}
+                      <div className="absolute top-[8%] left-[2%] sm:top-[12%] sm:left-[5%] flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <Megaphone className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-24 drop-shadow-md">Comunicados</span>
+                      </div>
 
-                        <figure className="mt-6">
-                          <img
-                            src="/Logo-collina-painel%20adm.jpg"
-                            alt="Visão do painel administrativo e módulos do portal"
-                            className="mx-auto w-full max-w-[520px] select-none object-contain [filter:drop-shadow(0_50px_120px_rgba(0,0,0,0.75))]"
-                            loading="eager"
-                            fetchPriority="high"
-                            decoding="async"
-                            draggable={false}
-                          />
-                        </figure>
-
-                        <div className="mt-5 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
-                          <span className="truncate">Experiência mobile-first</span>
-                          <span className="inline-flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
-                            Módulos reais
-                          </span>
+                      {/* Gestão de Moradores (Top Center) */}
+                      <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <Users className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-28 drop-shadow-md">Gestão de<br/>Moradores</span>
+                      </div>
+
+                      {/* Ordens de Serviço (Top Right) */}
+                      <div className="absolute top-[8%] right-[2%] sm:top-[12%] sm:right-[5%] flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <ClipboardList className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-24 drop-shadow-md">Ordens de<br/>Serviço</span>
+                      </div>
+
+                      {/* Assembleias (Left Middle) */}
+                      <div className="absolute top-1/2 left-[-5%] sm:left-[-2%] -translate-y-1/2 flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <UsersRound className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-24 drop-shadow-md">Assembleias</span>
+                      </div>
+
+                      {/* Eventos Sociais (Right Middle) */}
+                      <div className="absolute top-1/2 right-[-5%] sm:right-[-2%] -translate-y-1/2 flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-24 drop-shadow-md">Eventos<br/>Sociais</span>
+                      </div>
+
+                      {/* Clube de Vantagens (Bottom Left) */}
+                      <div className="absolute bottom-[8%] left-[2%] sm:bottom-[5%] sm:left-[8%] flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <Gift className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-24 drop-shadow-md">Clube de<br/>Vantagens</span>
+                      </div>
+
+                      {/* Segurança (Bottom Center) */}
+                      <div className="absolute -bottom-[5%] sm:bottom-[-2%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <Shield className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-28 drop-shadow-md">Segurança e<br/>Permissões</span>
+                      </div>
+
+                      {/* Relatórios (Bottom Right) */}
+                      <div className="absolute bottom-[8%] right-[2%] sm:bottom-[5%] sm:right-[8%] flex flex-col items-center gap-2">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#0a1510] border border-[#C5D932]/20 text-[#C5D932] shadow-[0_0_20px_rgba(197,217,50,0.2)]">
+                          <PieChart className="h-5 w-5 sm:h-6 sm:w-6" />
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white/80 text-center w-28 drop-shadow-md">Relatórios e<br/>Indicadores</span>
                       </div>
                     </div>
+
+
+
                   </div>
                 </div>
+
               </div>
 
               <div id="features" className="mt-14">
