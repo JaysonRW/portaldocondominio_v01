@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "../../lib/supabase"
 import { PublicHeader } from "../../components/layout/PublicHeader"
 import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
 import { withTenantPrefix } from "../../lib/utils"
 import { 
   MessageSquareText, 
@@ -15,12 +16,16 @@ import {
   MessageCircle,
   Globe,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  Building2,
+  Users,
+  Sparkles
 } from "lucide-react"
 import { AcessoRestritoModal } from "../../components/layout/AcessoRestritoModal"
 import { useState } from "react"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 
 export default function PublicLanding() {
   const { tenant } = useTenantStore()
@@ -34,6 +39,8 @@ export default function PublicLanding() {
     mensagem: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [accessOpen, setAccessOpen] = useState(false)
+  const [accessSlug, setAccessSlug] = useState("")
 
   const isPending = user && perfil && perfil.status_aprovacao === false
 
@@ -91,75 +98,530 @@ export default function PublicLanding() {
   }
 
   if (!tenant && !tenantSlug) {
+    const handleAccessCondo = () => {
+      const slug = accessSlug.trim().toLowerCase()
+      if (!slug) return
+      setAccessOpen(false)
+      setAccessSlug("")
+      navigate(`/${slug}`)
+    }
+
     return (
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex min-h-screen flex-col bg-[#07110d] text-white [font-family:'IBM_Plex_Sans',ui-sans-serif,system-ui,sans-serif]">
         <PublicHeader />
         
-        {/* SaaS Hero */}
-        <section className="relative flex min-h-[80vh] w-full items-center justify-center overflow-hidden bg-[#1a2e25]">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500 rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-lime-500 rounded-full blur-[120px]" />
-          </div>
-          
-          <div className="container relative z-10 px-4 text-center text-white max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-widest">SaaS de Gestão Condominial Smart</span>
+        <main className="flex-1">
+          <section className="relative overflow-hidden">
+            <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_20%_10%,rgba(197,217,50,0.22),transparent_55%),radial-gradient(1000px_circle_at_90%_30%,rgba(16,185,129,0.18),transparent_50%),radial-gradient(700px_circle_at_60%_100%,rgba(59,130,246,0.14),transparent_55%)]" />
+              <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
             </div>
-            <h1 className="mb-6 text-5xl font-black tracking-tighter sm:text-7xl lg:text-8xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
-              Transforme a Gestão do seu Condomínio.
-            </h1>
-            <p className="mb-12 max-w-2xl mx-auto text-xl text-white/70 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-              Uma plataforma completa para síndicos e moradores. Transparência, agilidade e comunicação em um só lugar.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
-              <Button size="lg" className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-10 py-8 rounded-2xl text-lg shadow-2xl" asChild>
-                <a href="https://wa.me/5541995343245?text=quero%20conhecer%20o%20portal" target="_blank" rel="noreferrer">
-                  Começar agora
-                </a>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-black px-10 py-8 rounded-2xl text-lg" asChild>
-                <Link to="/master">Painel Administrativo</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
 
-        {/* SaaS Features */}
-        <section className="py-32 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="grid gap-12 md:grid-cols-3">
-              <div className="p-8 rounded-[2.5rem] bg-white shadow-sm border border-slate-100">
-                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                  <ShieldCheck className="w-7 h-7" />
+            <div className="container mx-auto max-w-7xl px-4 pt-10 pb-14 sm:pt-16 sm:pb-20">
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-7">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/80">
+                    <Sparkles className="h-4 w-4 text-[#C5D932]" />
+                    Portal Condomínio Smart
+                  </div>
+
+                  <h1 className="mt-6 text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-[2.35rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-[3.25rem] lg:text-[3.75rem]">
+                    Seu condomínio ainda depende de grupos de WhatsApp para informar os moradores?
+                  </h1>
+
+                  <p className="mt-5 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/70 sm:text-lg">
+                    Organize comunicados, documentos, guia do morador, clube de vantagens e informações importantes em um portal simples, moderno e acessível pelo celular.
+                  </p>
+
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <Button asChild className="h-12 rounded-2xl bg-[#C5D932] px-6 font-black text-[#0b1411] hover:bg-[#b3c62d]">
+                      <a
+                        href="https://wa.me/5541995343245?text=Ol%C3%A1!%20Quero%20uma%20demonstra%C3%A7%C3%A3o%20do%20Condom%C3%ADnio%20Smart."
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Solicitar demonstração no WhatsApp"
+                      >
+                        Solicitar demonstração <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+
+                    <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-12 rounded-2xl border-white/15 bg-white/5 px-6 font-black text-white hover:bg-white/10"
+                          type="button"
+                        >
+                          Acessar meu condomínio
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[520px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-base font-black uppercase tracking-widest">
+                            Acessar meu condomínio
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="text-sm font-medium text-slate-600">
+                            Digite o slug do seu condomínio para abrir o portal.
+                          </div>
+                          <Input
+                            value={accessSlug}
+                            onChange={(e) => setAccessSlug(e.target.value)}
+                            placeholder="ex: colina-belvedere"
+                            autoComplete="off"
+                            inputMode="text"
+                            aria-label="Slug do condomínio"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleAccessCondo()
+                            }}
+                          />
+                          <div className="flex items-center justify-end gap-2">
+                            <Button variant="outline" className="rounded-xl" onClick={() => setAccessOpen(false)} type="button">
+                              Cancelar
+                            </Button>
+                            <Button className="rounded-xl font-black" onClick={handleAccessCondo} type="button">
+                              Abrir portal
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+
+                  <div className="mt-8 flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
+                      <ShieldCheck className="h-4 w-4 text-white/70" />
+                      Acesso por perfil
+                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
+                      <Globe className="h-4 w-4 text-white/70" />
+                      Multi-tenant
+                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
+                      <MessageCircle className="h-4 w-4 text-white/70" />
+                      Comunicação oficial
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-4">Segurança</h3>
-                <p className="text-slate-500 font-medium leading-relaxed">
-                  Dados protegidos e acesso restrito por níveis de permissão para síndicos e moradores.
-                </p>
+
+                <div className="lg:col-span-5">
+                  <div className="relative mx-auto w-full max-w-[420px]">
+                    <div className="absolute -inset-4 rounded-[2.75rem] bg-white/5 blur-2xl" />
+                    <div className="relative rounded-[2.25rem] border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-4 shadow-2xl">
+                      <div className="rounded-[1.75rem] bg-[#07110d] p-5">
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs font-black uppercase tracking-[0.18em] text-white/60">
+                            Prévia do Portal
+                          </div>
+                          <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/60">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
+                            Ao vivo
+                          </div>
+                        </div>
+
+                        <div className="mt-4 grid gap-3">
+                          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <div className="flex items-start gap-3">
+                              <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C5D932]/15 text-[#C5D932]">
+                                <MessageSquareText className="h-5 w-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-black text-white">Último comunicado</div>
+                                <div className="mt-1 text-xs font-medium leading-relaxed text-white/65">
+                                  Avisos oficiais e fixados. Sem depender do grupo.
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+                                  <FileText className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Arquivos</div>
+                                  <div className="mt-1 text-[11px] font-medium text-white/60">Atas e PDFs</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-400/10 text-sky-300">
+                                  <Globe className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Guia</div>
+                                  <div className="mt-1 text-[11px] font-medium text-white/60">Contatos úteis</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-300">
+                                  <Gift className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Vantagens</div>
+                                  <div className="mt-1 text-[11px] font-medium text-white/60">Parceiros</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/10 text-amber-300">
+                                  <CalendarIcon className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-black uppercase tracking-widest text-white/80">Eventos</div>
+                                  <div className="mt-1 text-[11px] font-medium text-white/60">Agenda</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="p-8 rounded-[2.5rem] bg-white shadow-sm border border-slate-100">
-                <div className="w-14 h-14 bg-lime-50 text-lime-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Globe className="w-7 h-7" />
+
+              <div id="features" className="mt-14">
+                <div className="mx-auto max-w-3xl text-center">
+                  <h2 className="text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                    Tudo que o morador precisa encontrar, em poucos toques.
+                  </h2>
+                  <p className="mt-4 text-pretty text-base font-medium leading-relaxed text-white/70">
+                    Uma central simples para acessar informações importantes do condomínio sem procurar em conversas antigas.
+                  </p>
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-4">Multi-instância</h3>
-                <p className="text-slate-500 font-medium leading-relaxed">
-                  Cada condomínio possui seu próprio portal personalizado com cores e documentos próprios.
-                </p>
-              </div>
-              <div className="p-8 rounded-[2.5rem] bg-white shadow-sm border border-slate-100">
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                  <MessageCircle className="w-7 h-7" />
+
+                <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {[
+                    {
+                      icon: MessageSquareText,
+                      title: "Comunicados importantes",
+                      desc: "Avisos oficiais do condomínio organizados em um só lugar.",
+                      tone: "bg-sky-400/10 text-sky-300",
+                    },
+                    {
+                      icon: FileText,
+                      title: "Arquivos e documentos",
+                      desc: "Regimentos, atas e documentos úteis sempre acessíveis.",
+                      tone: "bg-emerald-400/10 text-emerald-300",
+                    },
+                    {
+                      icon: Globe,
+                      title: "Guia do morador",
+                      desc: "Orientações essenciais, contatos úteis e regras práticas.",
+                      tone: "bg-indigo-400/10 text-indigo-300",
+                    },
+                    {
+                      icon: Gift,
+                      title: "Clube de vantagens",
+                      desc: "Benefícios, parceiros e promoções exclusivas para moradores.",
+                      tone: "bg-violet-400/10 text-violet-300",
+                    },
+                    {
+                      icon: CalendarIcon,
+                      title: "Eventos do condomínio",
+                      desc: "Agenda de atividades, campanhas, reuniões e eventos internos.",
+                      tone: "bg-amber-400/10 text-amber-300",
+                    },
+                    {
+                      icon: MessageCircle,
+                      title: "Dúvidas frequentes",
+                      desc: "Respostas rápidas que reduzem mensagens repetidas para o síndico.",
+                      tone: "bg-rose-400/10 text-rose-300",
+                    },
+                  ].map((item) => (
+                    <div key={item.title} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.75)]">
+                      <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.tone}`}>
+                        <item.icon className="h-6 w-6" />
+                      </div>
+                      <div className="mt-5 text-lg font-black text-white">{item.title}</div>
+                      <div className="mt-2 text-sm font-medium leading-relaxed text-white/65">{item.desc}</div>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-4">Comunicação</h3>
-                <p className="text-slate-500 font-medium leading-relaxed">
-                  Mural de avisos, calendário de eventos e documentos sempre à mão do morador.
-                </p>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <section id="sobre" className="bg-[#06100c] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+                <div className="lg:col-span-5">
+                  <h2 className="[font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                    Chega de informação espalhada.
+                  </h2>
+                  <p className="mt-4 text-base font-medium leading-relaxed text-white/70">
+                    Em muitos condomínios, comunicados ficam perdidos em grupos, documentos são enviados várias vezes, e o síndico perde tempo respondendo dúvidas repetidas.
+                    <span className="text-white/85"> Com o Condomínio Smart, cada condomínio ganha um portal próprio, organizado e fácil de acessar.</span>
+                  </p>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[
+                      "Comunicados perdidos em conversas antigas",
+                      "Documentos enviados repetidamente",
+                      "Moradores sem saber onde encontrar informações",
+                      "Síndico sobrecarregado com perguntas recorrentes",
+                      "Falta de uma central oficial de comunicação",
+                      "Dificuldade para divulgar benefícios e parceiros",
+                    ].map((text) => (
+                      <div key={text} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#C5D932]" />
+                        <div className="text-sm font-medium leading-relaxed text-white/70">{text}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="para-quem" className="bg-[#07110d] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="mx-auto max-w-3xl text-center">
+                <h2 className="text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                  Uma plataforma pensada para quem administra e para quem mora.
+                </h2>
+              </div>
+
+              <div className="mt-10 grid gap-4 md:grid-cols-3">
+                <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-7">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C5D932]/15 text-[#C5D932]">
+                    <Building2 className="h-6 w-6" />
+                  </div>
+                  <div className="mt-5 text-lg font-black">Para síndicos</div>
+                  <div className="mt-2 text-sm font-medium leading-relaxed text-white/65">
+                    Publique comunicados, documentos, guia do morador, parceiros e eventos em poucos cliques. Reduza dúvidas repetidas e melhore a comunicação com os moradores.
+                  </div>
+                </div>
+
+                <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-7">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-400/10 text-sky-300">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <div className="mt-5 text-lg font-black">Para administradoras</div>
+                  <div className="mt-2 text-sm font-medium leading-relaxed text-white/65">
+                    Entregue uma experiência digital consistente para diferentes condomínios, com padronização e percepção de valor para os clientes atendidos.
+                  </div>
+                </div>
+
+                <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-7">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+                    <MessageCircle className="h-6 w-6" />
+                  </div>
+                  <div className="mt-5 text-lg font-black">Para moradores</div>
+                  <div className="mt-2 text-sm font-medium leading-relaxed text-white/65">
+                    Acesse avisos, documentos, guia, benefícios, eventos e FAQ direto pelo celular. Informação simples, organizada e disponível quando precisar.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="como-funciona" className="bg-[#06100c] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="mx-auto max-w-3xl text-center">
+                <h2 className="text-balance [font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                  Como funciona na prática
+                </h2>
+              </div>
+
+              <div className="mt-10 grid gap-4 md:grid-cols-3">
+                {[
+                  {
+                    step: "1",
+                    title: "O condomínio é cadastrado",
+                    desc: "Criamos o ambiente do condomínio com identidade visual, dados e módulos disponíveis.",
+                  },
+                  {
+                    step: "2",
+                    title: "O síndico publica os conteúdos",
+                    desc: "Comunicados, arquivos, guia do morador, parceiros e eventos são organizados no painel.",
+                  },
+                  {
+                    step: "3",
+                    title: "O morador acessa quando precisar",
+                    desc: "Tudo fica centralizado em um portal simples, seguro e pensado para o celular.",
+                  },
+                ].map((item) => (
+                  <div key={item.step} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-7">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-black uppercase tracking-[0.18em] text-white/50">Passo</div>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/5 text-sm font-black text-white/80">
+                        {item.step}
+                      </div>
+                    </div>
+                    <div className="mt-4 text-lg font-black">{item.title}</div>
+                    <div className="mt-2 text-sm font-medium leading-relaxed text-white/65">{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-[#07110d] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+                <div className="lg:col-span-5">
+                  <h2 className="[font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                    Controle simples para o síndico manter tudo atualizado.
+                  </h2>
+                  <p className="mt-4 text-base font-medium leading-relaxed text-white/70">
+                    O painel administrativo permite atualizar os conteúdos do portal sem depender de alterações técnicas.
+                  </p>
+                </div>
+                <div className="lg:col-span-7">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[
+                      "Publicação de comunicados",
+                      "Gestão de documentos e arquivos",
+                      "Cadastro do guia do morador",
+                      "Cadastro de parceiros do clube",
+                      "Eventos e agenda do condomínio",
+                      "Galeria de fotos e FAQ",
+                    ].map((text) => (
+                      <div key={text} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C5D932]/15 text-[#C5D932]">
+                          <ArrowRight className="h-5 w-5" />
+                        </div>
+                        <div className="text-sm font-medium text-white/75">{text}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-[#06100c] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-7">
+                  <h2 className="[font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                    Mais valor percebido para os moradores.
+                  </h2>
+                  <p className="mt-4 text-base font-medium leading-relaxed text-white/70">
+                    Além de organizar informações, o condomínio pode divulgar parceiros, benefícios e promoções exclusivas, fortalecendo o relacionamento com empresas locais.
+                  </p>
+                </div>
+                <div className="lg:col-span-5">
+                  <div className="rounded-[2rem] border border-white/10 bg-white/5 p-7">
+                    <div className="text-xs font-black uppercase tracking-[0.18em] text-white/50">Exemplos</div>
+                    <div className="mt-4 grid gap-2 text-sm font-medium text-white/70">
+                      {["Pet shops", "Mercados", "Academias", "Restaurantes", "Assistências técnicas", "Profissionais locais"].map((t) => (
+                        <div key={t} className="flex items-center gap-3">
+                          <div className="h-2 w-2 rounded-full bg-[#C5D932]" />
+                          {t}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="contato" className="bg-[#07110d] py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="rounded-[2.25rem] border border-white/10 bg-[radial-gradient(800px_circle_at_20%_0%,rgba(197,217,50,0.18),transparent_55%),radial-gradient(700px_circle_at_90%_70%,rgba(59,130,246,0.12),transparent_55%)] p-8 sm:p-12">
+                <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+                  <div className="lg:col-span-7">
+                    <h2 className="[font-family:'Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif] text-3xl font-extrabold tracking-tight sm:text-4xl">
+                      Pronto para modernizar a comunicação do seu condomínio?
+                    </h2>
+                    <p className="mt-4 text-base font-medium leading-relaxed text-white/70">
+                      Ofereça aos moradores uma central simples, organizada e acessível pelo celular.
+                    </p>
+                  </div>
+
+                  <div className="lg:col-span-5">
+                    <div className="grid gap-3">
+                      <Button asChild className="h-12 rounded-2xl bg-[#C5D932] px-6 font-black text-[#0b1411] hover:bg-[#b3c62d]">
+                        <a
+                          href="https://wa.me/5541995343245?text=Ol%C3%A1!%20Quero%20uma%20demonstra%C3%A7%C3%A3o%20do%20Condom%C3%ADnio%20Smart."
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Quero uma demonstração no WhatsApp"
+                        >
+                          Quero uma demonstração <ArrowRight className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+
+                      <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-12 rounded-2xl border-white/15 bg-white/5 px-6 font-black text-white hover:bg-white/10"
+                            type="button"
+                          >
+                            Já sou morador / acessar portal
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[520px]">
+                          <DialogHeader>
+                            <DialogTitle className="text-base font-black uppercase tracking-widest">
+                              Acessar meu condomínio
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="grid gap-4">
+                            <div className="text-sm font-medium text-slate-600">
+                              Digite o slug do seu condomínio para abrir o portal.
+                            </div>
+                            <Input
+                              value={accessSlug}
+                              onChange={(e) => setAccessSlug(e.target.value)}
+                              placeholder="ex: colina-belvedere"
+                              autoComplete="off"
+                              inputMode="text"
+                              aria-label="Slug do condomínio"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleAccessCondo()
+                              }}
+                            />
+                            <div className="flex items-center justify-end gap-2">
+                              <Button variant="outline" className="rounded-xl" onClick={() => setAccessOpen(false)} type="button">
+                                Cancelar
+                              </Button>
+                              <Button className="rounded-xl font-black" onClick={handleAccessCondo} type="button">
+                                Abrir portal
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
+                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-white/45">
+                        Ou envie mensagem para <span className="text-white/70">+55 (41) 99534-3245</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-white/40">
+                  Condomínio Smart © 2026
+                </div>
+                <div className="flex items-center gap-5 text-xs font-bold uppercase tracking-[0.18em] text-white/50">
+                  <a href="#features" className="hover:text-white">Funcionalidades</a>
+                  <a href="#como-funciona" className="hover:text-white">Como funciona</a>
+                  <a href="#contato" className="hover:text-white">Contato</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
     )
   }

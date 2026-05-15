@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router"
+import { Link, useLocation, useNavigate } from "react-router"
 import { useTenantStore } from "../../stores/tenantStore"
 import { useAuthStore } from "../../stores/authStore"
 import { Button } from "../ui/button"
@@ -8,15 +8,19 @@ import { UserCircle, LogOut, LayoutDashboard, ChevronDown } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { AcessoRestritoModal } from "./AcessoRestritoModal"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Input } from "../ui/input"
 
 export function PublicHeader() {
   const { tenant } = useTenantStore()
   const { user, perfil } = useAuthStore()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [accessOpen, setAccessOpen] = useState(false)
+  const [accessSlug, setAccessSlug] = useState("")
   const dropdownRef = useRef<HTMLDivElement>(null)
   const tenantSlug = tenant?.slug
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => {
     const fullPath = withTenantPrefix(path, tenantSlug)
@@ -60,6 +64,15 @@ export function PublicHeader() {
     { label: "Funcionalidades", path: "/#features" },
     { label: "Contato", path: "/#contato" },
   ]
+
+  const handleAccessCondo = () => {
+    const slug = accessSlug.trim().toLowerCase()
+    if (!slug) return
+    setAccessOpen(false)
+    setMobileMenuOpen(false)
+    setAccessSlug("")
+    navigate(`/${slug}`)
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#1a2e25] text-white shadow-lg border-b border-white/5">
@@ -177,21 +190,114 @@ export function PublicHeader() {
                   </Button>
                 </AcessoRestritoModal>
               ) : (
-                <Button 
-                  className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-6 py-2 rounded-lg text-xs uppercase tracking-wider shadow-lg shadow-lime-900/20"
-                  asChild
-                >
-                  <Link to="/master">Entrar</Link>
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    className="bg-white/5 text-white hover:bg-white/10 font-black px-5 py-2 rounded-lg text-xs uppercase tracking-wider border border-white/10"
+                    asChild
+                  >
+                    <Link to="/master">Entrar</Link>
+                  </Button>
+                  <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-5 py-2 rounded-lg text-xs uppercase tracking-wider shadow-lg shadow-lime-900/20">
+                        Acessar condomínio
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[480px]">
+                      <DialogHeader>
+                        <DialogTitle className="text-base font-black uppercase tracking-widest">
+                          Acessar meu condomínio
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4">
+                        <div className="text-sm font-medium text-slate-600">
+                          Digite o slug do seu condomínio para abrir o portal.
+                        </div>
+                        <Input
+                          value={accessSlug}
+                          onChange={(e) => setAccessSlug(e.target.value)}
+                          placeholder="ex: colina-belvedere"
+                          autoComplete="off"
+                          inputMode="text"
+                          aria-label="Slug do condomínio"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleAccessCondo()
+                          }}
+                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            className="rounded-xl"
+                            onClick={() => setAccessOpen(false)}
+                            type="button"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button className="rounded-xl font-black" onClick={handleAccessCondo} type="button">
+                            Abrir portal
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               )
             )}
           </div>
         </nav>
 
+        {!tenant ? (
+          <div className="flex items-center gap-2 md:hidden">
+            <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider">
+                  Entrar
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[480px]">
+                <DialogHeader>
+                  <DialogTitle className="text-base font-black uppercase tracking-widest">
+                    Acessar meu condomínio
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4">
+                  <div className="text-sm font-medium text-slate-600">
+                    Digite o slug do seu condomínio para abrir o portal.
+                  </div>
+                  <Input
+                    value={accessSlug}
+                    onChange={(e) => setAccessSlug(e.target.value)}
+                    placeholder="ex: colina-belvedere"
+                    autoComplete="off"
+                    inputMode="text"
+                    aria-label="Slug do condomínio"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAccessCondo()
+                    }}
+                  />
+                  <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" className="rounded-xl" onClick={() => setAccessOpen(false)} type="button">
+                      Cancelar
+                    </Button>
+                    <Button className="rounded-xl font-black" onClick={handleAccessCondo} type="button">
+                      Abrir portal
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <button className="text-white p-2 rounded-xl hover:bg-white/10 transition-colors" onClick={() => setMobileMenuOpen(true)} type="button" aria-label="Abrir menu">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            </button>
+          </div>
+        ) : null}
+
         {/* Mobile Menu */}
         <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <DialogTrigger asChild>
-            <button className="md:hidden text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+            <button className="md:hidden text-white p-2 rounded-xl hover:bg-white/10 transition-colors" style={{ display: tenant ? undefined : "none" }}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
               </svg>
