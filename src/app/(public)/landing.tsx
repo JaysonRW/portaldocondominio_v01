@@ -19,7 +19,10 @@ import {
   ShieldCheck,
   Building2,
   Users,
-  Sparkles
+  Sparkles,
+  Wrench,
+  Image as ImageIcon,
+  HelpCircle
 } from "lucide-react"
 import { AcessoRestritoModal } from "../../components/layout/AcessoRestritoModal"
 import { useState } from "react"
@@ -105,6 +108,18 @@ export default function PublicLanding() {
       setAccessSlug("")
       navigate(`/${slug}`)
     }
+
+    const orbitItems = [
+      { label: "Comunicados", Icon: MessageSquareText, tone: "bg-sky-400/12 text-sky-200", angle: -90 },
+      { label: "Documentos", Icon: FileText, tone: "bg-emerald-400/12 text-emerald-200", angle: -50 },
+      { label: "Guia", Icon: Globe, tone: "bg-indigo-400/12 text-indigo-200", angle: -10 },
+      { label: "Vantagens", Icon: Gift, tone: "bg-violet-400/12 text-violet-200", angle: 30 },
+      { label: "Eventos", Icon: CalendarIcon, tone: "bg-amber-400/12 text-amber-200", angle: 70 },
+      { label: "Galeria", Icon: ImageIcon, tone: "bg-rose-400/12 text-rose-200", angle: 110 },
+      { label: "Moradores", Icon: Users, tone: "bg-cyan-400/12 text-cyan-200", angle: 150 },
+      { label: "Ordens", Icon: Wrench, tone: "bg-lime-400/12 text-lime-200", angle: 190 },
+      { label: "FAQ", Icon: HelpCircle, tone: "bg-fuchsia-400/12 text-fuchsia-200", angle: 230 },
+    ]
 
     return (
       <div className="flex min-h-screen flex-col bg-[#07110d] text-white [font-family:'IBM_Plex_Sans',ui-sans-serif,system-ui,sans-serif]">
@@ -206,42 +221,89 @@ export default function PublicLanding() {
                 </div>
 
                 <div className="lg:col-span-5">
-                  <div className="relative mx-auto w-full max-w-[420px]">
-                    <div className="absolute -inset-4 rounded-[2.75rem] bg-white/5 blur-2xl" />
-                    <div className="relative rounded-[2.25rem] border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-4 shadow-2xl">
-                      <div className="rounded-[1.75rem] bg-[#07110d] p-5">
+                  <div className="relative mx-auto w-full max-w-[560px]">
+                    <div className="absolute -inset-6 rounded-[3rem] bg-white/5 blur-2xl" />
+                    <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/5 shadow-[0_40px_120px_-80px_rgba(0,0,0,0.95)]">
+                      <img
+                        src="/banner-SaaSCondominio.jpg"
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover opacity-45 blur-[1px] scale-110"
+                        loading="eager"
+                        fetchPriority="high"
+                        decoding="async"
+                      />
+                      <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_65%_20%,rgba(197,217,50,0.18),transparent_55%),radial-gradient(700px_circle_at_40%_85%,rgba(16,185,129,0.16),transparent_52%)]" />
+                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,17,13,0.35),rgba(7,17,13,0.92))]" />
+
+                      <div className="relative p-6 sm:p-8">
                         <div className="flex items-center justify-between">
-                          <div className="text-xs font-black uppercase tracking-[0.18em] text-white/60">
+                          <div className="text-xs font-black uppercase tracking-[0.18em] text-white/70">
                             Prévia do Portal
                           </div>
-                          <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/60">
+                          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
                             <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
                             Ao vivo
                           </div>
                         </div>
 
-                        <figure className="mt-4 overflow-hidden rounded-[1.25rem] border border-white/10 bg-white/5">
-                          <div className="relative aspect-[16/10] w-full">
-                            <img
-                              src="/tela-inicial-portal.jpg"
-                              alt="Tela inicial do portal do condomínio"
-                              className="h-full w-full object-cover"
-                              loading="eager"
-                              fetchPriority="high"
-                              decoding="async"
-                              sizes="(min-width: 1024px) 420px, 90vw"
-                            />
-                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,17,13,0.22),rgba(7,17,13,0.72))]" />
-                            <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_0_60px_rgba(0,0,0,0.55)]" />
+                        <div className="relative mt-6 aspect-square w-full">
+                          <div className="pointer-events-none absolute inset-0 rounded-[2.25rem] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]" />
+
+                          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[78%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 shadow-[0_30px_120px_-90px_rgba(197,217,50,0.5)] [animation:spin_28s_linear_infinite]" />
+                          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[64%] w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 [animation:spin_44s_linear_infinite_reverse]" />
+                          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[50%] w-[50%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 opacity-60" />
+
+                          {orbitItems.map((item) => (
+                            <div
+                              key={item.label}
+                              className="absolute left-1/2 top-1/2"
+                              style={{
+                                transform: `translate(-50%, -50%) rotate(${item.angle}deg) translate(calc(clamp(132px, 16vw, 210px))) rotate(${-item.angle}deg)`,
+                              }}
+                            >
+                              <div className="group">
+                                <div
+                                  className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 ${item.tone} shadow-[0_18px_50px_-35px_rgba(0,0,0,0.9)] backdrop-blur-sm transition-transform group-hover:scale-105`}
+                                  aria-label={item.label}
+                                  role="img"
+                                >
+                                  <item.Icon className="h-5 w-5" />
+                                </div>
+                                <div className="mt-2 hidden text-center text-[10px] font-black uppercase tracking-[0.16em] text-white/60 sm:block">
+                                  {item.label}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+
+                          <div className="absolute left-1/2 top-1/2 w-[min(320px,66%)] -translate-x-1/2 -translate-y-1/2">
+                            <div className="relative rounded-[2.25rem] border border-white/10 bg-white/5 p-3 shadow-[0_55px_160px_-100px_rgba(0,0,0,0.95)] backdrop-blur-md">
+                              <div className="relative overflow-hidden rounded-[1.8rem] bg-[#07110d]">
+                                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(500px_circle_at_50%_0%,rgba(197,217,50,0.18),transparent_60%)]" />
+                                <div className="relative aspect-[9/19] w-full">
+                                  <img
+                                    src="/tela-inicial-portal.jpg"
+                                    alt="Tela inicial do portal do condomínio"
+                                    className="h-full w-full object-cover object-top"
+                                    loading="eager"
+                                    fetchPriority="high"
+                                    decoding="async"
+                                    sizes="(min-width: 1024px) 320px, 70vw"
+                                  />
+                                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,17,13,0.18),rgba(7,17,13,0.85))]" />
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <figcaption className="flex items-center justify-between gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
-                            <span className="truncate">Portal real (captura)</span>
-                            <span className="inline-flex items-center gap-2">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
-                              Mobile-first
-                            </span>
-                          </figcaption>
-                        </figure>
+                        </div>
+
+                        <div className="mt-5 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
+                          <span className="truncate">Experiência mobile-first</span>
+                          <span className="inline-flex items-center gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C5D932]" />
+                            Módulos reais
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
