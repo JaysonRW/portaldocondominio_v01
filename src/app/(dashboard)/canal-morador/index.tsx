@@ -3,7 +3,7 @@ import { useAuthStore } from "../../../stores/authStore"
 import { useTenantStore } from "../../../stores/tenantStore"
 import { supabase } from "../../../lib/supabase"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Card, CardContent } from "../../../components/ui/card"
 import { 
   MessageSquareText, 
   Search, 
@@ -21,11 +21,11 @@ import { Badge } from "../../../components/ui/badge"
 import { toast } from "sonner"
 import { cn } from "../../../lib/utils"
 import { Textarea } from "../../../components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../../components/ui/dialog"
 
 export default function CanalMoradorGestao() {
   const { tenant } = useTenantStore()
-  const { user, perfil } = useAuthStore()
+  const { perfil } = useAuthStore()
   const queryClient = useQueryClient()
   
   const [searchTerm, setSearchTerm] = useState("")

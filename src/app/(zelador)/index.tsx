@@ -15,7 +15,7 @@ import { withTenantPrefix, cn } from "../../lib/utils"
 import { Link } from "react-router"
 
 export default function ZeladorDashboard() {
-  const { user, perfil } = useAuthStore()
+  const { perfil } = useAuthStore()
   const { tenant } = useTenantStore()
   
   // 1. Busca ordens atribuídas ao zelador

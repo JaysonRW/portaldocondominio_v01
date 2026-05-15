@@ -2,7 +2,7 @@ import { useAuthStore } from "../../stores/authStore"
 import { useTenantStore } from "../../stores/tenantStore"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
-import { Link, useLocation, useNavigate } from "react-router"
+import { Link, useLocation } from "react-router"
 import { 
   Gavel,
   Bell, 

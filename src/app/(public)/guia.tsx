@@ -91,7 +91,6 @@ export default function PublicGuiaMorador() {
   }
 
   const getCategoriaLabel = (val: string) => categoriasOptions.find(c => c.value === val)?.label || val
-  const getCategoriaColor = (val: string) => categoriasOptions.find(c => c.value === val)?.color || "bg-slate-100 text-slate-800"
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">

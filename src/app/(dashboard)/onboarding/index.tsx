@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useAuthStore } from "../../../stores/authStore"
 import { useTenantStore } from "../../../stores/tenantStore"
 import { supabase } from "../../../lib/supabase"
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { toast } from "sonner"
 import { useNavigate } from "react-router"
-import { CheckCircle2, UserCircle, Phone, Home as HomeIcon, MessageSquareText, ArrowLeft, CheckCircle } from "lucide-react"
+import { UserCircle, MessageSquareText, ArrowLeft, CheckCircle } from "lucide-react"
 import { withTenantPrefix, cn } from "../../../lib/utils"
 import { Badge } from "../../../components/ui/badge"
 import { PublicHeader } from "../../../components/layout/PublicHeader"
 
 export default function OnboardingPage() {
-  const { user, perfil } = useAuthStore()
   const { tenant } = useTenantStore()
+  const { user, perfil } = useAuthStore()
   const navigate = useNavigate()
   
   const [nome, setNome] = useState(perfil?.nome || "")

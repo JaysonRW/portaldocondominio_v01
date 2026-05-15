@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { useAuthStore } from "../../../stores/authStore"
 import { useTenantStore } from "../../../stores/tenantStore"
 import { supabase } from "../../../lib/supabase"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { Button } from "../../../components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
@@ -20,7 +20,6 @@ interface ParceiroFormModalProps {
 export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSuccess }: ParceiroFormModalProps) {
   const { user, perfil } = useAuthStore()
   const { tenant, isMasterMode } = useTenantStore()
-  const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
 
