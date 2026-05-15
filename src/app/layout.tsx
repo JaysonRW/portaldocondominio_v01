@@ -90,14 +90,17 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
   // 1. Lógica do Tenant Baseada em Hostname ou Path (localhost)
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
   const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
-  const hasSub = hostname.includes('.') && !isLocalhost
+  const hostingDomains = ['vercel.app', 'netlify.app', 'pages.dev']
+  const isHostingDomain = hostingDomains.some((domain) => hostname.endsWith(domain))
+  const hasSub = hostname.includes('.') && !isLocalhost && !isHostingDomain
   const slugFromHost = hasSub ? hostname.split('.')[0] : null
   
   // Lista de slugs reservados que não devem ser tratados como condomínios
   const reservedSlugs = ['painel', 'painel-master', 'login', 'register', 'join', 'auth', 'onboarding', 'master', 'avisos', 'eventos', 'galeria', 'documentos', 'faq', 'clube', 'reservas', 'moradores']
   
-  const slugFromPath = (isLocalhost && firstPart && !reservedSlugs.includes(firstPart) && firstPart !== 'dev') ? firstPart : null
+  const slugFromPath = ((isLocalhost || isHostingDomain) && firstPart && !reservedSlugs.includes(firstPart) && firstPart !== 'dev') ? firstPart : null
   const slug = slugFromHost ?? slugFromPath
+
 
   const { data: tenant, isLoading: isTenantLoading } = useQuery({
     queryKey: ["tenant", slug],
