@@ -159,7 +159,7 @@ export default function PublicLanding() {
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
-                          className="h-14 rounded-full border-white/20 bg-transparent px-8 text-[15px] font-bold text-white hover:bg-white/5 transition-all hover:scale-[1.02]"
+                          className="h-14 rounded-full border-white/20 bg-transparent px-8 text-[15px] font-bold text-white hover:bg-[#C5D932]/10 hover:border-[#C5D932]/50 hover:text-[#C5D932] transition-all hover:scale-[1.02]"
                           type="button"
                         >
                           Acessar meu condomínio
