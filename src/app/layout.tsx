@@ -96,9 +96,24 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
   const slugFromHost = hasSub ? hostname.split('.')[0] : null
   
   // Lista de slugs reservados que não devem ser tratados como condomínios
-  const reservedSlugs = ['painel', 'painel-master', 'login', 'register', 'join', 'auth', 'onboarding', 'master', 'avisos', 'eventos', 'galeria', 'documentos', 'faq', 'clube', 'reservas', 'moradores']
-  
-  const slugFromPath = ((isLocalhost || isHostingDomain) && firstPart && !reservedSlugs.includes(firstPart) && firstPart !== 'dev') ? firstPart : null
+  const reservedSlugs = ['painel', 'painel-master', 'login', 'auth', 'master', 'reset-password', 'set-password', 'onboarding', 'portal', 'zelador']
+  const portalPages = ['comunicados', 'clube', 'guia', 'eventos', 'galeria', 'arquivos', 'faq']
+  const tenantSecondSegments = ['login', 'join', 'reset-password', 'set-password', 'painel', 'zelador', 'onboarding', 'auth']
+
+  const slugFromPath = (() => {
+    if (!isLocalhost && !isHostingDomain) return null
+    if (!firstPart || reservedSlugs.includes(firstPart) || firstPart === 'dev') return null
+
+    const secondPart = pathParts[1]
+    const thirdPart = pathParts[2]
+
+    if (secondPart === 'portal' && thirdPart && portalPages.includes(thirdPart)) return firstPart
+    if (secondPart && tenantSecondSegments.includes(secondPart)) return firstPart
+    if (!secondPart) return firstPart
+
+    return null
+  })()
+
   const slug = slugFromHost ?? slugFromPath
 
 
