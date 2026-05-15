@@ -7,7 +7,7 @@ import { withTenantPrefix } from "../../lib/utils"
 import { UserCircle, LogOut, LayoutDashboard, ChevronDown } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { AcessoRestritoModal } from "./AcessoRestritoModal"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Input } from "../ui/input"
 
 export function PublicHeader() {
@@ -208,6 +208,7 @@ export function PublicHeader() {
                         <DialogTitle className="text-base font-black uppercase tracking-widest text-slate-800">
                           Acessar meu condomínio
                         </DialogTitle>
+                        <DialogDescription className="sr-only">Digite o slug para acessar seu condomínio</DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4">
                         <div className="text-sm font-medium text-slate-500">
@@ -264,6 +265,7 @@ export function PublicHeader() {
                   <DialogTitle className="text-base font-black uppercase tracking-widest text-slate-800">
                     Acessar meu condomínio
                   </DialogTitle>
+                  <DialogDescription className="sr-only">Digite o slug para acessar seu condomínio</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                   <div className="text-sm font-medium text-slate-500">
@@ -329,6 +331,7 @@ export function PublicHeader() {
                   <DialogTitle className="text-base font-black uppercase tracking-widest text-white leading-tight">
                     Menu do Portal
                   </DialogTitle>
+                  <DialogDescription className="sr-only">Navegação principal do portal</DialogDescription>
                   <div className="text-[11px] font-bold text-[#C5D932] mt-1 tracking-widest uppercase">
                     {tenant?.nome || "Condomínio Smart"}
                   </div>
@@ -417,7 +420,6 @@ export function PublicHeader() {
                     <AcessoRestritoModal tenantName={tenant?.nome} tenantSlug={tenantSlug}>
                       <Button
                         className="w-full bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black py-6 rounded-2xl text-xs uppercase tracking-widest shadow-lg shadow-[#C5D932]/20"
-                        onClick={() => setMobileMenuOpen(false)}
                       >
                         Acesse seu portal
                       </Button>
