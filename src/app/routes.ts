@@ -91,6 +91,7 @@ export default [
 
     // 4. Landing Pages (Catch-all)
     route(":tenantSlug/login", "(auth)/login.tsx", { id: "tenant-login" }),
+    route("join", "(public)/join.tsx", { id: "global-join" }),
     route(":tenantSlug/join", "(public)/join.tsx", { id: "tenant-join" }),
     route(":tenantSlug", "(public)/landing.tsx", { id: "tenant-landing" }),
     

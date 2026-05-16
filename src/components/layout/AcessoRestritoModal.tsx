@@ -158,15 +158,16 @@ export function AcessoRestritoModal({ tenantName, tenantSlug, to = "/", children
               <Button 
                 className="h-24 flex flex-col items-center justify-center gap-1 bg-slate-50 hover:bg-[#C5D932]/10 border border-slate-100 hover:border-[#C5D932] transition-all rounded-2xl group"
                 variant="ghost"
-                asChild
+                onClick={() => {
+                  setIsOpen(false);
+                  setTimeout(() => navigate(withTenantPrefix("/join", tenantSlug)), 100);
+                }}
               >
-                <Link to={withTenantPrefix("/join", tenantSlug)}>
-                  <div className="flex items-center gap-2 font-black text-xl text-slate-800 group-hover:text-[#1a2e25]">
-                    <UserPlus className="w-6 h-6 text-[#C5D932]" />
-                    Quero me cadastrar
-                  </div>
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">Solicitar adesão ao condomínio</span>
-                </Link>
+                <div className="flex items-center gap-2 font-black text-xl text-slate-800 group-hover:text-[#1a2e25]">
+                  <UserPlus className="w-6 h-6 text-[#C5D932]" />
+                  Quero me cadastrar
+                </div>
+                <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">Solicitar adesão ao condomínio</span>
               </Button>
             </>
           ) : view === "login" ? (
