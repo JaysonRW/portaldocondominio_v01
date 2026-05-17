@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router"
+import { useQuery } from "@tanstack/react-query"
 import { useTenantStore } from "../../stores/tenantStore"
 import { useAuthStore } from "../../stores/authStore"
 import { Button } from "../ui/button"
@@ -8,7 +9,7 @@ import { UserCircle, LogOut, LayoutDashboard, ChevronDown } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { AcessoRestritoModal } from "./AcessoRestritoModal"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Input } from "../ui/input"
+
 
 export function PublicHeader() {
   const { tenant } = useTenantStore()
@@ -21,6 +22,20 @@ export function PublicHeader() {
   const tenantSlug = tenant?.slug
   const location = useLocation()
   const navigate = useNavigate()
+
+  const { data: condominiosList, isLoading: isLoadingCondominios } = useQuery({
+    queryKey: ['condominios_lista_publica'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('condominios')
+        .select('id, nome, slug')
+        .eq('ativo', true)
+        .order('nome', { ascending: true })
+      
+      if (error) throw error
+      return data || []
+    }
+  })
 
   const isActive = (path: string) => {
     const fullPath = withTenantPrefix(path, tenantSlug)
@@ -212,20 +227,27 @@ export function PublicHeader() {
                       </DialogHeader>
                       <div className="grid gap-4">
                         <div className="text-sm font-medium text-slate-500">
-                          Digite o slug do seu condomínio para abrir o portal.
+                          Selecione o seu condomínio para abrir o portal.
                         </div>
-                        <Input
-                          value={accessSlug}
-                          onChange={(e) => setAccessSlug(e.target.value)}
-                          placeholder="ex: colina-belvedere"
-                          autoComplete="off"
-                          inputMode="text"
-                          className="bg-white"
-                          aria-label="Slug do condomínio"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleAccessCondo()
-                          }}
-                        />
+                        {isLoadingCondominios ? (
+                          <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
+                            Carregando condomínios...
+                          </div>
+                        ) : (
+                          <select
+                            value={accessSlug}
+                            onChange={(e) => setAccessSlug(e.target.value)}
+                            className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
+                            aria-label="Selecione o condomínio"
+                          >
+                            <option value="">Selecione o seu condomínio...</option>
+                            {condominiosList?.map((c) => (
+                              <option key={c.id} value={c.slug}>
+                                {c.nome}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                         <div className="flex items-center justify-end gap-2">
                           <Button
                             variant="outline"
@@ -269,20 +291,27 @@ export function PublicHeader() {
                 </DialogHeader>
                 <div className="grid gap-4">
                   <div className="text-sm font-medium text-slate-500">
-                    Digite o slug do seu condomínio para abrir o portal.
+                    Selecione o seu condomínio para abrir o portal.
                   </div>
-                  <Input
-                    value={accessSlug}
-                    onChange={(e) => setAccessSlug(e.target.value)}
-                    placeholder="ex: colina-belvedere"
-                    autoComplete="off"
-                    inputMode="text"
-                    className="bg-white"
-                    aria-label="Slug do condomínio"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleAccessCondo()
-                    }}
-                  />
+                  {isLoadingCondominios ? (
+                    <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
+                      Carregando condomínios...
+                    </div>
+                  ) : (
+                    <select
+                      value={accessSlug}
+                      onChange={(e) => setAccessSlug(e.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
+                      aria-label="Selecione o condomínio"
+                    >
+                      <option value="">Selecione o seu condomínio...</option>
+                      {condominiosList?.map((c) => (
+                        <option key={c.id} value={c.slug}>
+                          {c.nome}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                   <div className="flex items-center justify-end gap-2">
                     <Button variant="outline" className="rounded-xl font-bold" onClick={() => setAccessOpen(false)} type="button">
                       Cancelar

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "../../lib/supabase"
 import { PublicHeader } from "../../components/layout/PublicHeader"
 import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
+
 import { withTenantPrefix } from "../../lib/utils"
 import { 
   MessageSquareText, 
@@ -64,6 +64,20 @@ export default function PublicLanding() {
       return data || []
     },
     enabled: !!tenant?.id,
+  })
+
+  const { data: condominiosList, isLoading: isLoadingCondominios } = useQuery({
+    queryKey: ['condominios_lista_publica'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('condominios')
+        .select('id, nome, slug')
+        .eq('ativo', true)
+        .order('nome', { ascending: true })
+      
+      if (error) throw error
+      return data || []
+    }
   })
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -173,19 +187,27 @@ export default function PublicLanding() {
                         </DialogHeader>
                         <div className="grid gap-4">
                           <div className="text-sm font-medium text-slate-600">
-                            Digite o slug do seu condomínio para abrir o portal.
+                            Selecione o seu condomínio para abrir o portal.
                           </div>
-                          <Input
-                            value={accessSlug}
-                            onChange={(e) => setAccessSlug(e.target.value)}
-                            placeholder="ex: colina-belvedere"
-                            autoComplete="off"
-                            inputMode="text"
-                            aria-label="Slug do condomínio"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") handleAccessCondo()
-                            }}
-                          />
+                          {isLoadingCondominios ? (
+                            <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
+                              Carregando condomínios...
+                            </div>
+                          ) : (
+                            <select
+                              value={accessSlug}
+                              onChange={(e) => setAccessSlug(e.target.value)}
+                              className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
+                              aria-label="Selecione o condomínio"
+                            >
+                              <option value="">Selecione o seu condomínio...</option>
+                              {condominiosList?.map((c) => (
+                                <option key={c.id} value={c.slug}>
+                                  {c.nome}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                           <div className="flex items-center justify-end gap-2">
                             <Button variant="outline" className="rounded-xl" onClick={() => setAccessOpen(false)} type="button">
                               Cancelar
@@ -596,19 +618,27 @@ export default function PublicLanding() {
                           </DialogHeader>
                           <div className="grid gap-4">
                             <div className="text-sm font-medium text-slate-600">
-                              Digite o slug do seu condomínio para abrir o portal.
+                              Selecione o seu condomínio para abrir o portal.
                             </div>
-                            <Input
-                              value={accessSlug}
-                              onChange={(e) => setAccessSlug(e.target.value)}
-                              placeholder="ex: colina-belvedere"
-                              autoComplete="off"
-                              inputMode="text"
-                              aria-label="Slug do condomínio"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") handleAccessCondo()
-                              }}
-                            />
+                            {isLoadingCondominios ? (
+                              <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
+                                Carregando condomínios...
+                              </div>
+                            ) : (
+                              <select
+                                value={accessSlug}
+                                onChange={(e) => setAccessSlug(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
+                                aria-label="Selecione o condomínio"
+                              >
+                                <option value="">Selecione o seu condomínio...</option>
+                                {condominiosList?.map((c) => (
+                                  <option key={c.id} value={c.slug}>
+                                    {c.nome}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
                             <div className="flex items-center justify-end gap-2">
                               <Button variant="outline" className="rounded-xl" onClick={() => setAccessOpen(false)} type="button">
                                 Cancelar
@@ -943,3 +973,4 @@ export default function PublicLanding() {
     </div>
   )
 }
+
