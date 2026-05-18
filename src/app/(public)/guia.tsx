@@ -196,7 +196,7 @@ export default function PublicGuiaMorador() {
       <footer className="bg-[#1a2e25] text-white/50 py-12 text-center text-sm border-t border-white/5">
         <div className="container mx-auto px-4 max-w-6xl">
           <p>
-            © {new Date().getFullYear()} Condomínio Smart. Portal de informações para moradores do {tenant?.nome}.
+            © {new Date().getFullYear()} Condomínio Smart. Portal de informações para moradores do {tenant?.nome}. Criado por <a href="https://www.propagounaweb.com.br" target="_blank" rel="noopener noreferrer" className="text-[#C5D932] hover:underline font-bold">propagounaweb</a>.
           </p>
         </div>
       </footer>

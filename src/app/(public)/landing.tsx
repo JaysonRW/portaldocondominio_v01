@@ -966,7 +966,7 @@ export default function PublicLanding() {
             </div>
           </div>
           <p className="border-t border-white/5 pt-12">
-            © {new Date().getFullYear()} Condomínio Smart. Plataforma construída para gestão de condomínios modernos.
+            © {new Date().getFullYear()} Condomínio Smart. Plataforma construída para gestão de condomínios modernos. Criado por <a href="https://www.propagounaweb.com.br" target="_blank" rel="noopener noreferrer" className="text-[#C5D932] hover:underline font-bold">propagounaweb</a>.
           </p>
         </div>
       </footer>

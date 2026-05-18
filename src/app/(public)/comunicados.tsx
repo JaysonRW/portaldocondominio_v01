@@ -102,7 +102,7 @@ export default function PublicComunicados() {
 
       <footer className="bg-[#1a2e25] text-white/50 py-16 text-center text-sm border-t border-white/5">
         <div className="container mx-auto px-4 max-w-6xl">
-          <p>© {new Date().getFullYear()} Condomínio Smart. Plataforma oficial de transparência para {tenant?.nome}.</p>
+          <p>© {new Date().getFullYear()} Condomínio Smart. Plataforma oficial de transparência para {tenant?.nome}. Criado por <a href="https://www.propagounaweb.com.br" target="_blank" rel="noopener noreferrer" className="text-[#C5D932] hover:underline font-bold">propagounaweb</a>.</p>
         </div>
       </footer>
     </div>
