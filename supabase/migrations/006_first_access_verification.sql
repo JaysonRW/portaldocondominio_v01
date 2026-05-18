@@ -52,10 +52,25 @@ $$;
 -- 3. Função auxiliar para a policy
 CREATE OR REPLACE FUNCTION public.jwt_primeiro_acesso()
 RETURNS boolean
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
+SECURITY DEFINER
+SET search_path = public
 AS $$
-  SELECT COALESCE((auth.jwt() -> 'app_metadata' ->> 'primeiro_acesso')::boolean, true);
+DECLARE
+  val boolean;
+  jwt_val text;
+BEGIN
+  -- 1. Tenta pegar do JWT
+  jwt_val := auth.jwt() -> 'app_metadata' ->> 'primeiro_acesso';
+  IF jwt_val IS NOT NULL AND jwt_val <> '' THEN
+    RETURN jwt_val::boolean;
+  END IF;
+  
+  -- 2. Fallback: Consulta direta na tabela perfis
+  SELECT primeiro_acesso INTO val FROM public.perfis WHERE id = auth.uid() LIMIT 1;
+  RETURN COALESCE(val, true);
+END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.jwt_primeiro_acesso() TO authenticated;

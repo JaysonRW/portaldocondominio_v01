@@ -98,14 +98,26 @@ AS $$
 $$;
 
 -- CORREÇÃO: Lê condominio_id diretamente da tabela perfis (não do JWT)
-CREATE OR REPLACE FUNCTION public.get_condominio_id() RETURNS UUID AS $$
+CREATE OR REPLACE FUNCTION public.get_condominio_id()
+RETURNS UUID
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT condominio_id FROM public.perfis WHERE id = auth.uid() LIMIT 1;
-$$ LANGUAGE SQL STABLE SECURITY DEFINER;
+$$;
 
 -- CORREÇÃO: Delega para get_my_role() para evitar recursão
-CREATE OR REPLACE FUNCTION public.get_user_role() RETURNS VARCHAR AS $$
+CREATE OR REPLACE FUNCTION public.get_user_role()
+RETURNS VARCHAR
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT public.get_my_role();
-$$ LANGUAGE SQL STABLE SECURITY DEFINER;
+$$;
 
 CREATE OR REPLACE FUNCTION public.sync_updated_at() RETURNS TRIGGER AS $$
 BEGIN
