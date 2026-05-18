@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router"
-import { Home, Bell, Gift, FileText, Gavel, CircleHelp } from "lucide-react"
+import { Home, Bell, Gift, FileText, Gavel, BookOpen, CalendarDays } from "lucide-react"
 import { useTenantStore } from "../../stores/tenantStore"
 import { withTenantPrefix } from "../../lib/utils"
 
@@ -19,7 +19,8 @@ export function BottomNav() {
   ] : [
     { icon: Home, label: "Início", path: "/" },
     { icon: Bell, label: "Avisos", path: "/portal/comunicados", key: "comunicados" },
-    { icon: CircleHelp, label: "FAQ", path: "/portal/faq", key: "faq" },
+    { icon: BookOpen, label: "Guia", path: "/portal/guia", key: "guia" },
+    { icon: CalendarDays, label: "Eventos", path: "/portal/eventos", key: "eventos" },
     { icon: Gift, label: "Clube", path: "/portal/clube", key: "clube" },
   ]
 

@@ -64,7 +64,7 @@ export default function PublicClube() {
           </Badge>
           <h1 className="text-5xl font-black text-[#1a2e25] mb-6 uppercase tracking-tight">Vantagens</h1>
           <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-            Ofertas exclusivas, parceiros selecionados e negócios de moradores do <span className="text-[#1a2e25] font-black">{tenant?.nome}</span>.
+            Ofertas exclusivas, parceiros selecionados e negócios de moradores do <span className="text-[#1a2e25] font-black">{tenant?.nome || "condomínio"}</span>.
           </p>
         </div>
 
