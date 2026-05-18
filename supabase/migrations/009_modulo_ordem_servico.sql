@@ -244,22 +244,44 @@ WITH CHECK (
 
 -- Políticas para ordem_servico_atualizacoes
 DROP POLICY IF EXISTS "Manage updates for service orders" ON public.ordem_servico_atualizacoes;
-CREATE POLICY "Manage updates for service orders"
+DROP POLICY IF EXISTS "Allow update management for authorized users" ON public.ordem_servico_atualizacoes;
+CREATE POLICY "Allow update management for authorized users"
 ON public.ordem_servico_atualizacoes
 FOR ALL
 TO authenticated
 USING (
   public.is_super_admin()
   OR public.same_tenant(condominio_id)
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.criado_por = auth.uid()
+  )
 )
 WITH CHECK (
   public.is_super_admin()
   OR public.same_tenant(condominio_id)
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.criado_por = auth.uid()
+  )
 );
 
 -- Políticas para ordem_servico_materiais
 DROP POLICY IF EXISTS "Manage materials for service orders" ON public.ordem_servico_materiais;
-CREATE POLICY "Manage materials for service orders"
+DROP POLICY IF EXISTS "Allow material management for authorized users" ON public.ordem_servico_materiais;
+CREATE POLICY "Allow material management for authorized users"
 ON public.ordem_servico_materiais
 FOR ALL
 TO authenticated
@@ -270,6 +292,11 @@ USING (
     AND public.same_tenant(condominio_id)
     AND public.jwt_ativo()
   )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
+  )
 )
 WITH CHECK (
   public.is_super_admin()
@@ -277,6 +304,45 @@ WITH CHECK (
     public.jwt_role() IN ('sindico', 'subsindico')
     AND public.same_tenant(condominio_id)
     AND public.jwt_ativo()
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
+  )
+);
+
+-- Políticas para ordem_servico_fotos
+DROP POLICY IF EXISTS "Manage photos for service orders" ON public.ordem_servico_fotos;
+DROP POLICY IF EXISTS "Allow photo management for authorized users" ON public.ordem_servico_fotos;
+CREATE POLICY "Allow photo management for authorized users"
+ON public.ordem_servico_fotos
+FOR ALL
+TO authenticated
+USING (
+  public.is_super_admin()
+  OR (
+    public.jwt_role() IN ('sindico', 'subsindico')
+    AND public.same_tenant(condominio_id)
+    AND public.jwt_ativo()
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
+  )
+)
+WITH CHECK (
+  public.is_super_admin()
+  OR (
+    public.jwt_role() IN ('sindico', 'subsindico')
+    AND public.same_tenant(condominio_id)
+    AND public.jwt_ativo()
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.ordens_servico o
+    WHERE o.id = ordem_id
+      AND o.responsavel_id = auth.uid()
   )
 );
 
