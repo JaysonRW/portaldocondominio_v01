@@ -64,7 +64,7 @@ Arquivos-chave:
 - `fornecedor` (existem redirecionamentos/placeholder)
 
 **Guard principal:** `ProtectedRoute`:
-- Não autenticado → redireciona para `/login` (com prefixo de tenant quando aplicável)
+- Não autenticado → redireciona para `/login` (com prefixo de tenant quando aplicável). Agora protege TODAS as rotas do portal (`/portal/*`).
 - Primeiro acesso (`primeiro_acesso`) → força `set-password`
 - Morador não entra em `/painel*` → vai para `/portal/comunicados`
 - Síndico/subsíndico/zelador entram no painel; master entra em `/painel-master`
@@ -145,7 +145,9 @@ Layout: `ProtectedRoute` → `DashboardLayout`
 - `/:tenantSlug/onboarding` → `src/app/(dashboard)/onboarding/index.tsx`
 - `/onboarding` → `src/app/(dashboard)/onboarding/index.tsx`
 
-### 3) Portal Público (informativo)
+### 3) Portal (Área Protegida do Morador)
+
+*Nota: Todas as rotas do portal agora exigem autenticação e estão dentro do `ProtectedRoute`.*
 
 **Com tenant no path:**
 - `/:tenantSlug/portal/comunicados` → `src/app/(public)/comunicados.tsx`
@@ -167,7 +169,7 @@ Layout: `ProtectedRoute` → `DashboardLayout`
 
 ### 4) Landing / Cadastro
 
-- `/:tenantSlug` → Landing do condomínio (`src/app/(public)/landing.tsx`)
+- `/:tenantSlug` → Landing do condomínio (`src/app/(public)/landing.tsx`) (Usa Dropdown dinâmico para seleção do condomínio nos modais de acesso)
 - `/` → Landing global (`src/app/(public)/landing.tsx`)
 - `/:tenantSlug/join` → Adesão (solicitação) (`src/app/(public)/join.tsx`)
 - `/:tenantSlug/login` → Login tenant (duplicado por compatibilidade; ver `routes.ts`)
@@ -186,7 +188,9 @@ Layout: `ProtectedRoute` → `DashboardLayout`
 - **Reset/Set password** (`(auth)/reset-password.tsx`): fluxo de redefinição/definição de senha.
 - **Master gateway** (`(auth)/master-gateway.tsx`): entrada para operação master.
 
-### Portal Público
+### Portal (Área do Morador)
+
+*Nota: O menu inferior mobile (BottomNav) foi padronizado para 5 atalhos focados no morador: Início, Avisos, Guia, Eventos, Clube.*
 
 - **Comunicados**: lista comunicados do condomínio.
 - **Clube**: lista parceiros do `clube_parceiros` e exibe banners premium quando aplicável.
