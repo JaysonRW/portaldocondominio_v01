@@ -83,6 +83,36 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
   const { setTenant, setIsLoading } = useTenantStore()
   const { user, setSession, setUser, setIsLoading: setAuthLoading } = useAuthStore()
 
+  // 1. Buscar Perfil da Tabela Public.Perfis
+  const { setPerfil } = useAuthStore()
+  const { data: profileData, isSuccess: isPerfilSuccess } = useQuery({
+    queryKey: ['meu_perfil_shell', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('perfis')
+        .select('*')
+        .eq('id', user!.id)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error // PGRST116 = "No rows found"
+      return data || null
+    },
+    enabled: !!user?.id
+  })
+
+  useEffect(() => {
+    if (!user) {
+      // Usuário deslogou → resetar perfil para null (não undefined)
+      setPerfil(null)
+      return
+    }
+    if (isPerfilSuccess) {
+      // Query completou → atualizar perfil (pode ser null se não tiver registro)
+      setPerfil(profileData ?? null)
+    }
+    // Enquanto isPerfilSuccess=false e user existe, perfil fica undefined (aguardando)
+  }, [user, profileData, isPerfilSuccess, setPerfil])
+
   const location = useLocation()
   const pathParts = location.pathname.split('/').filter(Boolean)
   const firstPart = pathParts[0]
@@ -118,18 +148,29 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
 
 
   const { data: tenant, isLoading: isTenantLoading } = useQuery({
-    queryKey: ["tenant", slug],
+    queryKey: ["tenant", slug, profileData?.condominio_id],
     queryFn: async () => {
-      if (!slug) return null
+      // 1. Tenta buscar pelo slug da URL se existir
+      if (slug) {
+        const { data, error } = await supabase
+          .from('condominios')
+          .select('*')
+          .eq('slug', slug)
+          .single()
+        if (!error && data) return data
+      }
       
-      const { data, error } = await supabase
-        .from('condominios')
-        .select('*')
-        .eq('slug', slug)
-        .single()
-
-      if (error) return null
-      return data
+      // 2. Fallback: Tenta buscar pelo condominio_id do perfil do usuário logado
+      if (profileData?.condominio_id) {
+        const { data, error } = await supabase
+          .from('condominios')
+          .select('*')
+          .eq('id', profileData.condominio_id)
+          .single()
+        if (!error && data) return data
+      }
+      
+      return null
     },
     staleTime: 1000 * 60 * 60, // 1 hr
   })
@@ -151,6 +192,9 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
       if (secondaryHsl) {
         document.documentElement.style.setProperty("--secondary", secondaryHsl)
       }
+    } else {
+      setTenant(null)
+      setIsLoading(false)
     }
   }, [tenant, setTenant, setIsLoading])
 
@@ -171,35 +215,7 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [setSession, setUser, setAuthLoading])
 
-  // 4. Buscar Perfil da Tabela Public.Perfis
-  const { setPerfil } = useAuthStore()
-  const { data: profileData, isSuccess: isPerfilSuccess } = useQuery({
-    queryKey: ['meu_perfil_shell', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('perfis')
-        .select('*')
-        .eq('id', user!.id)
-        .single()
 
-      if (error && error.code !== 'PGRST116') throw error // PGRST116 = "No rows found"
-      return data || null
-    },
-    enabled: !!user?.id
-  })
-
-  useEffect(() => {
-    if (!user) {
-      // Usuário deslogou → resetar perfil para null (não undefined)
-      setPerfil(null)
-      return
-    }
-    if (isPerfilSuccess) {
-      // Query completou → atualizar perfil (pode ser null se não tiver registro)
-      setPerfil(profileData ?? null)
-    }
-    // Enquanto isPerfilSuccess=false e user existe, perfil fica undefined (aguardando)
-  }, [user, profileData, isPerfilSuccess, setPerfil])
 
   if (isTenantLoading) {
     return (

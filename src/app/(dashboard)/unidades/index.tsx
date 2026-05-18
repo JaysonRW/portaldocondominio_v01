@@ -291,9 +291,12 @@ export default function UnidadesAdmin() {
                   </div>
                 </div>
                 
-                <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-100/50 space-y-2">
                   <p className="text-sm text-blue-800 font-medium leading-relaxed">
                     <strong>Exemplo da Geração:</strong> O primeiro apartamento do 1º andar será <span className="font-bold bg-blue-100 px-1 rounded">101</span>, e do 10º andar será <span className="font-bold bg-blue-100 px-1 rounded">1001</span>. Unidades que já existem serão ignoradas (não duplicam).
+                  </p>
+                  <p className="text-xs text-blue-700 leading-relaxed font-semibold">
+                    💡 <strong>Dica para Exceções:</strong> O gerador é aditivo! Se você tiver blocos com padrões ou andares diferentes, pode rodá-lo múltiplas vezes (ex: uma vez para os blocos "A, B" com 6 aptos/andar e outra para o bloco "C" com 3 aptos/andar). Unidades já criadas não são apagadas nem duplicadas.
                   </p>
                 </div>
               </div>
