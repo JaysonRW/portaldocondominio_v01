@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTenantStore } from "../../stores/tenantStore"
 import { supabase } from "../../lib/supabase"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -65,6 +65,41 @@ export default function JoinCondo() {
   const effectiveCondo = isTenantResolved
     ? { id: tenant!.id, slug: tenant!.slug, nome: tenant!.nome }
     : selectedCondo
+
+  // 1. Busca todas as unidades desse condomínio cadastrado
+  const { data: dbUnidades } = useQuery({
+    queryKey: ["condominio_unidades", effectiveCondo?.id],
+    queryFn: async () => {
+      if (!effectiveCondo?.id) return []
+      const { data, error } = await supabase
+        .from("condominio_unidades")
+        .select("id, bloco, unidade")
+        .eq("condominio_id", effectiveCondo.id)
+        .eq("ativo", true)
+        .order("bloco", { ascending: true })
+        .order("unidade", { ascending: true })
+
+      if (error) throw error
+      return data ?? []
+    },
+    enabled: !!effectiveCondo?.id,
+  })
+
+  // Limpa bloco/unidade se o condomínio mudar
+  useEffect(() => {
+    setBloco("")
+    setUnidade("")
+  }, [effectiveCondo?.id])
+
+  const temDbUnidades = dbUnidades && dbUnidades.length > 0
+  const dbBlocos = temDbUnidades
+    ? Array.from(new Set(dbUnidades.map((u) => u.bloco).filter(Boolean))) as string[]
+    : []
+  const condoHasBlocos = dbBlocos.length > 0
+
+  const dbUnidadesFiltradas = temDbUnidades
+    ? dbUnidades.filter((u) => !bloco || u.bloco === bloco)
+    : []
 
   const ensureCondoSelected = () => {
     if (isTenantResolved) return { id: tenant!.id, slug: tenant!.slug, nome: tenant!.nome }
@@ -306,14 +341,85 @@ export default function JoinCondo() {
                 type="tel"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-600 uppercase">Bloco / Torre</label>
-              <Input className="h-11 rounded-xl bg-white/50 border-slate-200 focus-visible:ring-[#C5D932]" value={bloco} onChange={(e) => setBloco(e.target.value)} placeholder="Ex: Bloco A" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-600 uppercase">Apartamento / Unidade</label>
-              <Input className="h-11 rounded-xl bg-white/50 border-slate-200 focus-visible:ring-[#C5D932]" value={unidade} onChange={(e) => setUnidade(e.target.value)} placeholder="Ex: 101" />
-            </div>
+            {temDbUnidades ? (
+              <>
+                {condoHasBlocos ? (
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-600 uppercase">Bloco / Torre *</label>
+                      <select
+                        className="flex h-11 w-full rounded-xl border border-slate-200 bg-white/50 px-3 py-2 text-sm focus-visible:ring-[#C5D932] outline-none text-slate-750 font-bold"
+                        value={bloco}
+                        onChange={(e) => {
+                          setBloco(e.target.value)
+                          setUnidade("")
+                        }}
+                      >
+                        <option value="">Selecione o Bloco</option>
+                        {dbBlocos.map((b) => (
+                          <option key={b} value={b}>
+                            Bloco {b}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-600 uppercase">Apartamento / Unidade *</label>
+                      <select
+                        className="flex h-11 w-full rounded-xl border border-slate-200 bg-white/50 px-3 py-2 text-sm focus-visible:ring-[#C5D932] outline-none text-slate-750 font-bold disabled:opacity-50"
+                        value={unidade}
+                        onChange={(e) => setUnidade(e.target.value)}
+                        disabled={!bloco}
+                      >
+                        <option value="">Selecione a Unidade</option>
+                        {dbUnidadesFiltradas.map((u) => (
+                          <option key={u.id} value={u.unidade}>
+                            {u.unidade}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-bold text-slate-600 uppercase">Apartamento / Unidade *</label>
+                    <select
+                      className="flex h-11 w-full rounded-xl border border-slate-200 bg-white/50 px-3 py-2 text-sm focus-visible:ring-[#C5D932] outline-none text-slate-750 font-bold"
+                      value={unidade}
+                      onChange={(e) => setUnidade(e.target.value)}
+                    >
+                      <option value="">Selecione a Unidade</option>
+                      {dbUnidades.map((u) => (
+                        <option key={u.id} value={u.unidade}>
+                          {u.unidade}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-600 uppercase">Bloco / Torre</label>
+                  <Input 
+                    className="h-11 rounded-xl bg-white/50 border-slate-200 focus-visible:ring-[#C5D932]" 
+                    value={bloco} 
+                    onChange={(e) => setBloco(e.target.value)} 
+                    placeholder="Ex: Bloco A" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-600 uppercase">Apartamento / Unidade</label>
+                  <Input 
+                    className="h-11 rounded-xl bg-white/50 border-slate-200 focus-visible:ring-[#C5D932]" 
+                    value={unidade} 
+                    onChange={(e) => setUnidade(e.target.value)} 
+                    placeholder="Ex: 101" 
+                  />
+                </div>
+              </>
+            )}
             <div className="space-y-2 md:col-span-2">
               <label className="text-xs font-bold text-slate-600 uppercase">Número da Vaga</label>
               <Input className="h-11 rounded-xl bg-white/50 border-slate-200 focus-visible:ring-[#C5D932]" value={vaga} onChange={(e) => setVaga(e.target.value)} placeholder="Ex: 12" />

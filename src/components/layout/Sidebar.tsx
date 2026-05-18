@@ -45,6 +45,7 @@ export function Sidebar() {
   const menuItemsPainel = [
     { icon: LayoutDashboard, label: "Gestão", path: "/painel", roles: ["sindico", "subsindico"] },
     { icon: Users, label: "Moradores", path: "/painel/moradores", roles: ["sindico", "subsindico"] },
+    { icon: Building2, label: "Unidades", path: "/painel/unidades", roles: ["sindico", "subsindico"] },
     { icon: MessageSquareText, label: "Canal do Morador", path: "/painel/canal-morador", roles: ["sindico", "subsindico"] },
     { icon: Bell, label: "Comunicados", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
     { icon: Gavel, label: "Assembleias", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },

@@ -515,5 +515,31 @@ CREATE TABLE IF NOT EXISTS notificacoes (
 ALTER TABLE notificacoes ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Leitura notificacoes usuario" ON notificacoes;
 CREATE POLICY "Leitura notificacoes usuario" ON notificacoes FOR SELECT USING (
-  usuario_id = auth.uid() OR (usuario_id IS NULL AND condominio_id = public.get_condominio_id())
 );
+
+-----------------------------------------------------------
+-- 12. TABELA UNIDADES (Estrutura do Condomínio)
+-----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.condominio_unidades (
+  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  condominio_id  uuid NOT NULL REFERENCES public.condominios(id) ON DELETE CASCADE,
+  bloco          varchar,
+  unidade        varchar NOT NULL,
+  tipo           text DEFAULT 'residencial',
+  ativo          boolean DEFAULT true,
+  criado_em      timestamptz DEFAULT now(),
+  CONSTRAINT uk_condominio_bloco_unidade UNIQUE (condominio_id, bloco, unidade)
+);
+
+ALTER TABLE public.condominio_unidades ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Leitura de unidades do tenant" ON public.condominio_unidades
+  FOR SELECT USING (
+    condominio_id = public.get_condominio_id() OR true
+  );
+
+CREATE POLICY "Modificação de unidades por síndicos" ON public.condominio_unidades
+  FOR ALL USING (
+    condominio_id = public.get_condominio_id() 
+    AND public.get_user_role() IN ('sindico', 'super_admin')
+  );
