@@ -155,7 +155,7 @@ export function PublicHeader() {
                         {perfil?.nome || user.email?.split('@')[0]}
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">
-                        {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : 'Morador'}
+                        {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
                       </span>
                     </div>
                     <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -413,7 +413,7 @@ export function PublicHeader() {
                         </div>
                         <div className="text-[11px] text-slate-500 font-bold truncate mt-0.5">{user.email}</div>
                         <div className="mt-2 inline-flex items-center rounded-md bg-[#C5D932]/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-[#8ea31f]">
-                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : 'Morador'}
+                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
                         </div>
                       </div>
                     </div>
