@@ -341,7 +341,7 @@ export function PublicHeader() {
               </svg>
             </button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden w-[90vw] mx-auto rounded-3xl border-0 shadow-2xl">
+          <DialogContent className="sm:max-w-[420px] p-0 w-[90vw] mx-auto rounded-3xl border-0 shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar">
             <DialogHeader className="px-6 py-6 bg-[#1a2e25] text-white relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e25] to-[#0a1410] opacity-90" />
               <div className="relative z-10 flex items-center gap-4">

@@ -300,8 +300,10 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
 export default function AppLayout() {
   const location = useLocation()
   const params = useParams()
+  const { user } = useAuthStore()
   const tenantSlug = typeof params.tenantSlug === "string" && params.tenantSlug.trim().length > 0 ? params.tenantSlug : null
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
+  
   const isPublicRoute = [
     "/",
     "/login",
@@ -315,6 +317,15 @@ export default function AppLayout() {
     "/documentos",
     "/faq",
   ].includes(normalizedPath)
+
+  const isAuthRoute = [
+    "/login",
+    "/auth/callback",
+    "/register",
+    "/join",
+    "/reset-password",
+    "/set-password",
+  ].includes(normalizedPath)
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -326,8 +337,8 @@ export default function AppLayout() {
           
           <Footer />
           
-          {/* Bottom Navigation for Mobile (apenas rotas privadas) */}
-          {!isPublicRoute && <BottomNav />}
+          {/* Bottom Navigation for Mobile (exibido em rotas privadas OU quando o usuário estiver autenticado, exceto telas de login/cadastro) */}
+          {!isAuthRoute && (!isPublicRoute || user) && <BottomNav />}
         </div>
         <Toaster />
       </AppShellManager>
