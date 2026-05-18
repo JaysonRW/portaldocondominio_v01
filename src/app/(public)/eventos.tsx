@@ -2,7 +2,7 @@ import { PublicHeader } from "../../components/layout/PublicHeader"
 import { useTenantStore } from "../../stores/tenantStore"
 import { Calendar as CalendarIcon, MapPin, Clock } from "lucide-react"
 import { useState } from "react"
-import { Button } from "../../components/ui/button"
+
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "../../lib/supabase"
 import { Skeleton } from "../../components/ui/skeleton"
@@ -47,21 +47,28 @@ export default function PublicEventos() {
           <p className="text-slate-500 text-lg font-medium">Fique por dentro das atividades e confraternizações do {tenant?.nome}.</p>
         </div>
 
-        <div className="flex w-full justify-center gap-3 sm:gap-4 mb-12">
-          <Button 
-            variant={tab === "proximos" ? "default" : "secondary"}
+        {/* Unified Responsive Tab Switcher */}
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl max-w-md mx-auto mb-12 shadow-inner border border-slate-200/50">
+          <button
             onClick={() => setTab("proximos")}
-            className={tab === "proximos" ? "flex-1 sm:flex-initial bg-[#1a2e25] text-white font-black py-4 px-3 sm:py-8 sm:px-10 rounded-2xl text-xs sm:text-base md:text-lg transition-all shadow-md shadow-emerald-950/5" : "flex-1 sm:flex-initial py-4 px-3 sm:py-8 sm:px-10 font-black rounded-2xl text-xs sm:text-base md:text-lg text-slate-400 bg-white border border-slate-100 transition-all hover:bg-slate-50"}
+            className={`flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
+              tab === "proximos" 
+                ? 'bg-[#1a2e25] text-white shadow-sm' 
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
           >
             Próximos Eventos
-          </Button>
-          <Button 
-            variant={tab === "anteriores" ? "default" : "secondary"}
+          </button>
+          <button
             onClick={() => setTab("anteriores")}
-            className={tab === "anteriores" ? "flex-1 sm:flex-initial bg-[#1a2e25] text-white font-black py-4 px-3 sm:py-8 sm:px-10 rounded-2xl text-xs sm:text-base md:text-lg transition-all shadow-md shadow-emerald-950/5" : "flex-1 sm:flex-initial py-4 px-3 sm:py-8 sm:px-10 font-black rounded-2xl text-xs sm:text-base md:text-lg text-slate-400 bg-white border border-slate-100 transition-all hover:bg-slate-50"}
+            className={`flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
+              tab === "anteriores" 
+                ? 'bg-[#1a2e25] text-white shadow-sm' 
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
           >
             Eventos Anteriores
-          </Button>
+          </button>
         </div>
 
         {isLoading ? (

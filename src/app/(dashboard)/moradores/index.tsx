@@ -41,7 +41,7 @@ export default function MoradoresAdmin() {
   
   const isMock = tenant?.id === '00000000-0000-0000-0000-000000000000'
 
-  // 1. Busca todos os moradores desse condomínio
+  // 1. Busca todos os moradores desse condomínio (excluindo contas de portaria)
   const { data: pessoas, isLoading } = useQuery({
     queryKey: ['moradores', tenant?.id],
     queryFn: async () => {
@@ -49,6 +49,7 @@ export default function MoradoresAdmin() {
         .from('perfis')
         .select('*')
         .eq('condominio_id', tenant?.id)
+        .neq('role', 'portaria')
         .order('nome', { ascending: true })
 
       if (error) throw error

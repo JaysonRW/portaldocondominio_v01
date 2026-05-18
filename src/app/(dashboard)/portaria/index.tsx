@@ -90,7 +90,10 @@ export default function GestaoPortaria() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('encomendas')
-        .select('*')
+        .select(`
+          *,
+          recebido:recebido_por(nome)
+        `)
         .eq('condominio_id', tenant?.id)
         .order('criado_em', { ascending: false })
 
@@ -112,7 +115,18 @@ export default function GestaoPortaria() {
         }
       })
 
-      if (error) throw error
+      if (error) {
+        let message = error.message
+        try {
+          if (error.context && typeof error.context.json === 'function') {
+            const body = await error.context.json()
+            if (body && body.error) {
+              message = body.error
+            }
+          }
+        } catch (_) {}
+        throw new Error(message)
+      }
       return data
     },
     onSuccess: () => {
@@ -130,7 +144,7 @@ export default function GestaoPortaria() {
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('perfis')
-        .update({ ativo: false })
+        .update({ status_aprovacao: false })
         .eq('id', id)
       
       if (error) throw error
@@ -170,9 +184,9 @@ export default function GestaoPortaria() {
   )
 
   const filteredEncomendas = todasEncomendas?.filter(e => 
-    e.destinatario.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (e.destinatario_nome && e.destinatario_nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (e.codigo_rastreio && e.codigo_rastreio.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    e.unidade.includes(searchTerm) ||
+    (e.unidade && e.unidade.includes(searchTerm)) ||
     (e.bloco && e.bloco.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
@@ -358,8 +372,8 @@ export default function GestaoPortaria() {
                   <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Acesso</span>
-                      <span className={`text-xs font-black ${portaria.ativo !== false ? 'text-green-600' : 'text-red-600'}`}>
-                        {portaria.ativo !== false ? 'Ativo' : 'Inativo'}
+                      <span className={`text-xs font-black ${portaria.status_aprovacao !== false ? 'text-green-600' : 'text-red-600'}`}>
+                        {portaria.status_aprovacao !== false ? 'Ativo' : 'Inativo'}
                       </span>
                     </div>
                     <Button variant="outline" className="rounded-xl h-9 text-xs font-bold border-slate-200 text-slate-600 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200">
@@ -438,7 +452,7 @@ export default function GestaoPortaria() {
                         {/* Unidade & Bloco */}
                         <td className="py-4 px-6">
                           <div className="flex flex-col">
-                            <span className="font-black text-slate-800">{enc.destinatario}</span>
+                            <span className="font-black text-slate-800">{enc.destinatario_nome}</span>
                             <span className="text-xs font-bold text-slate-400">
                               Apto {enc.unidade} {enc.bloco ? `• Bloco ${enc.bloco}` : ''}
                             </span>
@@ -466,7 +480,7 @@ export default function GestaoPortaria() {
                               <Clock className="w-3 h-3 text-slate-400" />
                               {new Date(enc.data_recebimento).toLocaleDateString('pt-BR')} às {new Date(enc.data_recebimento).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                             </span>
-                            <span className="text-[10px] text-slate-400 mt-0.5">Cadastrado por: {enc.porteiro_nome || "Porteiro"}</span>
+                            <span className="text-[10px] text-slate-400 mt-0.5">Cadastrado por: {enc.recebido?.nome || "Porteiro"}</span>
                           </div>
                         </td>
 

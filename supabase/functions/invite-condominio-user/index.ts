@@ -153,7 +153,6 @@ Deno.serve(async (req) => {
         unidade,
         horario_trabalho,
         status_aprovacao: true, // Convidados pelo admin já nascem aprovados
-        ativo: true,
         primeiro_acesso: true // Força definição de senha
       }, { onConflict: 'id' })
 

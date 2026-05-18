@@ -51,7 +51,7 @@ export function Sidebar() {
     { icon: Bell, label: "Comunicados", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
     { icon: Gavel, label: "Assembleias", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },
     { icon: ClipboardList, label: "Ordens de Serviço", path: "/painel/servicos", roles: ["sindico"], key: "servicos" },
-    { icon: Package, label: "Portaria & Entregas", path: "/painel/portarias", roles: ["sindico"] },
+    { icon: Package, label: "Portaria", path: "/painel/portarias", roles: ["sindico"] },
     { icon: Calendar, label: "Agenda", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
     { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
     { icon: Calendar, label: "Eventos Sociais", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },
@@ -117,16 +117,16 @@ export function Sidebar() {
       </button>
 
       {/* Brand */}
-      <div className="p-6 flex items-center gap-3 border-b border-white/5 h-20">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#C5D932] shrink-0 p-1">
-          <span className="text-xs font-black text-[#1a2e25] uppercase leading-none">
+      <div className="px-5 flex items-center gap-3 border-b border-white/5 h-16 shrink-0">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C5D932] shrink-0 p-1">
+          <span className="text-[10px] font-black text-[#1a2e25] uppercase leading-none">
             {tenant?.nome?.split(' ').map(w => w[0]).join('').substring(0, 2) || "CB"}
           </span>
         </div>
         {!collapsed && (
           <div className="flex flex-col leading-none overflow-hidden">
             <span className="font-bold text-sm text-white truncate">{tenant?.nome || "Condomínio Smart"}</span>
-            <span className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-1">
+            <span className="text-[9px] text-[#C5D932] font-black uppercase tracking-widest mt-1">
               {isPainelPath ? "Painel Adm" : "Portal Morador"}
             </span>
           </div>
@@ -135,15 +135,15 @@ export function Sidebar() {
 
       {/* User Profile Summary */}
       {!collapsed && (
-        <div className="p-4 mx-4 my-6 rounded-2xl bg-white/5 border border-white/5">
+        <div className="p-3 mx-4 my-3 rounded-xl bg-white/5 border border-white/5 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C5D932]/20 flex items-center justify-center text-[#C5D932] font-black text-xs border border-[#C5D932]/10 shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#C5D932]/20 flex items-center justify-center text-[#C5D932] font-black text-xs border border-[#C5D932]/10 shrink-0">
               {perfil?.nome?.[0] || user?.email?.[0]?.toUpperCase()}
             </div>
             <div className="flex flex-col leading-none overflow-hidden">
               <span className="text-sm font-bold truncate">{perfil?.nome || user?.email?.split('@')[0]}</span>
-              <span className="text-[10px] text-[#C5D932] font-bold uppercase tracking-widest mt-1">
-                {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
+              <span className="text-[9px] text-[#C5D932] font-black uppercase tracking-widest mt-1">
+                {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
               </span>
             </div>
           </div>
@@ -151,7 +151,7 @@ export function Sidebar() {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar pt-2">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar pt-1">
         {filteredMenu.map((item) => {
           const active = isActive(item.path)
           return (
@@ -159,15 +159,15 @@ export function Sidebar() {
               key={item.path}
               to={withTenantPrefix(item.path, tenantSlug)}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
+                "flex items-center gap-3 px-3 py-2 rounded-lg transition-all group",
                 active 
-                  ? "bg-[#C5D932] text-[#1a2e25] font-bold shadow-lg shadow-lime-900/20" 
+                  ? "bg-[#C5D932] text-[#1a2e25] font-bold shadow-lg shadow-lime-900/10" 
                   : "text-white/70 hover:bg-white/5 hover:text-white"
               )}
               title={collapsed ? item.label : ""}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0 transition-transform", !active && "group-hover:scale-110")} />
-              {!collapsed && <span className="text-sm tracking-tight">{item.label}</span>}
+              <item.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", !active && "group-hover:scale-110")} />
+              {!collapsed && <span className="text-sm tracking-tight font-medium">{item.label}</span>}
               {!collapsed && active && (
                 <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1a2e25]" />
               )}
@@ -177,34 +177,34 @@ export function Sidebar() {
       </nav>
 
       {/* Footer Actions */}
-      <div className="p-4 border-t border-white/5 space-y-1">
+      <div className="p-3 border-t border-white/5 space-y-0.5 shrink-0">
         {!collapsed && isAppPath && (perfil?.role === 'sindico' || perfil?.role === 'subsindico' || isMaster) && (
           <Link 
             to={withTenantPrefix("/painel", tenantSlug)} 
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#C5D932] hover:bg-white/5 transition-all text-sm font-bold"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#C5D932] hover:bg-white/5 transition-all text-sm font-bold"
           >
-            <ShieldAlert className="w-5 h-5" />
+            <ShieldAlert className="w-4.5 h-4.5" />
             Painel Administrativo
           </Link>
         )}
         {!collapsed && isPainelPath && (
           <Link 
             to={withTenantPrefix("/", tenantSlug)} 
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all text-sm font-medium"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all text-sm font-medium"
           >
-            <Building2 className="w-5 h-5" />
+            <Building2 className="w-4.5 h-4.5" />
             Ver Área do Morador
           </Link>
         )}
         <button
           onClick={handleSignOut}
           className={cn(
-            "flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium",
+            "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium",
             collapsed && "justify-center"
           )}
           title={collapsed ? "Sair" : ""}
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-4.5 h-4.5" />
           {!collapsed && <span>Sair</span>}
         </button>
       </div>

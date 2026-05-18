@@ -212,7 +212,7 @@ export default function DashboardLayout() {
                   {perfil?.nome || user?.email?.split('@')[0]}
                 </span>
                 <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">
-                  {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
+                  {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
                 </span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">

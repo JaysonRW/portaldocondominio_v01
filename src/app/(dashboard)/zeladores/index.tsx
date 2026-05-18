@@ -86,7 +86,18 @@ export default function GestaoZeladores() {
           }
         })
 
-        if (error) throw error
+        if (error) {
+          let message = error.message
+          try {
+            if (error.context && typeof error.context.json === 'function') {
+              const body = await error.context.json()
+              if (body && body.error) {
+                message = body.error
+              }
+            }
+          } catch (_) {}
+          throw new Error(message)
+        }
         return data
       }
     },

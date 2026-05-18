@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 // https://vite.dev/config/
+// Force reload routes manifest 20260518
 export default defineConfig({
   plugins: [
     reactRouter(),
