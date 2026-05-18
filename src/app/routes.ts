@@ -70,24 +70,24 @@ export default [
       // Onboarding
       route(":tenantSlug/onboarding", "(dashboard)/onboarding/index.tsx", { id: "tenant-onboarding" }),
       route("onboarding", "(dashboard)/onboarding/index.tsx", { id: "onboarding" }),
-    ]),
 
-    // 3. Rotas Públicas do Portal (Com e Sem Slug)
-    route(":tenantSlug/portal/comunicados", "(public)/comunicados.tsx", { id: "tenant-public-comunicados" }),
-    route(":tenantSlug/portal/clube", "(public)/clube.tsx", { id: "tenant-public-clube" }),
-    route(":tenantSlug/portal/guia", "(public)/guia.tsx", { id: "tenant-public-guia" }),
-    route(":tenantSlug/portal/eventos", "(public)/eventos.tsx", { id: "tenant-public-eventos" }),
-    route(":tenantSlug/portal/galeria", "(public)/galeria.tsx", { id: "tenant-public-galeria" }),
-    route(":tenantSlug/portal/arquivos", "(public)/documentos.tsx", { id: "tenant-public-docs" }),
-    route(":tenantSlug/portal/faq", "(public)/faq.tsx", { id: "tenant-public-faq" }),
-    
-    route("portal/comunicados", "(public)/comunicados.tsx", { id: "public-comunicados" }),
-    route("portal/clube", "(public)/clube.tsx", { id: "public-clube" }),
-    route("portal/guia", "(public)/guia.tsx", { id: "public-guia" }),
-    route("portal/eventos", "(public)/eventos.tsx", { id: "public-eventos" }),
-    route("portal/galeria", "(public)/galeria.tsx", { id: "public-galeria" }),
-    route("portal/arquivos", "(public)/documentos.tsx", { id: "public-docs" }),
-    route("portal/faq", "(public)/faq.tsx", { id: "public-faq" }),
+      // 3. Rotas Privadas do Portal (Requer Autenticação)
+      route(":tenantSlug/portal/comunicados", "(public)/comunicados.tsx", { id: "tenant-public-comunicados" }),
+      route(":tenantSlug/portal/clube", "(public)/clube.tsx", { id: "tenant-public-clube" }),
+      route(":tenantSlug/portal/guia", "(public)/guia.tsx", { id: "tenant-public-guia" }),
+      route(":tenantSlug/portal/eventos", "(public)/eventos.tsx", { id: "tenant-public-eventos" }),
+      route(":tenantSlug/portal/galeria", "(public)/galeria.tsx", { id: "tenant-public-galeria" }),
+      route(":tenantSlug/portal/arquivos", "(public)/documentos.tsx", { id: "tenant-public-docs" }),
+      route(":tenantSlug/portal/faq", "(public)/faq.tsx", { id: "tenant-public-faq" }),
+      
+      route("portal/comunicados", "(public)/comunicados.tsx", { id: "public-comunicados" }),
+      route("portal/clube", "(public)/clube.tsx", { id: "public-clube" }),
+      route("portal/guia", "(public)/guia.tsx", { id: "public-guia" }),
+      route("portal/eventos", "(public)/eventos.tsx", { id: "public-eventos" }),
+      route("portal/galeria", "(public)/galeria.tsx", { id: "public-galeria" }),
+      route("portal/arquivos", "(public)/documentos.tsx", { id: "public-docs" }),
+      route("portal/faq", "(public)/faq.tsx", { id: "public-faq" }),
+    ]),
 
     // 4. Landing Pages (Catch-all)
     route(":tenantSlug/login", "(auth)/login.tsx", { id: "tenant-login" }),
