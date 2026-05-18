@@ -77,7 +77,8 @@ Deno.serve(async (req) => {
       telefone,
       bloco,
       unidade,
-      horario_trabalho
+      horario_trabalho,
+      password
     } = payload
 
     if (!email) return jsonResponse(400, { error: "E-mail é obrigatório" })
@@ -103,39 +104,59 @@ Deno.serve(async (req) => {
     // 4. Executar convite (Admin API)
     const admin = createClient(supabaseUrl, supabaseServiceRoleKey)
 
-    // Determinar a URL de redirecionamento correta baseada no tenant e ambiente
-    const isLocal = payload.origin?.includes('localhost') || payload.origin?.includes('127.0.0.1')
-    const baseUrl = payload.origin || ''
-    let redirectUrl = `${baseUrl}/set-password`
+    let invited: any
+    let inviteError: any
 
-    if (tenantSlug) {
-      if (isLocal) {
-        redirectUrl = `${baseUrl}/${tenantSlug}/set-password`
-      } else {
-        try {
-          const url = new URL(baseUrl)
-          const domain = url.hostname.split('.').slice(-2).join('.')
-          redirectUrl = `${url.protocol}//${tenantSlug}.${domain}/set-password`
-        } catch (e) {
-          console.error("URL Base inválida:", baseUrl);
+    if (password) {
+      const { data, error } = await admin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          role,
+          condominio_id: targetCondominioId,
+          nome: nome || email.split('@')[0]
+        }
+      })
+      invited = data
+      inviteError = error
+    } else {
+      // Determinar a URL de redirecionamento correta baseada no tenant e ambiente
+      const isLocal = payload.origin?.includes('localhost') || payload.origin?.includes('127.0.0.1')
+      const baseUrl = payload.origin || ''
+      let redirectUrl = `${baseUrl}/set-password`
+
+      if (tenantSlug) {
+        if (isLocal) {
+          redirectUrl = `${baseUrl}/${tenantSlug}/set-password`
+        } else {
+          try {
+            const url = new URL(baseUrl)
+            const domain = url.hostname.split('.').slice(-2).join('.')
+            redirectUrl = `${url.protocol}//${tenantSlug}.${domain}/set-password`
+          } catch (e) {
+            console.error("URL Base inválida:", baseUrl);
+          }
         }
       }
+
+      const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+        redirectTo: redirectUrl,
+        data: {
+          role,
+          condominio_id: targetCondominioId,
+          nome: nome || email.split('@')[0]
+        },
+      })
+      invited = data
+      inviteError = error
     }
 
-    const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-      redirectTo: redirectUrl,
-      data: {
-        role,
-        condominio_id: targetCondominioId,
-        nome: nome || email.split('@')[0]
-      },
-    })
-
     if (inviteError) {
-      console.error("Erro no convite Auth:", inviteError.message)
+      console.error("Erro na criação/convite Auth:", inviteError.message)
       return jsonResponse(400, { 
         error: inviteError.message,
-        details: "Erro ao disparar convite via Supabase Auth. Verifique se o e-mail já existe ou se o SMTP está configurado." 
+        details: "Erro ao criar/convidar usuário no Supabase Auth." 
       })
     }
 
@@ -153,7 +174,7 @@ Deno.serve(async (req) => {
         unidade,
         horario_trabalho,
         status_aprovacao: true, // Convidados pelo admin já nascem aprovados
-        primeiro_acesso: true // Força definição de senha
+        primeiro_acesso: password ? false : true // Força definição de senha se convidado sem senha
       }, { onConflict: 'id' })
 
     if (upsertError) {

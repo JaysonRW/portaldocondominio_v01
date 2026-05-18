@@ -51,6 +51,7 @@ export default function GestaoPortaria() {
   const [openModal, setOpenModal] = useState(false)
   const [nome, setNome] = useState("")
   const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [zoomPhoto, setZoomPhoto] = useState<string | null>(null)
 
   // Segurança de role - Síndico apenas
@@ -64,6 +65,7 @@ export default function GestaoPortaria() {
     if (!open) {
       setNome("")
       setEmail("")
+      setPassword("")
     }
   }
 
@@ -110,6 +112,7 @@ export default function GestaoPortaria() {
         body: {
           nome,
           email: email.trim(),
+          password: password.trim(),
           role: 'portaria',
           condominio_id: tenant?.id
         }
@@ -130,7 +133,7 @@ export default function GestaoPortaria() {
       return data
     },
     onSuccess: () => {
-      toast.success("Conta de Portaria criada e convite enviado por e-mail com sucesso!")
+      toast.success("Conta de Portaria criada e ativada com sucesso!")
       handleOpenChange(false)
       queryClient.invalidateQueries({ queryKey: ['portarias-list'] })
     },
@@ -245,8 +248,18 @@ export default function GestaoPortaria() {
                     onChange={e => setEmail(e.target.value)}
                     className="rounded-xl bg-slate-50 border-none h-12 font-bold"
                   />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-bold text-slate-700">Senha de Acesso</label>
+                  <Input 
+                    type="password"
+                    placeholder="Mínimo 6 caracteres" 
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="rounded-xl bg-slate-50 border-none h-12 font-bold"
+                  />
                   <p className="text-xs text-slate-500 font-medium">
-                    Será enviado um e-mail de confirmação de senha para este endereço.
+                    Quem for acessar usará este e-mail e senha para logar.
                   </p>
                 </div>
               </div>
@@ -255,7 +268,7 @@ export default function GestaoPortaria() {
                 <Button variant="ghost" onClick={() => handleOpenChange(false)} className="rounded-xl">Cancelar</Button>
                 <Button 
                   onClick={() => cadastrarPortaria.mutate()} 
-                  disabled={cadastrarPortaria.isPending || !nome || !email}
+                  disabled={cadastrarPortaria.isPending || !nome || !email || password.length < 6}
                   className="bg-primary hover:opacity-90 text-white rounded-xl"
                 >
                   {cadastrarPortaria.isPending ? "Criando..." : "Criar Credencial"}
