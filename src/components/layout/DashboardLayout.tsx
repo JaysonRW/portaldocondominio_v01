@@ -24,7 +24,8 @@ import {
   Gift, 
   Settings,
   Sparkles,
-  Command
+  Command,
+  Package
 } from "lucide-react"
 
 export default function DashboardLayout() {
@@ -97,6 +98,7 @@ export default function DashboardLayout() {
     { icon: Bell, label: "Comunicados / Avisos / Notificações", category: "Comunicação", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
     { icon: Gavel, label: "Assembleias / Editais / Votações", category: "Comunicação", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },
     { icon: ClipboardList, label: "Ordens de Serviço / Manutenção", category: "Operacional", path: "/painel/servicos", roles: ["sindico"], key: "servicos" },
+    { icon: Package, label: "Portaria / Entregas / Encomendas / Guarita", category: "Operacional", path: "/painel/portarias", roles: ["sindico"] },
     { icon: Calendar, label: "Agenda do Zelador", category: "Operacional", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
     { icon: LayoutDashboard, label: "Meu Painel (Zelador)", category: "Operacional", path: "/painel", roles: ["zelador"], key: "zelador-home" },
     { icon: Calendar, label: "Eventos Sociais / Reservas", category: "Comunicação", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },

@@ -38,6 +38,7 @@ export default function ProtectedRoute() {
   const isZelador = perfil?.role === "zelador"
   const isMorador = perfil?.role === "morador"
   const isFornecedor = perfil?.role === "fornecedor"
+  const isPortaria = perfil?.role === "portaria"
   const isPrimeiroAcesso = perfil?.primeiro_acesso === true
   
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
@@ -75,6 +76,10 @@ export default function ProtectedRoute() {
     return <Navigate to={withTenantPrefix("/portal/comunicados", tenantSlug)} replace />
   }
 
+  if (isPortaria && (isPainelPath || isAppPath || isPainelMasterPath || normalizedPath.startsWith("/painel-fornecedor"))) {
+    return <Navigate to={withTenantPrefix("/portaria", tenantSlug)} replace />
+  }
+
   if ((isSindico || isSubsindico || isZelador) && (isAppPath || isPainelMasterPath)) {
     if (normalizedPath === "/") {
       if (isZelador) return <Navigate to={withTenantPrefix("/zelador", tenantSlug)} replace />
@@ -92,6 +97,7 @@ export default function ProtectedRoute() {
   if (normalizedPath === "/") {
     if (isMorador) return <Navigate to={withTenantPrefix("/portal/comunicados", tenantSlug)} replace />
     if (isZelador) return <Navigate to={withTenantPrefix("/zelador", tenantSlug)} replace />
+    if (isPortaria) return <Navigate to={withTenantPrefix("/portaria", tenantSlug)} replace />
     if (isSindico || isSubsindico) return <Navigate to={withTenantPrefix("/painel", tenantSlug)} replace />
   }
 

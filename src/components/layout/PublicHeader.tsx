@@ -67,6 +67,7 @@ export function PublicHeader() {
   const navLinks = tenant ? [
     { label: "Início", path: "/" },
     { label: "Comunicados", path: "/portal/comunicados" },
+    ...(user ? [{ label: "Encomendas", path: "/portal/encomendas" }] : []),
     { label: "Guia", path: "/portal/guia" },
     { label: "Vantagens", path: "/portal/clube", sublabel: tenant?.nome || "" },
     { label: "Eventos", path: "/portal/eventos" },

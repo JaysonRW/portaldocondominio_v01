@@ -1,12 +1,16 @@
 import { PublicHeader } from "../../components/layout/PublicHeader"
 import { useTenantStore } from "../../stores/tenantStore"
+import { useAuthStore } from "../../stores/authStore"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "../../lib/supabase"
-import { Search, ExternalLink } from "lucide-react"
+import { Search, ExternalLink, Bell, ArrowRight } from "lucide-react"
 import { useState } from "react"
+import { Link } from "react-router"
+import { withTenantPrefix } from "../../lib/utils"
 
 export default function PublicComunicados() {
   const { tenant } = useTenantStore()
+  const { user, perfil } = useAuthStore()
   const [search, setSearch] = useState("")
 
   const { data: comunicados, isLoading } = useQuery({
@@ -26,6 +30,35 @@ export default function PublicComunicados() {
     enabled: !!tenant?.id,
   })
 
+  // Busca encomendas pendentes do morador logado
+  const { data: encomendasPendentes } = useQuery({
+    queryKey: ['morador-encomendas-pendentes', tenant?.id, user?.id, perfil?.unidade, perfil?.bloco],
+    queryFn: async () => {
+      if (!tenant?.id || !user?.id) return []
+
+      let query = supabase
+        .from('encomendas')
+        .select('id')
+        .eq('condominio_id', tenant.id)
+        .eq('status', 'pendente')
+
+      if (perfil?.unidade) {
+        if (perfil.bloco) {
+          query = query.or(`morador_id.eq.${user?.id},and(unidade.eq.${perfil.unidade},bloco.eq.${perfil.bloco})`)
+        } else {
+          query = query.or(`morador_id.eq.${user?.id},and(unidade.eq.${perfil.unidade},bloco.is.null)`)
+        }
+      } else {
+        query = query.eq('morador_id', user?.id)
+      }
+
+      const { data, error } = await query
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!tenant?.id && !!user?.id,
+  })
+
   const filtered = comunicados?.filter(c => 
     c.titulo.toLowerCase().includes(search.toLowerCase()) || 
     c.conteudo.toLowerCase().includes(search.toLowerCase())
@@ -36,6 +69,29 @@ export default function PublicComunicados() {
       <PublicHeader />
       
       <main className="flex-1 container mx-auto px-4 py-20 max-w-5xl">
+        
+        {/* Widget de Encomendas Pendentes */}
+        {encomendasPendentes && encomendasPendentes.length > 0 && (
+          <div className="mb-12 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-[2rem] p-6 sm:p-8 shadow-lg shadow-orange-500/20 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center gap-4 text-center sm:text-left">
+              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                <Bell className="w-6 h-6 text-white animate-bounce" />
+              </div>
+              <div>
+                <h4 className="text-lg font-black tracking-tight leading-tight">Você tem encomenda(s) na Portaria!</h4>
+                <p className="text-white/80 text-sm font-semibold mt-0.5">Há {encomendasPendentes.length} pacote(s) disponível(is) para retirada na guarita.</p>
+              </div>
+            </div>
+            <Link 
+              to={withTenantPrefix("/portal/encomendas", tenant?.slug)}
+              className="bg-white hover:bg-slate-50 text-orange-600 rounded-2xl h-12 px-6 font-black text-xs uppercase tracking-wider shadow-md gap-2 flex items-center transition-all hover:scale-105 active:scale-95 shrink-0"
+            >
+              Ver Encomendas
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
+
         <div className="text-center mb-16">
           <h1 className="text-5xl font-black text-[#1a2e25] mb-4 uppercase tracking-tight">Mural de Comunicados</h1>
           <p className="text-slate-500 text-lg font-medium">Avisos, eventos e informações importantes do condomínio.</p>

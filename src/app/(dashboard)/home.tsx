@@ -22,7 +22,8 @@ import {
   ShieldAlert,
   ClipboardList,
   CheckCircle2,
-  MapPin
+  MapPin,
+  Package
 } from "lucide-react"
 import { withTenantPrefix, cn } from "../../lib/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -391,21 +392,29 @@ export default function DashboardHome() {
                      </Link>
                    </Button>
                    <Button variant="outline" className="w-full justify-start h-14 rounded-2xl border-slate-100 hover:bg-slate-50 hover:border-primary group" asChild>
-                     <Link to={withTenantPrefix("/painel/moradores", tenantSlug)}>
-                       <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
-                         <Users className="w-4 h-4" />
-                       </div>
-                       <span className="font-bold text-slate-700">Gerenciar Moradores</span>
-                     </Link>
-                   </Button>
-                   <Button variant="outline" className="w-full justify-start h-14 rounded-2xl border-slate-100 hover:bg-slate-50 hover:border-primary group" asChild>
-                     <Link to={withTenantPrefix("/painel/servicos", tenantSlug)}>
-                       <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
-                         <ClipboardList className="w-4 h-4" />
-                       </div>
-                       <span className="font-bold text-slate-700">Gerenciar Ordens de Serviço</span>
-                     </Link>
-                   </Button>
+                      <Link to={withTenantPrefix("/painel/moradores", tenantSlug)}>
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
+                          <Users className="w-4 h-4" />
+                        </div>
+                        <span className="font-bold text-slate-700">Gerenciar Moradores</span>
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-14 rounded-2xl border-slate-100 hover:bg-slate-50 hover:border-primary group" asChild>
+                      <Link to={withTenantPrefix("/painel/portarias", tenantSlug)}>
+                        <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
+                          <Package className="w-4 h-4" />
+                        </div>
+                        <span className="font-bold text-slate-700">Portaria & Entregas</span>
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start h-14 rounded-2xl border-slate-100 hover:bg-slate-50 hover:border-primary group" asChild>
+                      <Link to={withTenantPrefix("/painel/servicos", tenantSlug)}>
+                        <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
+                          <ClipboardList className="w-4 h-4" />
+                        </div>
+                        <span className="font-bold text-slate-700">Gerenciar Ordens de Serviço</span>
+                      </Link>
+                    </Button>
                  </>
                )}
                <Button variant="outline" className="w-full justify-start h-14 rounded-2xl border-slate-100 hover:bg-slate-50 hover:border-primary group" asChild>

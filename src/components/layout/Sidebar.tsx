@@ -15,7 +15,8 @@ import {
   Gavel,
   Settings,
   ClipboardList,
-  MessageSquareText
+  MessageSquareText,
+  Package
 } from "lucide-react"
 import { useAuthStore } from "../../stores/authStore"
 import { useTenantStore } from "../../stores/tenantStore"
@@ -50,6 +51,7 @@ export function Sidebar() {
     { icon: Bell, label: "Comunicados", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
     { icon: Gavel, label: "Assembleias", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },
     { icon: ClipboardList, label: "Ordens de Serviço", path: "/painel/servicos", roles: ["sindico"], key: "servicos" },
+    { icon: Package, label: "Portaria & Entregas", path: "/painel/portarias", roles: ["sindico"] },
     { icon: Calendar, label: "Agenda", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
     { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
     { icon: Calendar, label: "Eventos Sociais", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },

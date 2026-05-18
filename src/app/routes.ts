@@ -29,6 +29,7 @@ export default [
         route(":tenantSlug/painel/servicos/relatorios", "(dashboard)/servicos/relatorios.tsx", { id: "tenant-admin-servicos-relatorios" }),
         route(":tenantSlug/painel/servicos/:id", "(dashboard)/servicos/[id].tsx", { id: "tenant-admin-servicos-detalhe" }),
         route(":tenantSlug/painel/zeladores", "(dashboard)/zeladores/index.tsx", { id: "tenant-admin-zeladores" }),
+        route(":tenantSlug/painel/portarias", "(dashboard)/portaria/index.tsx", { id: "tenant-admin-portaria" }),
         route(":tenantSlug/painel/moradores", "(dashboard)/moradores/index.tsx", { id: "tenant-admin-moradores" }),
         route(":tenantSlug/painel/unidades", "(dashboard)/unidades/index.tsx", { id: "tenant-admin-unidades" }),
         route(":tenantSlug/painel/comunicados", "(dashboard)/avisos/index.tsx", { id: "tenant-admin-comunicados" }),
@@ -43,6 +44,7 @@ export default [
         route(":tenantSlug/painel/configuracoes", "(dashboard)/configuracoes/index.tsx", { id: "tenant-admin-settings" }),
         route(":tenantSlug/painel", "(dashboard)/home.tsx", { id: "tenant-admin-home" }),
         route(":tenantSlug/zelador", "(zelador)/index.tsx", { id: "tenant-zelador-home" }),
+        route(":tenantSlug/portaria", "(portaria)/index.tsx", { id: "tenant-portaria-home" }),
 
         // Versão sem Slug (Domínios customizados / Localhost sem slug)
         route("painel/servicos", "(dashboard)/servicos/index.tsx", { id: "admin-servicos" }),
@@ -51,6 +53,7 @@ export default [
         route("painel/servicos/relatorios", "(dashboard)/servicos/relatorios.tsx", { id: "admin-servicos-relatorios" }),
         route("painel/servicos/:id", "(dashboard)/servicos/[id].tsx", { id: "admin-servicos-detalhe" }),
         route("painel/zeladores", "(dashboard)/zeladores/index.tsx", { id: "admin-zeladores" }),
+        route("painel/portarias", "(dashboard)/portaria/index.tsx", { id: "admin-portaria" }),
         route("painel/moradores", "(dashboard)/moradores/index.tsx", { id: "admin-moradores" }),
         route("painel/unidades", "(dashboard)/unidades/index.tsx", { id: "admin-unidades" }),
         route("painel/comunicados", "(dashboard)/avisos/index.tsx", { id: "admin-comunicados" }),
@@ -65,6 +68,7 @@ export default [
         route("painel/configuracoes", "(dashboard)/configuracoes/index.tsx", { id: "admin-settings" }),
         route("painel", "(dashboard)/home.tsx", { id: "admin-home" }),
         route("zelador", "(zelador)/index.tsx", { id: "zelador-home" }),
+        route("portaria", "(portaria)/index.tsx", { id: "portaria-home" }),
         
         route("painel-master", "(dashboard)/master-dashboard.tsx", { id: "painel-master" }),
       ]),
@@ -75,6 +79,7 @@ export default [
 
       // 3. Rotas Privadas do Portal (Requer Autenticação)
       route(":tenantSlug/portal/comunicados", "(public)/comunicados.tsx", { id: "tenant-public-comunicados" }),
+      route(":tenantSlug/portal/encomendas", "(public)/encomendas.tsx", { id: "tenant-public-encomendas" }),
       route(":tenantSlug/portal/clube", "(public)/clube.tsx", { id: "tenant-public-clube" }),
       route(":tenantSlug/portal/guia", "(public)/guia.tsx", { id: "tenant-public-guia" }),
       route(":tenantSlug/portal/eventos", "(public)/eventos.tsx", { id: "tenant-public-eventos" }),
@@ -83,6 +88,7 @@ export default [
       route(":tenantSlug/portal/faq", "(public)/faq.tsx", { id: "tenant-public-faq" }),
       
       route("portal/comunicados", "(public)/comunicados.tsx", { id: "public-comunicados" }),
+      route("portal/encomendas", "(public)/encomendas.tsx", { id: "public-encomendas" }),
       route("portal/clube", "(public)/clube.tsx", { id: "public-clube" }),
       route("portal/guia", "(public)/guia.tsx", { id: "public-guia" }),
       route("portal/eventos", "(public)/eventos.tsx", { id: "public-eventos" }),
