@@ -47,18 +47,18 @@ export default function PublicEventos() {
           <p className="text-slate-500 text-lg font-medium">Fique por dentro das atividades e confraternizações do {tenant?.nome}.</p>
         </div>
 
-        <div className="flex justify-center gap-4 mb-12">
+        <div className="flex w-full justify-center gap-3 sm:gap-4 mb-12">
           <Button 
             variant={tab === "proximos" ? "default" : "secondary"}
             onClick={() => setTab("proximos")}
-            className={tab === "proximos" ? "bg-[#1a2e25] text-white font-black py-8 px-10 rounded-2xl text-lg" : "py-8 px-10 font-black rounded-2xl text-lg text-slate-400 bg-white border border-slate-100"}
+            className={tab === "proximos" ? "flex-1 sm:flex-initial bg-[#1a2e25] text-white font-black py-4 px-3 sm:py-8 sm:px-10 rounded-2xl text-xs sm:text-base md:text-lg transition-all shadow-md shadow-emerald-950/5" : "flex-1 sm:flex-initial py-4 px-3 sm:py-8 sm:px-10 font-black rounded-2xl text-xs sm:text-base md:text-lg text-slate-400 bg-white border border-slate-100 transition-all hover:bg-slate-50"}
           >
             Próximos Eventos
           </Button>
           <Button 
             variant={tab === "anteriores" ? "default" : "secondary"}
             onClick={() => setTab("anteriores")}
-            className={tab === "anteriores" ? "bg-[#1a2e25] text-white font-black py-8 px-10 rounded-2xl text-lg" : "py-8 px-10 font-black rounded-2xl text-lg text-slate-400 bg-white border border-slate-100"}
+            className={tab === "anteriores" ? "flex-1 sm:flex-initial bg-[#1a2e25] text-white font-black py-4 px-3 sm:py-8 sm:px-10 rounded-2xl text-xs sm:text-base md:text-lg transition-all shadow-md shadow-emerald-950/5" : "flex-1 sm:flex-initial py-4 px-3 sm:py-8 sm:px-10 font-black rounded-2xl text-xs sm:text-base md:text-lg text-slate-400 bg-white border border-slate-100 transition-all hover:bg-slate-50"}
           >
             Eventos Anteriores
           </Button>
