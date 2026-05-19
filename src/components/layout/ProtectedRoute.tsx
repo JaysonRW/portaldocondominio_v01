@@ -32,13 +32,14 @@ export default function ProtectedRoute() {
   }
 
   const MASTER_EMAIL = "propagoumkd@gmail.com"
-  const isMasterAdmin = perfil?.role === 'super_admin' || user?.email === MASTER_EMAIL
-  const isSindico = perfil?.role === "sindico"
-  const isSubsindico = perfil?.role === "subsindico"
-  const isZelador = perfil?.role === "zelador"
-  const isMorador = perfil?.role === "morador"
-  const isFornecedor = perfil?.role === "fornecedor"
-  const isPortaria = perfil?.role === "portaria"
+  const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
+  const isMasterAdmin = userRole === 'super_admin' || user?.email === MASTER_EMAIL
+  const isSindico = userRole === "sindico"
+  const isSubsindico = userRole === "subsindico"
+  const isZelador = userRole === "zelador"
+  const isMorador = userRole === "morador"
+  const isFornecedor = userRole === "fornecedor"
+  const isPortaria = userRole === "portaria"
   const isPrimeiroAcesso = perfil?.primeiro_acesso === true
   
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
@@ -61,6 +62,11 @@ export default function ProtectedRoute() {
 
   // 5. Perfil nulo (não tem registro em perfis ainda) — vai para onboarding
   if (!perfil) {
+    if (userRole !== 'morador') {
+      if (userRole === 'portaria') return <Navigate to={withTenantPrefix("/portaria", tenantSlug)} replace />
+      if (userRole === 'zelador') return <Navigate to={withTenantPrefix("/zelador", tenantSlug)} replace />
+      return <Navigate to={withTenantPrefix("/painel", tenantSlug)} replace />
+    }
     if (!isOnboardingPage) return <Navigate to={withTenantPrefix("/onboarding", tenantSlug)} replace />
     return <Outlet />
   }

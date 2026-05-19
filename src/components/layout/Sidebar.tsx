@@ -36,7 +36,8 @@ export function Sidebar() {
   const isPainelPath = normalizedPath.startsWith("/painel") || normalizedPath.startsWith("/portaria") || normalizedPath.startsWith("/zelador")
   const isAppPath = normalizedPath.startsWith("/app")
 
-  const isMaster = perfil?.role === 'super_admin' || user?.email === "propagoumkd@gmail.com"
+  const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
+  const isMaster = userRole === 'super_admin' || user?.email === "propagoumkd@gmail.com"
   
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -83,7 +84,7 @@ export function Sidebar() {
     if (isMaster) return true;
     
     // Filtro por Role
-    const hasRole = item.roles.includes(perfil?.role);
+    const hasRole = item.roles.includes(userRole);
     if (!hasRole) return false;
 
     // Filtro por Módulo Ativo (se houver chave de módulo)
@@ -144,7 +145,7 @@ export function Sidebar() {
             <div className="flex flex-col leading-none overflow-hidden">
               <span className="text-sm font-bold truncate">{perfil?.nome || user?.email?.split('@')[0]}</span>
               <span className="text-[9px] text-[#C5D932] font-black uppercase tracking-widest mt-1">
-                {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
+                {userRole === 'super_admin' ? 'Master' : userRole === 'sindico' ? 'Síndico' : userRole === 'zelador' ? 'Zelador' : userRole === 'portaria' ? 'Portaria' : 'Morador'}
               </span>
             </div>
           </div>
@@ -179,7 +180,7 @@ export function Sidebar() {
 
       {/* Footer Actions */}
       <div className="p-3 border-t border-white/5 space-y-0.5 shrink-0">
-        {!collapsed && isAppPath && (perfil?.role === 'sindico' || perfil?.role === 'subsindico' || isMaster) && (
+        {!collapsed && isAppPath && (userRole === 'sindico' || userRole === 'subsindico' || isMaster) && (
           <Link 
             to={withTenantPrefix("/painel", tenantSlug)} 
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#C5D932] hover:bg-white/5 transition-all text-sm font-bold"

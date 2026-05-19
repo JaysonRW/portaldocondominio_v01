@@ -39,7 +39,8 @@ export default function DashboardLayout() {
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const tenantSlug = tenant?.slug
-  const isMaster = perfil?.role === 'super_admin' || user?.email === "propagoumkd@gmail.com"
+  const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
+  const isMaster = userRole === 'super_admin' || user?.email === "propagoumkd@gmail.com"
 
   // Atalho de teclado (Ctrl+K / Cmd+K)
   useEffect(() => {
@@ -115,7 +116,7 @@ export default function DashboardLayout() {
     if (isMaster) return true;
     
     // Filtro por Role
-    const hasRole = item.roles.includes(perfil?.role);
+    const hasRole = item.roles.includes(userRole);
     if (!hasRole) return false;
 
     // Filtro por Módulo Ativo
@@ -213,7 +214,7 @@ export default function DashboardLayout() {
                   {perfil?.nome || user?.email?.split('@')[0]}
                 </span>
                 <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">
-                  {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
+                  {userRole === 'super_admin' ? 'Master' : userRole === 'sindico' ? 'Síndico' : userRole === 'zelador' ? 'Zelador' : userRole === 'portaria' ? 'Portaria' : 'Morador'}
                 </span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">

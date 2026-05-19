@@ -59,6 +59,8 @@ export function PublicHeader() {
     setMobileMenuOpen(false)
   }
 
+  const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
+
   // Iniciais para o avatar fallback
   const iniciais = perfil?.nome
     ? perfil.nome.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
@@ -156,7 +158,7 @@ export function PublicHeader() {
                         {perfil?.nome || user.email?.split('@')[0]}
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">
-                        {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
+                        {userRole === 'super_admin' ? 'Master' : userRole === 'sindico' ? 'Síndico' : userRole === 'subsindico' ? 'Subsíndico' : userRole === 'zelador' ? 'Zelador' : userRole === 'portaria' ? 'Portaria' : 'Morador'}
                       </span>
                     </div>
                     <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -168,12 +170,12 @@ export function PublicHeader() {
                         <p className="text-sm font-black text-slate-800 truncate">{perfil?.nome || user.email?.split('@')[0]}</p>
                         <p className="text-xs text-slate-500 font-bold truncate mt-1">{user.email}</p>
                         <p className="text-[10px] text-[#8ea31f] uppercase tracking-widest font-black mt-2 bg-[#C5D932]/10 inline-block px-2 py-0.5 rounded-md">
-                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
+                          {userRole === 'super_admin' ? 'Master' : userRole === 'sindico' ? 'Síndico' : userRole === 'zelador' ? 'Zelador' : userRole === 'portaria' ? 'Portaria' : 'Morador'}
                         </p>
                       </div>
 
                       <div className="py-2">
-                        {perfil?.role === 'portaria' ? (
+                        {userRole === 'portaria' ? (
                           <Link
                             to={withTenantPrefix("/portaria", tenantSlug)}
                             className="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
@@ -181,7 +183,7 @@ export function PublicHeader() {
                           >
                             <LayoutDashboard className="w-4 h-4" /> Painel da Portaria
                           </Link>
-                        ) : (perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
+                        ) : (userRole === 'sindico' || userRole === 'super_admin' || userRole === 'zelador') ? (
                           <Link
                             to={withTenantPrefix("/painel", tenantSlug)}
                             className="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
@@ -422,13 +424,13 @@ export function PublicHeader() {
                         </div>
                         <div className="text-[11px] text-slate-500 font-bold truncate mt-0.5">{user.email}</div>
                         <div className="mt-2 inline-flex items-center rounded-md bg-[#C5D932]/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-[#8ea31f]">
-                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
+                          {userRole === 'super_admin' ? 'Master' : userRole === 'sindico' ? 'Síndico' : userRole === 'subsindico' ? 'Subsíndico' : userRole === 'zelador' ? 'Zelador' : userRole === 'portaria' ? 'Portaria' : 'Morador'}
                         </div>
                       </div>
                     </div>
 
                     <div className="grid gap-2">
-                      {perfil?.role === 'portaria' ? (
+                      {userRole === 'portaria' ? (
                         <Link
                           to={withTenantPrefix("/portaria", tenantSlug)}
                           onClick={() => setMobileMenuOpen(false)}
@@ -436,7 +438,7 @@ export function PublicHeader() {
                         >
                           <LayoutDashboard className="w-4 h-4" /> Painel da Portaria
                         </Link>
-                      ) : (perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
+                      ) : (userRole === 'sindico' || userRole === 'super_admin' || userRole === 'zelador') ? (
                         <Link
                           to={withTenantPrefix("/painel", tenantSlug)}
                           onClick={() => setMobileMenuOpen(false)}

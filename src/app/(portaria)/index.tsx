@@ -9,7 +9,6 @@ import {
   PlusCircle, 
   Search, 
   Camera, 
-  Building2, 
   CheckCircle2, 
   X,
   ArrowRight,
@@ -225,12 +224,7 @@ export default function PortariaConsole() {
     setFotoPreview(null)
   }
 
-  // Logout do Porteiro
-  const handleLogout = async () => {
-    if (confirm("Deseja realmente sair do console de Portaria?")) {
-      await supabase.auth.signOut()
-    }
-  }
+
 
   // Filtragem das Encomendas na Lista Principal
   const filteredEncomendas = encomendas?.filter(enc => {

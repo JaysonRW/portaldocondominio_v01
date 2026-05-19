@@ -7,10 +7,12 @@ import { withTenantPrefix } from "../../lib/utils"
 export function BottomNav() {
   const location = useLocation()
   const { tenant } = useTenantStore()
-  const { perfil } = useAuthStore()
+  const { perfil, user } = useAuthStore()
   const tenantSlug = tenant?.slug
   
-  if (perfil?.role === 'portaria') {
+  const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
+  
+  if (userRole === 'portaria') {
     return null
   }
 
