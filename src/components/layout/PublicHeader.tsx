@@ -156,7 +156,7 @@ export function PublicHeader() {
                         {perfil?.nome || user.email?.split('@')[0]}
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">
-                        {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
+                        {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
                       </span>
                     </div>
                     <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -168,12 +168,20 @@ export function PublicHeader() {
                         <p className="text-sm font-black text-slate-800 truncate">{perfil?.nome || user.email?.split('@')[0]}</p>
                         <p className="text-xs text-slate-500 font-bold truncate mt-1">{user.email}</p>
                         <p className="text-[10px] text-[#8ea31f] uppercase tracking-widest font-black mt-2 bg-[#C5D932]/10 inline-block px-2 py-0.5 rounded-md">
-                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
+                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
                         </p>
                       </div>
 
                       <div className="py-2">
-                        {(perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
+                        {perfil?.role === 'portaria' ? (
+                          <Link
+                            to={withTenantPrefix("/portaria", tenantSlug)}
+                            className="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            <LayoutDashboard className="w-4 h-4" /> Painel da Portaria
+                          </Link>
+                        ) : (perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
                           <Link
                             to={withTenantPrefix("/painel", tenantSlug)}
                             className="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
@@ -414,13 +422,21 @@ export function PublicHeader() {
                         </div>
                         <div className="text-[11px] text-slate-500 font-bold truncate mt-0.5">{user.email}</div>
                         <div className="mt-2 inline-flex items-center rounded-md bg-[#C5D932]/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-[#8ea31f]">
-                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : 'Morador'}
+                          {perfil?.role === 'super_admin' ? 'Master' : perfil?.role === 'sindico' ? 'Síndico' : perfil?.role === 'subsindico' ? 'Subsíndico' : perfil?.role === 'zelador' ? 'Zelador' : perfil?.role === 'portaria' ? 'Portaria' : 'Morador'}
                         </div>
                       </div>
                     </div>
 
                     <div className="grid gap-2">
-                      {(perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
+                      {perfil?.role === 'portaria' ? (
+                        <Link
+                          to={withTenantPrefix("/portaria", tenantSlug)}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-2 w-full rounded-2xl bg-[#1a2e25] px-6 py-4 font-black uppercase tracking-widest text-xs text-white hover:bg-[#0a1410] transition-colors shadow-lg shadow-emerald-900/10"
+                        >
+                          <LayoutDashboard className="w-4 h-4" /> Painel da Portaria
+                        </Link>
+                      ) : (perfil?.role === 'sindico' || perfil?.role === 'super_admin' || perfil?.role === 'zelador') ? (
                         <Link
                           to={withTenantPrefix("/painel", tenantSlug)}
                           onClick={() => setMobileMenuOpen(false)}
