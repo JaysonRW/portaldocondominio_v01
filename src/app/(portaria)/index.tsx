@@ -8,7 +8,6 @@ import {
   Package, 
   PlusCircle, 
   Search, 
-  LogOut, 
   Camera, 
   Building2, 
   CheckCircle2, 
@@ -255,34 +254,16 @@ export default function PortariaConsole() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 pb-12 antialiased">
-      {/* Header Premium Mobile-First */}
-      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100/80 px-4 py-4 md:px-8 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
-              <Package className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <h1 className="text-lg font-black tracking-tight leading-none text-slate-800">Portaria & Entregas</h1>
-              <p className="text-[11px] font-bold text-slate-400 mt-1 flex items-center gap-1">
-                <Building2 className="w-3 h-3 text-slate-400" />
-                {tenant?.nome || "Carregando..."}
-              </p>
-            </div>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleLogout} 
-            className="rounded-2xl hover:bg-red-50 hover:text-red-600 text-slate-500 h-10 w-10 transition-all shrink-0"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
-      </header>
+    <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="flex flex-col gap-2 mb-6">
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">Portaria & Entregas</h1>
+        <p className="text-slate-500 font-medium">
+          Gerencie as encomendas e recebimentos do <span className="text-primary font-bold">{tenant?.nome}</span>.
+        </p>
+      </div>
 
-      <main className="max-w-5xl mx-auto px-4 mt-6 flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
         
         {/* Banner de Ação Primária & Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -460,7 +441,7 @@ export default function PortariaConsole() {
             )}
           </div>
         </div>
-      </main>
+      </div>
 
       {/* ==========================================================
           MODAL: REGISTRAR ENCOMENDA

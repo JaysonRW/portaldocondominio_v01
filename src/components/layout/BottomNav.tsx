@@ -1,13 +1,19 @@
 import { Link, useLocation } from "react-router"
 import { Home, Bell, Gift, FileText, Gavel, BookOpen, CalendarDays } from "lucide-react"
 import { useTenantStore } from "../../stores/tenantStore"
+import { useAuthStore } from "../../stores/authStore"
 import { withTenantPrefix } from "../../lib/utils"
 
 export function BottomNav() {
   const location = useLocation()
   const { tenant } = useTenantStore()
+  const { perfil } = useAuthStore()
   const tenantSlug = tenant?.slug
   
+  if (perfil?.role === 'portaria') {
+    return null
+  }
+
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
   const isPainelPath = normalizedPath.startsWith("/painel")
 

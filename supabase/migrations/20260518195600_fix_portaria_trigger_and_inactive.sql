@@ -37,7 +37,7 @@ BEGIN
       COALESCE(NEW.raw_user_meta_data->>'role', 'morador'), 
       COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'nome', NEW.email),
       NEW.email,
-      (NEW.raw_user_meta_data->>'condominio_id')::UUID,
+      NULLIF(NEW.raw_user_meta_data->>'condominio_id', '')::UUID,
       CASE 
         WHEN NEW.raw_user_meta_data->>'role' IN ('portaria', 'zelador', 'sindico', 'subsindico') THEN true 
         ELSE false 

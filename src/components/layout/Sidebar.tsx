@@ -33,7 +33,7 @@ export function Sidebar() {
 
   const tenantSlug = tenant?.slug
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
-  const isPainelPath = normalizedPath.startsWith("/painel")
+  const isPainelPath = normalizedPath.startsWith("/painel") || normalizedPath.startsWith("/portaria") || normalizedPath.startsWith("/zelador")
   const isAppPath = normalizedPath.startsWith("/app")
 
   const isMaster = perfil?.role === 'super_admin' || user?.email === "propagoumkd@gmail.com"
@@ -54,6 +54,7 @@ export function Sidebar() {
     { icon: Package, label: "Portaria", path: "/painel/portarias", roles: ["sindico"] },
     { icon: Calendar, label: "Agenda", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
     { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
+    { icon: Package, label: "Meu Painel", path: "/portaria", roles: ["portaria"], key: "portaria-home" },
     { icon: Calendar, label: "Eventos Sociais", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },
     { icon: ImageIcon, label: "Galeria", path: "/painel/galeria", roles: ["sindico", "subsindico"], key: "galeria" },
     { icon: FileText, label: "Arquivos", path: "/painel/arquivos", roles: ["sindico", "subsindico"], key: "arquivos" },

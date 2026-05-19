@@ -101,6 +101,7 @@ export default function DashboardLayout() {
     { icon: Package, label: "Portaria / Entregas / Encomendas / Guarita", category: "Operacional", path: "/painel/portarias", roles: ["sindico"] },
     { icon: Calendar, label: "Agenda do Zelador", category: "Operacional", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
     { icon: LayoutDashboard, label: "Meu Painel (Zelador)", category: "Operacional", path: "/painel", roles: ["zelador"], key: "zelador-home" },
+    { icon: Package, label: "Meu Painel (Portaria)", category: "Operacional", path: "/portaria", roles: ["portaria"], key: "portaria-home" },
     { icon: Calendar, label: "Eventos Sociais / Reservas", category: "Comunicação", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },
     { icon: ImageIcon, label: "Galeria de Fotos", category: "Comunicação", path: "/painel/galeria", roles: ["sindico", "subsindico"], key: "galeria" },
     { icon: FileText, label: "Arquivos / Documentos / Regimentos", category: "Administração", path: "/painel/arquivos", roles: ["sindico", "subsindico"], key: "arquivos" },
