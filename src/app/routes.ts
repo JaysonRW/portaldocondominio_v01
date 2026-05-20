@@ -18,8 +18,12 @@ export default [
     route(":tenantSlug/set-password", "(auth)/reset-password.tsx", { id: "set-password-tenant" }),
     
     // 2. Rotas Administrativas (Com e Sem Slug)
-    // Usamos um layout protegido para todas as rotas de painel
     layout("../components/layout/ProtectedRoute.tsx", [
+      // Painel Master — layout próprio (menu enxuto, sem sidebar do síndico)
+      layout("../components/layout/MasterLayout.tsx", [
+        route("painel-master", "(dashboard)/master-dashboard.tsx", { id: "painel-master" }),
+      ]),
+
       layout("../components/layout/DashboardLayout.tsx", [
         
         // Versão com Slug (Multi-tenant)
@@ -69,8 +73,6 @@ export default [
         route("painel", "(dashboard)/home.tsx", { id: "admin-home" }),
         route("zelador", "(zelador)/index.tsx", { id: "zelador-home" }),
         route("portaria", "(portaria)/index.tsx", { id: "portaria-home" }),
-        
-        route("painel-master", "(dashboard)/master-dashboard.tsx", { id: "painel-master" }),
       ]),
       
       // Onboarding

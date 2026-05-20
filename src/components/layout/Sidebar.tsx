@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import { useAuthStore } from "../../stores/authStore"
 import { useTenantStore } from "../../stores/tenantStore"
-import { withTenantPrefix } from "../../lib/utils"
+import { withTenantPrefix, isMasterUser } from "../../lib/utils"
 import { supabase } from "../../lib/supabase"
 import { useState } from "react"
 import { cn } from "../../lib/utils"
@@ -33,11 +33,12 @@ export function Sidebar() {
 
   const tenantSlug = tenant?.slug
   const normalizedPath = tenantSlug ? (location.pathname.replace(new RegExp(`^/${tenantSlug}`), "") || "/") : location.pathname
-  const isPainelPath = normalizedPath.startsWith("/painel") || normalizedPath.startsWith("/portaria") || normalizedPath.startsWith("/zelador")
+  const isPainelMasterPath = normalizedPath.startsWith("/painel-master")
+  const isPainelPath = !isPainelMasterPath && (normalizedPath.startsWith("/painel") || normalizedPath.startsWith("/portaria") || normalizedPath.startsWith("/zelador"))
   const isAppPath = normalizedPath.startsWith("/app")
 
   const userRole = perfil?.role || user?.app_metadata?.role || user?.user_metadata?.role || 'morador'
-  const isMaster = userRole === 'super_admin' || user?.email === "propagoumkd@gmail.com"
+  const isMaster = isMasterUser(user, perfil)
   
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -91,7 +92,6 @@ export function Sidebar() {
       title: "⚙️ CONFIGURAÇÕES",
       items: [
         { icon: Settings, label: "Configurações", path: "/painel/configuracoes", roles: ["sindico"] },
-        { icon: ShieldAlert, label: "Painel Master", path: "/painel-master", roles: ["super_admin"] },
       ]
     }
   ];

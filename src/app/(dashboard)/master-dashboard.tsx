@@ -7,22 +7,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
-import { UserCircle, Building2, Plus, Settings2, Globe, ShieldCheck, Layers, Search, Mail, ExternalLink, CheckCircle, Clock, Copy, Trash2, Power, MoreVertical, XCircle, Pencil, ShoppingBag } from "lucide-react"
+import { UserCircle, Building2, Plus, Settings2, Globe, ShieldCheck, Layers, Search, Mail, ExternalLink, CheckCircle, Clock, Copy, Trash2, PauseCircle, MoreVertical, XCircle, Pencil, ShoppingBag, KeyRound, DollarSign, Users } from "lucide-react"
+import { MasterSidebar, type MasterSection } from "../../components/layout/MasterSidebar"
 import { toast } from "sonner"
 import { Skeleton } from "../../components/ui/skeleton"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Badge } from "../../components/ui/badge"
-import { isLocalhostHost, cn, isMasterUser } from "../../lib/utils"
+import { isLocalhostHost, isMasterUser } from "../../lib/utils"
 import { ParceiroFormModal } from "./clube/ParceiroFormModal"
-
-type Tab = "condos" | "users" | "approvals" | "partners" | "settings"
 
 export default function MasterDashboard() {
   const { perfil: perfilFromStore, user } = useAuthStore()
   const { setTenant, setIsMasterMode } = useTenantStore()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState<Tab>("condos")
+  const [activeSection, setActiveSection] = useState<MasterSection>("dashboard")
+  const [settingsTab, setSettingsTab] = useState<"system" | "users">("system")
+  const [condoSearch, setCondoSearch] = useState("")
   const [openModal, setOpenModal] = useState(false)
   const [manageCondo, setManageCondo] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
@@ -82,7 +83,7 @@ export default function MasterDashboard() {
       }
       return data || []
     },
-    enabled: activeTab === "users",
+    enabled: activeSection === "settings" && settingsTab === "users",
     retry: 1,
   })
 
@@ -376,7 +377,7 @@ export default function MasterDashboard() {
       }
       return data || []
     },
-    enabled: activeTab === "partners" && isMaster,
+    enabled: (activeSection === "partners" || activeSection === "dashboard") && isMaster,
     retry: 1,
   })
 
@@ -428,22 +429,34 @@ export default function MasterDashboard() {
     )
   }
 
+  const activeCondos = condominios?.filter((c: { ativo?: boolean }) => c.ativo).length || 0
+  const pausedCondos = condominios?.filter((c: { ativo?: boolean }) => !c.ativo).length || 0
+  const totalPartners = allPartners?.length ?? 0
+
   const stats = [
-    { label: "Ativos", value: condominios?.filter((c:any) => c.ativo).length || 0, icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Pausados", value: condominios?.filter((c:any) => !c.ativo).length || 0, icon: Power, color: "text-amber-600", bg: "bg-amber-50" },
-    { label: "Pendências", value: solicitacoes?.length || 0, icon: Clock, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "SaaS Health", value: "100%", icon: ShieldCheck, color: "text-primary", bg: "bg-primary/5" }
+    { label: "Condomínios ativos", value: activeCondos, icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Pausados", value: pausedCondos, icon: PauseCircle, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Pendências de adesão", value: solicitacoes?.length || 0, icon: Clock, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Parceiros cadastrados", value: totalPartners, icon: ShoppingBag, color: "text-primary", bg: "bg-primary/5" },
   ]
 
-  return (
-    <div className="flex flex-col gap-8 p-4 pt-10 md:p-10 max-w-7xl mx-auto min-h-screen">
-      {/* Header com Stats */}
-      <div className="flex flex-col gap-6">
-        <div className="flex items-end justify-between">
-          <div className="space-y-1">
-            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Master Control</h1>
-            <p className="text-lg text-muted-foreground">Gerenciamento global de instâncias e acessos do SaaS.</p>
-          </div>
+  const filteredCondosList = condominios?.filter((c: { nome?: string; slug?: string }) => {
+    if (!condoSearch.trim()) return true
+    const q = condoSearch.toLowerCase()
+    return c.nome?.toLowerCase().includes(q) || c.slug?.toLowerCase().includes(q)
+  })
+
+  const sectionTitles: Record<MasterSection, { title: string; subtitle: string }> = {
+    dashboard: { title: "Dashboard Master", subtitle: "Visão geral do seu SaaS: tenants, parceiros e faturamento." },
+    condos: { title: "Condomínios (Tenants)", subtitle: "Clientes cadastrados na plataforma. Use suporte para entrar no painel de cada um." },
+    partners: { title: "Parceiros Globais", subtitle: "Central do Clube de Vantagens em todos os condomínios." },
+    invites: { title: "Convites & Adesões", subtitle: "Novas instâncias e solicitações pendentes de moradores." },
+    settings: { title: "Configurações do Sistema", subtitle: "Infraestrutura, variáveis globais e usuários da plataforma." },
+  }
+
+  const { title: sectionTitle, subtitle: sectionSubtitle } = sectionTitles[activeSection]
+
+  const newCondominioDialog = (
           <Dialog
             open={openModal}
             onOpenChange={(open) => {
@@ -532,363 +545,353 @@ export default function MasterDashboard() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
+  )
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((s) => (
-            <Card key={s.label} className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className={`p-3 rounded-2xl ${s.bg} ${s.color}`}>
-                  <s.icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{s.label}</p>
-                  <p className="text-2xl font-bold text-slate-800">{s.value}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+  const getJoinUrl = (slug: string) =>
+    isLocalhostHost(window.location.hostname)
+      ? `${window.location.origin}/${slug}/join`
+      : `${window.location.protocol}//${slug}.${window.location.host}/join`
 
-        {lastCreatedAdminUrl && lastCreatedLoginUrl ? (
-          <Card className="border border-slate-100 shadow-sm">
-            <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="min-w-0">
-                <div className="text-xs font-black uppercase tracking-widest text-slate-500">Última instância criada</div>
-                <div className="mt-2 text-sm font-black text-slate-900 truncate">{lastCreatedAdminUrl}</div>
-                <div className="mt-1 text-xs font-bold text-slate-500 truncate">Login do síndico: {lastCreatedLoginUrl}</div>
+  return (
+    <div className="flex min-h-screen w-full">
+      <MasterSidebar
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        pendingApprovals={solicitacoes?.length || 0}
+      />
+
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+          <div className="min-w-0">
+            <h1 className="text-xl font-extrabold text-slate-900 truncate">{sectionTitle}</h1>
+            <p className="text-xs text-muted-foreground font-medium truncate">{sectionSubtitle}</p>
+          </div>
+          {(activeSection === "dashboard" || activeSection === "condos" || activeSection === "invites") && newCondominioDialog}
+        </header>
+
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 max-w-7xl w-full mx-auto">
+          {activeSection === "dashboard" && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {stats.map((s) => (
+                  <Card key={s.label} className="border-none shadow-sm bg-white">
+                    <CardContent className="p-6 flex items-center gap-4">
+                      <div className={`p-3 rounded-2xl ${s.bg} ${s.color}`}>
+                        <s.icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                        <p className="text-2xl font-bold text-slate-800">{s.value}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(lastCreatedLoginUrl)
-                    toast.success("Link de login copiado!")
-                  }}
-                >
-                  <Copy className="h-4 w-4 mr-2" /> Copiar login
-                </Button>
-                <a href={lastCreatedAdminUrl} target="_blank" rel="noreferrer">
-                  <Button>
-                    <ExternalLink className="h-4 w-4 mr-2" /> Abrir portal
-                  </Button>
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        ) : null}
-      </div>
 
-      {/* Tabs de Navegação */}
-      <div className="flex gap-2 p-1 bg-muted/50 rounded-xl w-fit">
-        <Button 
-          variant={activeTab === "condos" ? "default" : "ghost"} 
-          onClick={() => setActiveTab("condos")}
-          className="rounded-lg px-6"
-        >
-          Condomínios
-        </Button>
-        <Button 
-          variant={activeTab === "users" ? "default" : "ghost"} 
-          onClick={() => setActiveTab("users")}
-          className="rounded-lg px-6"
-        >
-          Usuários
-        </Button>
-        <Button 
-          variant={activeTab === "approvals" ? "default" : "ghost"} 
-          onClick={() => setActiveTab("approvals")}
-          className="rounded-lg px-6 relative"
-        >
-          Aprovações
-          {solicitacoes && solicitacoes.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-[10px] text-white rounded-full flex items-center justify-center animate-bounce">
-              {solicitacoes.length}
-            </span>
+              <Card className="border-dashed border-amber-200 bg-amber-50/50">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-amber-600" />
+                    Faturamento (MRR)
+                  </CardTitle>
+                  <CardDescription>Placeholder — pronto para integração com gateway de pagamento.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl bg-white p-4 border border-amber-100">
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">MRR estimado</p>
+                    <p className="text-2xl font-black text-slate-800 mt-1">—</p>
+                    <p className="text-xs text-slate-500 mt-1">Aguardando dados reais</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 border border-amber-100">
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Planos Pro</p>
+                    <p className="text-2xl font-black text-slate-800 mt-1">
+                      {condominios?.filter((c: { plano?: string }) => c.plano === "pro").length ?? "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 border border-amber-100">
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Taxa de conversão</p>
+                    <p className="text-2xl font-black text-slate-800 mt-1">—</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {lastCreatedAdminUrl && lastCreatedLoginUrl ? (
+                <Card className="border border-slate-100 shadow-sm">
+                  <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="text-xs font-black uppercase tracking-widest text-slate-500">Última instância criada</div>
+                      <div className="mt-2 text-sm font-black text-slate-900 truncate">{lastCreatedAdminUrl}</div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" onClick={() => { navigator.clipboard.writeText(lastCreatedLoginUrl); toast.success("Link copiado!") }}>
+                        <Copy className="h-4 w-4 mr-2" /> Copiar login
+                      </Button>
+                      <a href={lastCreatedAdminUrl} target="_blank" rel="noreferrer"><Button><ExternalLink className="h-4 w-4 mr-2" /> Abrir</Button></a>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : null}
+
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={() => setActiveSection("condos")}><Building2 className="w-4 h-4 mr-2" /> Ver condomínios</Button>
+                <Button variant="outline" onClick={() => setActiveSection("partners")}><ShoppingBag className="w-4 h-4 mr-2" /> Parceiros globais</Button>
+                {(solicitacoes?.length ?? 0) > 0 && (
+                  <Button variant="outline" onClick={() => setActiveSection("invites")}><Clock className="w-4 h-4 mr-2" /> {solicitacoes!.length} pendência(s)</Button>
+                )}
+              </div>
+            </div>
           )}
-        </Button>
-        <Button 
-          variant={activeTab === "partners" ? "default" : "ghost"} 
-          onClick={() => setActiveTab("partners")}
-          className="rounded-lg px-6"
-        >
-          Parceiros (Clube)
-        </Button>
-        <Button 
-          variant={activeTab === "settings" ? "default" : "ghost"} 
-          onClick={() => setActiveTab("settings")}
-          className="rounded-lg px-6"
-        >
-          Configurações
-        </Button>
-      </div>
 
-      {/* Conteúdo das Tabs */}
-      <div className="min-h-[400px]">
-        {activeTab === "condos" && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {loadingCondos ? (
-              Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-2xl" />)
-            ) : (
-              condominios?.map((condo: any) => (
-                <Card key={condo.id} className="group overflow-hidden border-slate-200 hover:border-primary transition-all hover:shadow-xl bg-white flex flex-col">
-                  <div className="h-2 w-full" style={{ backgroundColor: condo.cor_primaria }} />
-                  <CardHeader className="pb-4">
-                    <div className="flex justify-between items-start">
-                      <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                        <Building2 className="w-6 h-6" />
-                      </div>
-                      <Badge variant={condo.ativo ? "default" : "destructive"} className="text-[10px] uppercase">
-                        {condo.ativo ? "Online" : "Pausado"}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-xl mt-4 font-bold">{condo.nome}</CardTitle>
-                    <div className="flex items-center text-xs text-muted-foreground gap-1.5 mt-1 font-medium italic">
-                      <Globe className="w-3 h-3" />
-                      <span>{condo.slug}.localhost:5173</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-1 space-y-4">
-                     <div className="text-xs text-muted-foreground bg-muted/40 p-3 rounded-lg border border-slate-100 flex items-center justify-between">
-                        <span>Plano atual: <strong>{condo.plano?.toUpperCase()}</strong></span>
-                        <div className="flex gap-1.5">
-                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: condo.cor_primaria }} />
-                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: condo.cor_secundaria }} />
-                        </div>
-                     </div>
-                  </CardContent>
-                  <div className="p-4 border-t bg-slate-50/50 flex flex-wrap justify-between items-center mt-auto gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-9 font-semibold text-slate-600 hover:text-primary flex-1 justify-start"
-                      onClick={() => setManageCondo(condo)}
-                    >
-                      <Settings2 className="w-4 h-4 mr-2" /> Gerenciar
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className={cn(
-                        "h-9 text-xs font-bold gap-2",
-                        condo.ativo ? "text-amber-600 border-amber-100 hover:bg-amber-50" : "text-emerald-600 border-emerald-100 hover:bg-emerald-50"
+          {activeSection === "condos" && (
+            <div className="space-y-4">
+              <div className="relative max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input placeholder="Buscar condomínio ou slug..." className="pl-9 rounded-xl" value={condoSearch} onChange={(e) => setCondoSearch(e.target.value)} />
+              </div>
+              <Card className="border-slate-200 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-slate-50 text-slate-500 font-semibold border-b">
+                      <tr>
+                        <th className="px-6 py-4">Condomínio</th>
+                        <th className="px-6 py-4">Plano</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {loadingCondos ? (
+                        Array.from({ length: 4 }).map((_, i) => (
+                          <tr key={i}><td colSpan={4} className="px-6 py-4"><Skeleton className="h-8 w-full" /></td></tr>
+                        ))
+                      ) : filteredCondosList?.length === 0 ? (
+                        <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">Nenhum condomínio encontrado.</td></tr>
+                      ) : (
+                        filteredCondosList?.map((condo: any) => (
+                          <tr key={condo.id} className="hover:bg-slate-50/80">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-2 h-10 rounded-full shrink-0" style={{ backgroundColor: condo.cor_primaria || "#3E594D" }} />
+                                <div>
+                                  <p className="font-bold text-slate-900">{condo.nome}</p>
+                                  <p className="text-xs text-muted-foreground flex items-center gap-1"><Globe className="w-3 h-3" />{condo.slug}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 font-semibold uppercase text-xs">{condo.plano || "—"}</td>
+                            <td className="px-6 py-4">
+                              <Badge variant={condo.ativo ? "default" : "destructive"} className="text-[10px]">{condo.ativo ? "Online" : "Pausado"}</Badge>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center justify-end gap-1 flex-wrap">
+                                <Button size="sm" className="rounded-lg font-bold gap-1.5 h-8" onClick={() => handleImpersonate(condo)}>
+                                  <KeyRound className="w-3.5 h-3.5" /> Acessar Painel
+                                </Button>
+                                <Button variant="outline" size="sm" className="rounded-lg h-8" onClick={() => setManageCondo(condo)}>
+                                  <Settings2 className="w-3.5 h-3.5 mr-1" /> Gerenciar
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" title="Link de adesão" onClick={() => { navigator.clipboard.writeText(getJoinUrl(condo.slug)); toast.success("Link copiado!") }}>
+                                  <Copy className="w-3.5 h-3.5" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => { if (confirm(`Excluir ${condo.nome}?`)) deleteCondo.mutate(condo.id) }}>
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
                       )}
-                      onClick={() => toggleCondoStatus.mutate({ id: condo.id, active: !condo.ativo })}
-                      disabled={toggleCondoStatus.isPending}
-                    >
-                       <Power className="w-3 h-3" /> {condo.ativo ? "Desativar" : "Ativar"}
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="h-9 w-9 text-red-500 border-red-100 hover:bg-red-50"
-                      onClick={() => {
-                        if (confirm(`Tem certeza que deseja EXCLUIR permanentemente o condomínio ${condo.nome}? Esta ação não pode ser desfeita.`)) {
-                          deleteCondo.mutate(condo.id)
-                        }
-                      }}
-                      disabled={deleteCondo.isPending}
-                    >
-                       <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="px-4 pb-4 bg-slate-50/50 flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-9 text-[10px] font-bold gap-2 flex-1"
-                      onClick={() => {
-                        const url = isLocalhostHost(window.location.hostname)
-                          ? `${window.location.origin}/${condo.slug}/join`
-                          : `${window.location.protocol}//${condo.slug}.${window.location.host}/join`
-                        navigator.clipboard.writeText(url)
-                        toast.success("Link de adesão copiado!")
-                      }}
-                    >
-                       <Copy className="w-3 h-3" /> Link Adesão
-                    </Button>
-                    <Button variant="outline" size="icon" className="h-9 w-9 rounded-full shrink-0" asChild>
-                       <a
-                         href={
-                           isLocalhostHost(window.location.hostname)
-                             ? `${window.location.origin}/${condo.slug}/join`
-                             : `${window.location.protocol}//${condo.slug}.${window.location.host}/join`
-                         }
-                         target="_blank"
-                       >
-                          <ExternalLink className="w-4 h-4" />
-                       </a>
-                    </Button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </div>
+          )}
 
-        {activeTab === "users" && (
-          <Card className="border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="border-b bg-slate-50/50">
-              <div className="flex items-center justify-between">
-                 <CardTitle className="text-lg">Controle de Usuários Global</CardTitle>
-                 <div className="relative w-72">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input 
-                      placeholder="Buscar por nome ou email..." 
-                      className="pl-9 h-9 text-sm"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-slate-50 text-slate-500 font-semibold border-b">
-                  <tr>
-                    <th className="px-6 py-4">Usuário / Email</th>
-                    <th className="px-6 py-4">Condomínio</th>
-                    <th className="px-6 py-4">Cargo (Role)</th>
-                    <th className="px-6 py-4">Cadastro em</th>
-                    <th className="px-6 py-4 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {loadingPerfis ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <tr key={i}><td colSpan={5} className="px-6 py-4"><Skeleton className="h-6 w-full" /></td></tr>
-                    ))
-                  ) : perfis?.filter(p => {
-                    if (!searchTerm) return true;
-                    const search = searchTerm.toLowerCase();
-                    const nomeMatch = p.nome?.toLowerCase()?.includes(search);
-                    const emailMatch = p.email?.toLowerCase()?.includes(search) || p.cpf?.toLowerCase()?.includes(search);
-                    return nomeMatch || emailMatch;
-                  }).map((p: any) => (
-                    <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
-                              {(p.nome || p.email || "?").substring(0,1).toUpperCase()}
-                           </div>
-                           <div className="flex flex-col">
-                              <span className="font-bold text-slate-900">{p.nome || "Usuário sem nome"}</span>
-                              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                                <Mail className="w-3 h-3" /> {p.email || "Sem Email"}
-                              </span>
-                              {p.cpf && (
-                                <span className="text-[10px] text-slate-400">CPF: {p.cpf}</span>
-                              )}
-                           </div>
+          {activeSection === "invites" && (
+            <div className="space-y-6">
+              <Card className="border-slate-100 bg-slate-50/50">
+                <CardContent className="p-4 text-sm text-slate-600">
+                  Crie novas instâncias com <strong>Novo Condomínio</strong> ou compartilhe o link de adesão na lista de condomínios.
+                </CardContent>
+              </Card>
+              <div className="grid gap-6 md:grid-cols-2">
+                {loadingSols ? (
+                  Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-2xl" />)
+                ) : solicitacoes?.length === 0 ? (
+                  <div className="md:col-span-2 py-20 text-center border-2 border-dashed rounded-3xl text-muted-foreground">
+                    <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-10" />
+                    <p className="text-lg font-medium">Nenhuma solicitação pendente.</p>
+                    <p className="text-sm">Tudo em dia com os novos moradores!</p>
+                  </div>
+                ) : (
+                  solicitacoes?.map((sol: any) => (
+                    <Card key={sol.id} className="overflow-hidden border-slate-200">
+                      <CardHeader className="pb-4 flex flex-row items-center gap-4">
+                        <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden border shadow-inner">
+                          {sol.foto_url ? (
+                            <img src={sol.foto_url} alt={sol.nome} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300">
+                              <UserCircle className="w-10 h-10" />
+                            </div>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <select 
-                          className="bg-transparent border-none text-xs font-semibold focus:ring-0 cursor-pointer text-slate-600 hover:text-primary transition-colors max-w-[150px]"
-                          value={p.condominio_id || ""}
-                          onChange={(e) => updateCondo.mutate({ userId: p.id, condoId: e.target.value })}
-                        >
-                          <option value="">Sem Vínculo</option>
-                          {condominios?.map((c: any) => (
-                            <option key={c.id} value={c.id}>{c.nome}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-6 py-4">
-                        <select 
-                          className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer text-slate-600 hover:text-primary transition-colors"
-                          value={p.role}
-                          onChange={(e) => updateRole.mutate({ userId: p.id, role: e.target.value })}
-                        >
-                          <option value="morador">🏠 MORADOR</option>
-                          <option value="sindico">🛡️ SÍNDICO</option>
-                          <option value="zelador">👷 ZELADOR</option>
-                          <option value="super_admin">🚀 MASTER</option>
-                        </select>
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground text-xs">
-                        {new Date(p.criado_em).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                           <MoreVertical className="w-4 h-4" />
+                        <div className="flex-1">
+                          <CardTitle className="text-lg">{sol.nome}</CardTitle>
+                          <CardDescription className="flex flex-col">
+                            <span>{sol.email}</span>
+                            <span className="text-xs font-bold text-primary">{sol.condominios?.nome}</span>
+                          </CardDescription>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-3 gap-2 text-center">
+                        <div className="bg-muted/50 p-2 rounded-lg">
+                          <span className="block text-[10px] uppercase text-muted-foreground font-bold">Bloco</span>
+                          <span className="font-bold">{sol.bloco || "-"}</span>
+                        </div>
+                        <div className="bg-muted/50 p-2 rounded-lg">
+                          <span className="block text-[10px] uppercase text-muted-foreground font-bold">Apto</span>
+                          <span className="font-bold">{sol.unidade || "-"}</span>
+                        </div>
+                        <div className="bg-muted/50 p-2 rounded-lg">
+                          <span className="block text-[10px] uppercase text-muted-foreground font-bold">Vaga</span>
+                          <span className="font-bold">{sol.numero_vaga || "-"}</span>
+                        </div>
+                      </CardContent>
+                      <div className="p-4 border-t bg-slate-50 flex gap-2">
+                        <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={() => updateSoliStatus.mutate({ id: sol.id, status: "aprovado" })}>
+                          <CheckCircle className="w-4 h-4 mr-2" /> Aprovar
                         </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </CardContent>
-          </Card>
-        )}
-
-        {activeTab === "approvals" && (
-          <div className="grid gap-6 md:grid-cols-2">
-            {loadingSols ? (
-              Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-2xl" />)
-            ) : solicitacoes?.length === 0 ? (
-              <div className="md:col-span-2 py-20 text-center border-2 border-dashed rounded-3xl text-muted-foreground">
-                 <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-10" />
-                 <p className="text-lg font-medium">Nenhuma solicitação pendente.</p>
-                 <p className="text-sm">Tudo em dia com os novos moradores!</p>
+                        <Button variant="destructive" className="flex-none w-12" onClick={() => updateSoliStatus.mutate({ id: sol.id, status: "recusado" })}>
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))
+                )}
               </div>
-            ) : (
-              solicitacoes?.map((sol: any) => (
-                <Card key={sol.id} className="overflow-hidden border-slate-200">
-                  <CardHeader className="pb-4 flex flex-row items-center gap-4">
-                     <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden border shadow-inner">
-                        {sol.foto_url ? (
-                          <img src={sol.foto_url} alt={sol.nome} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-300">
-                             <UserCircle className="w-10 h-10" />
-                          </div>
-                        )}
-                     </div>
-                     <div className="flex-1">
-                        <CardTitle className="text-lg">{sol.nome}</CardTitle>
-                        <CardDescription className="flex flex-col">
-                           <span>{sol.email}</span>
-                           <span className="text-xs font-bold text-primary">{sol.condominios?.nome}</span>
-                        </CardDescription>
-                     </div>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-muted/50 p-2 rounded-lg">
-                         <span className="block text-[10px] uppercase text-muted-foreground font-bold">Bloco</span>
-                         <span className="font-bold">{sol.bloco || "-"}</span>
-                      </div>
-                      <div className="bg-muted/50 p-2 rounded-lg">
-                         <span className="block text-[10px] uppercase text-muted-foreground font-bold">Apto</span>
-                         <span className="font-bold">{sol.unidade || "-"}</span>
-                      </div>
-                      <div className="bg-muted/50 p-2 rounded-lg">
-                         <span className="block text-[10px] uppercase text-muted-foreground font-bold">Vaga</span>
-                         <span className="font-bold">{sol.numero_vaga || "-"}</span>
-                      </div>
-                  </CardContent>
-                  <div className="p-4 border-t bg-slate-50 flex gap-2">
-                     <Button 
-                       className="flex-1 bg-emerald-600 hover:bg-emerald-700" 
-                       onClick={() => updateSoliStatus.mutate({ id: sol.id, status: 'aprovado' })}
-                     >
-                        <CheckCircle className="w-4 h-4 mr-2" /> Aprovar
-                     </Button>
-                     <Button 
-                        variant="destructive" 
-                        className="flex-none w-12"
-                        onClick={() => updateSoliStatus.mutate({ id: sol.id, status: 'recusado' })}
-                     >
-                        <XCircle className="w-4 h-4" />
-                     </Button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-        {activeTab === "partners" && (
+          {activeSection === "settings" && (
+            <div className="space-y-6">
+              <div className="flex gap-2 p-1 bg-muted/50 rounded-xl w-fit">
+                <Button variant={settingsTab === "system" ? "default" : "ghost"} onClick={() => setSettingsTab("system")} className="rounded-lg px-5">Sistema</Button>
+                <Button variant={settingsTab === "users" ? "default" : "ghost"} onClick={() => setSettingsTab("users")} className="rounded-lg px-5 gap-2"><Users className="w-4 h-4" /> Usuários globais</Button>
+              </div>
+              {settingsTab === "system" && (
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  <Card className="border-none shadow-sm bg-white rounded-[32px] overflow-hidden">
+                    <CardHeader className="bg-slate-50/50 border-b">
+                      <CardTitle className="text-lg font-black text-slate-800 flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-primary" />
+                        Status da Infraestrutura
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-6">
+                      {["Banco de Dados (Supabase)", "Storage (Arquivos/Fotos)", "Edge Functions", "DNS / Multi-tenancy"].map((label) => (
+                        <div key={label} className="flex items-center justify-between">
+                          <span className="text-sm font-bold text-slate-600">{label}</span>
+                          <Badge className="bg-emerald-100 text-emerald-700 border-none font-black text-[10px]">OPERACIONAL</Badge>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                  <Card className="border-none shadow-sm bg-white rounded-[32px] overflow-hidden">
+                    <CardHeader className="bg-slate-50/50 border-b">
+                      <CardTitle className="text-lg font-black text-slate-800 flex items-center gap-2">
+                        <Settings2 className="w-5 h-5 text-primary" />
+                        Configurações Globais
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-4">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Domínio Principal</label>
+                        <Input value="antigravity.com.br" disabled className="rounded-xl bg-slate-50" />
+                      </div>
+                      <div className="flex flex-col gap-2 pt-4">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Ambiente</label>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-blue-100 text-blue-700 border-none font-black text-[10px]">PRODUCTION</Badge>
+                          <span className="text-xs font-bold text-slate-400">v2.5.0-stable</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+              {settingsTab === "users" && (
+                <Card className="border-slate-200 shadow-sm overflow-hidden">
+                  <CardHeader className="border-b bg-slate-50/50">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">Controle de Usuários Global</CardTitle>
+                      <div className="relative w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input placeholder="Buscar por nome ou email..." className="pl-9 h-9 text-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-0 overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                      <thead className="bg-slate-50 text-slate-500 font-semibold border-b">
+                        <tr>
+                          <th className="px-6 py-4">Usuário / Email</th>
+                          <th className="px-6 py-4">Condomínio</th>
+                          <th className="px-6 py-4">Cargo (Role)</th>
+                          <th className="px-6 py-4">Cadastro em</th>
+                          <th className="px-6 py-4 text-right">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {loadingPerfis ? (
+                          Array.from({ length: 5 }).map((_, i) => (
+                            <tr key={i}><td colSpan={5} className="px-6 py-4"><Skeleton className="h-6 w-full" /></td></tr>
+                          ))
+                        ) : perfis?.filter((p) => {
+                          if (!searchTerm) return true
+                          const search = searchTerm.toLowerCase()
+                          return p.nome?.toLowerCase()?.includes(search) || p.email?.toLowerCase()?.includes(search) || p.cpf?.toLowerCase()?.includes(search)
+                        }).map((p: any) => (
+                          <tr key={p.id} className="hover:bg-slate-50/50">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                                  {(p.nome || p.email || "?").substring(0, 1).toUpperCase()}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-slate-900">{p.nome || "Usuário sem nome"}</span>
+                                  <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Mail className="w-3 h-3" /> {p.email || "Sem Email"}</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <select className="bg-transparent border-none text-xs font-semibold focus:ring-0 cursor-pointer max-w-[150px]" value={p.condominio_id || ""} onChange={(e) => updateCondo.mutate({ userId: p.id, condoId: e.target.value })}>
+                                <option value="">Sem Vínculo</option>
+                                {condominios?.map((c: any) => (<option key={c.id} value={c.id}>{c.nome}</option>))}
+                              </select>
+                            </td>
+                            <td className="px-6 py-4">
+                              <select className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer" value={p.role} onChange={(e) => updateRole.mutate({ userId: p.id, role: e.target.value })}>
+                                <option value="morador">MORADOR</option>
+                                <option value="sindico">SÍNDICO</option>
+                                <option value="zelador">ZELADOR</option>
+                                <option value="super_admin">MASTER</option>
+                              </select>
+                            </td>
+                            <td className="px-6 py-4 text-muted-foreground text-xs">{new Date(p.criado_em).toLocaleDateString()}</td>
+                            <td className="px-6 py-4 text-right"><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="w-4 h-4" /></Button></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {activeSection === "partners" && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-[24px] border border-slate-100/50 shadow-sm">
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -1040,59 +1043,7 @@ export default function MasterDashboard() {
             )}
           </div>
         )}
-
-        {activeTab === "settings" && (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-             <Card className="border-none shadow-sm bg-white rounded-[32px] overflow-hidden">
-                <CardHeader className="bg-slate-50/50 border-b">
-                   <CardTitle className="text-lg font-black text-slate-800 flex items-center gap-2">
-                      <Layers className="w-5 h-5 text-primary" />
-                      Status da Infraestrutura
-                   </CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                   <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-600">Banco de Dados (Supabase)</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 border-none font-black text-[10px]">OPERACIONAL</Badge>
-                   </div>
-                   <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-600">Storage (Arquivos/Fotos)</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 border-none font-black text-[10px]">OPERACIONAL</Badge>
-                   </div>
-                   <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-600">Edge Functions</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 border-none font-black text-[10px]">OPERACIONAL</Badge>
-                   </div>
-                   <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-600">DNS / Multi-tenancy</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 border-none font-black text-[10px]">OPERACIONAL</Badge>
-                   </div>
-                </CardContent>
-             </Card>
-
-             <Card className="border-none shadow-sm bg-white rounded-[32px] overflow-hidden">
-                <CardHeader className="bg-slate-50/50 border-b">
-                   <CardTitle className="text-lg font-black text-slate-800 flex items-center gap-2">
-                      <Settings2 className="w-5 h-5 text-primary" />
-                      Configurações Globais
-                   </CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 space-y-4">
-                   <div className="flex flex-col gap-2">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Domínio Principal</label>
-                      <Input value="antigravity.com.br" disabled className="rounded-xl bg-slate-50" />
-                   </div>
-                   <div className="flex flex-col gap-2 pt-4">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Ambiente</label>
-                      <div className="flex items-center gap-2">
-                         <Badge className="bg-blue-100 text-blue-700 border-none font-black text-[10px]">PRODUCTION</Badge>
-                         <span className="text-xs font-bold text-slate-400">v2.5.0-stable</span>
-                      </div>
-                   </div>
-                </CardContent>
-             </Card>
-          </div>
-        )}
+        </main>
       </div>
 
       <ParceiroFormModal
@@ -1227,7 +1178,7 @@ export default function MasterDashboard() {
                          className="bg-primary hover:opacity-90 rounded-2xl font-bold gap-2 flex-1"
                          onClick={() => handleImpersonate(manageCondo)}
                       >
-                         <ShieldCheck className="w-4 h-4" /> Acessar Painel Master
+                         <KeyRound className="w-4 h-4" /> Acessar Painel (Suporte)
                       </Button>
                       <Button 
                          variant="outline"
