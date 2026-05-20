@@ -9,6 +9,18 @@ export function isLocalhostHost(hostname: string) {
   return hostname === "localhost" || hostname === "127.0.0.1"
 }
 
+export const MASTER_EMAIL = "propagoumkd@gmail.com"
+
+export function isMasterUser(
+  user: { email?: string | null } | null | undefined,
+  perfil: { role?: string | null } | null | undefined
+) {
+  return (
+    perfil?.role === "super_admin" ||
+    user?.email?.toLowerCase() === MASTER_EMAIL
+  )
+}
+
 export function withTenantPrefix(path: string, tenantSlug: string | null | undefined) {
   const normalized = path.startsWith("/") ? path : `/${path}`
   if (!tenantSlug) return normalized

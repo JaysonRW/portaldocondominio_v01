@@ -48,7 +48,7 @@ export function Sidebar() {
     {
       title: "📊 DASHBOARD",
       items: [
-        { icon: LayoutDashboard, label: "Gestão", path: "/painel", roles: ["sindico", "subsindico"] },
+        { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["sindico", "subsindico"] },
         { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
         { icon: Package, label: "Meu Painel", path: "/portaria", roles: ["portaria"], key: "portaria-home" },
       ]
@@ -111,7 +111,18 @@ export function Sidebar() {
   // Processa as seções do painel aplicando filtros de permissões e módulos ativos
   const filteredSections = sectionsPainel.map(section => {
     const filteredItems = section.items.filter(item => {
-      if (isMaster) return true;
+      if (isMaster) {
+        // Master vê apenas itens de super_admin, sindico ou subsindico (oculta menus de zelador e portaria)
+        const isMasterRole = item.roles.includes('super_admin') || 
+                             item.roles.includes('sindico') || 
+                             item.roles.includes('subsindico');
+        if (!isMasterRole) return false;
+
+        if (item.key && tenant?.modulos_ativos) {
+           return tenant.modulos_ativos[item.key] !== false;
+        }
+        return true;
+      }
       
       const hasRole = item.roles.includes(userRole);
       if (!hasRole) return false;
@@ -131,7 +142,12 @@ export function Sidebar() {
 
   // Processa o menu do morador aplicando filtros de permissões e módulos ativos
   const filteredMenuApp = menuItemsApp.filter(item => {
-    if (isMaster) return true;
+    if (isMaster) {
+      if (item.key && tenant?.modulos_ativos) {
+         return tenant.modulos_ativos[item.key] !== false;
+      }
+      return true;
+    }
     
     const hasRole = item.roles.includes(userRole);
     if (!hasRole) return false;

@@ -13,17 +13,30 @@ DROP POLICY IF EXISTS "Leitura parceiros tenant" ON public.clube_parceiros;
 CREATE POLICY "Leitura parceiros tenant" ON public.clube_parceiros
 FOR SELECT
 USING (
-  condominio_id = public.get_condominio_id() 
+  public.is_super_admin()
+  OR condominio_id = public.get_condominio_id()
   OR condominio_id IS NULL
 );
 
--- 2. Recriar política de Escrita e Acesso Total para super_admin
+-- 2. Escrita síndico no próprio tenant
+DROP POLICY IF EXISTS "Escrita parceiros sindico" ON public.clube_parceiros;
+CREATE POLICY "Escrita parceiros sindico" ON public.clube_parceiros
+FOR ALL
+USING (
+  public.get_user_role() IN ('sindico', 'subsindico')
+  AND condominio_id = public.get_condominio_id()
+)
+WITH CHECK (
+  public.get_user_role() IN ('sindico', 'subsindico')
+  AND condominio_id = public.get_condominio_id()
+);
+
+-- 3. Escrita e leitura global para master
 DROP POLICY IF EXISTS "Escrita parceiros admin" ON public.clube_parceiros;
 CREATE POLICY "Escrita parceiros admin" ON public.clube_parceiros
 FOR ALL
-USING (
-  public.get_user_role() = 'super_admin'
-);
+USING (public.is_super_admin())
+WITH CHECK (public.is_super_admin());
 
 -- 3. Promover usuário propagoumkd@gmail.com a super_admin para garantir bypass do RLS
 UPDATE public.perfis

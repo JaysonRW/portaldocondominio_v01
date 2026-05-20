@@ -99,10 +99,12 @@ CREATE OR REPLACE FUNCTION public.is_super_admin()
 RETURNS boolean
 LANGUAGE sql
 STABLE
+SECURITY DEFINER
+SET search_path = public
 AS $$
-  SELECT 
+  SELECT
     public.jwt_role() = 'super_admin'
-    OR auth.jwt() ->> 'email' = 'propagoumkd@gmail.com';
+    OR lower(coalesce(auth.jwt() ->> 'email', '')) = 'propagoumkd@gmail.com';
 $$;
 
 CREATE OR REPLACE FUNCTION public.is_sindico()

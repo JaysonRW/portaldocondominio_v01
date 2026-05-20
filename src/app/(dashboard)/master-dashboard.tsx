@@ -1,6 +1,6 @@
 import { useTenantStore } from "../../stores/tenantStore"
 import { useNavigate } from "react-router"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useAuthStore } from "../../stores/authStore"
 import { supabase } from "../../lib/supabase"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -12,7 +12,7 @@ import { toast } from "sonner"
 import { Skeleton } from "../../components/ui/skeleton"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Badge } from "../../components/ui/badge"
-import { isLocalhostHost, cn } from "../../lib/utils"
+import { isLocalhostHost, cn, isMasterUser } from "../../lib/utils"
 import { ParceiroFormModal } from "./clube/ParceiroFormModal"
 
 type Tab = "condos" | "users" | "approvals" | "partners" | "settings"
@@ -346,13 +346,29 @@ export default function MasterDashboard() {
     navigate(targetPath)
   }
 
+  const isMaster = isMasterUser(user, meuPerfil)
+
+  const condoById = useMemo(() => {
+    const map = new Map<string, { nome: string; slug: string }>()
+    condominios?.forEach((c: { id: string; nome: string; slug: string }) => {
+      map.set(c.id, { nome: c.nome, slug: c.slug })
+    })
+    return map
+  }, [condominios])
+
   // Queries & Mutations para Gerenciamento de Parceiros (Clube)
-  const { data: allPartners, isLoading: loadingPartners } = useQuery({
+  const {
+    data: allPartners,
+    isLoading: loadingPartners,
+    isError: partnersQueryFailed,
+    error: partnersQueryError,
+  } = useQuery({
     queryKey: ['all_partners'],
     queryFn: async () => {
+      // Mesmo padrão do painel síndico: select simples (evita falha no embed condominios)
       const { data, error } = await supabase
         .from('clube_parceiros')
-        .select('*, condominios(nome, slug)')
+        .select('*')
         .order('criado_em', { ascending: false })
       if (error) {
         console.error('[Master] Erro ao buscar parceiros:', error)
@@ -360,8 +376,18 @@ export default function MasterDashboard() {
       }
       return data || []
     },
-    enabled: activeTab === "partners",
+    enabled: activeTab === "partners" && isMaster,
+    retry: 1,
   })
+
+  const partnersEnriched = useMemo(
+    () =>
+      (allPartners ?? []).map((p: { condominio_id: string | null }) => ({
+        ...p,
+        condominios: p.condominio_id ? condoById.get(p.condominio_id) ?? null : null,
+      })),
+    [allPartners, condoById]
+  )
 
   const deletePartner = useMutation({
     mutationFn: async (id: string) => {
@@ -380,7 +406,7 @@ export default function MasterDashboard() {
     }
   })
 
-  const filteredPartners = allPartners?.filter((p: any) => {
+  const filteredPartners = partnersEnriched.filter((p: any) => {
     const matchesSearch = p.nome?.toLowerCase().includes(partnerSearchTerm.toLowerCase()) ||
                           p.descricao?.toLowerCase().includes(partnerSearchTerm.toLowerCase()) ||
                           p.categoria?.toLowerCase().includes(partnerSearchTerm.toLowerCase());
@@ -389,9 +415,6 @@ export default function MasterDashboard() {
     if (partnerCondoFilter === "global") return matchesSearch && p.condominio_id === null;
     return matchesSearch && p.condominio_id === partnerCondoFilter;
   });
-
-  const MASTER_EMAIL = "propagoumkd@gmail.com"
-  const isMaster = meuPerfil?.role === 'super_admin' || user?.email === MASTER_EMAIL
 
   if (!isMaster) {
     return (
@@ -910,11 +933,33 @@ export default function MasterDashboard() {
                   <Skeleton key={i} className="h-64 rounded-[32px]" />
                 ))}
               </div>
-            ) : filteredPartners?.length === 0 ? (
+            ) : partnersQueryFailed ? (
+              <div className="text-center p-20 bg-white border border-dashed border-red-100 rounded-[32px]">
+                <ShoppingBag className="mx-auto h-12 w-12 text-red-200 mb-4" />
+                <h3 className="text-lg font-black text-slate-800">Não foi possível carregar os parceiros</h3>
+                <p className="text-slate-500 font-medium mt-2 max-w-md mx-auto">
+                  {(partnersQueryError as Error)?.message || "Erro de permissão (RLS) ou conexão com o Supabase."}
+                </p>
+                <p className="text-xs text-slate-400 mt-3">
+                  Logado como: {user?.email || "—"} · Perfil: {meuPerfil?.role || "sem registro em perfis"}
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-6"
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ['all_partners'] })}
+                >
+                  Tentar novamente
+                </Button>
+              </div>
+            ) : filteredPartners.length === 0 ? (
               <div className="text-center p-20 bg-white border border-dashed border-slate-100 rounded-[32px]">
                 <ShoppingBag className="mx-auto h-12 w-12 text-slate-200 mb-4" />
                 <h3 className="text-lg font-black text-slate-800">Nenhum parceiro encontrado</h3>
-                <p className="text-slate-500 font-medium mt-2">Cadastre um parceiro ou altere os filtros de busca.</p>
+                <p className="text-slate-500 font-medium mt-2">
+                  {allPartners && allPartners.length > 0
+                    ? "Altere os filtros de busca ou condomínio."
+                    : "Cadastre um parceiro ou verifique o RLS no Supabase (aba Parceiros)."}
+                </p>
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
