@@ -127,7 +127,7 @@ function AppShellManager({ children }: { children: React.ReactNode }) {
   
   // Lista de slugs reservados que não devem ser tratados como condomínios
   const reservedSlugs = ['painel', 'painel-master', 'login', 'join', 'register', 'auth', 'master', 'reset-password', 'set-password', 'onboarding', 'portal', 'zelador']
-  const portalPages = ['comunicados', 'clube', 'guia', 'eventos', 'galeria', 'arquivos', 'faq']
+  const portalPages = ['comunicados', 'encomendas', 'clube', 'guia', 'eventos', 'galeria', 'arquivos', 'faq']
   const tenantSecondSegments = ['login', 'join', 'reset-password', 'set-password', 'painel', 'zelador', 'onboarding', 'auth']
 
   const slugFromPath = (() => {
