@@ -43,27 +43,57 @@ export function Sidebar() {
     await supabase.auth.signOut()
   }
 
-  // Definição dos menus baseada na área (App ou Painel)
-  const menuItemsPainel = [
-    { icon: LayoutDashboard, label: "Gestão", path: "/painel", roles: ["sindico", "subsindico"] },
-    { icon: Users, label: "Moradores", path: "/painel/moradores", roles: ["sindico", "subsindico"] },
-    { icon: Building2, label: "Unidades", path: "/painel/unidades", roles: ["sindico", "subsindico"] },
-    { icon: MessageSquareText, label: "Canal do Morador", path: "/painel/canal-morador", roles: ["sindico", "subsindico"] },
-    { icon: Bell, label: "Comunicados", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
-    { icon: Gavel, label: "Assembleias", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },
-    { icon: ClipboardList, label: "Ordens de Serviço", path: "/painel/servicos", roles: ["sindico"], key: "servicos" },
-    { icon: Package, label: "Portaria", path: "/painel/portarias", roles: ["sindico"] },
-    { icon: Calendar, label: "Agenda", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
-    { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
-    { icon: Package, label: "Meu Painel", path: "/portaria", roles: ["portaria"], key: "portaria-home" },
-    { icon: Calendar, label: "Eventos Sociais", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },
-    { icon: ImageIcon, label: "Galeria", path: "/painel/galeria", roles: ["sindico", "subsindico"], key: "galeria" },
-    { icon: FileText, label: "Arquivos", path: "/painel/arquivos", roles: ["sindico", "subsindico"], key: "arquivos" },
-    { icon: CircleHelp, label: "FAQ", path: "/painel/faq", roles: ["sindico", "subsindico"], key: "faq" },
-    { icon: Gift, label: "Clube", path: "/painel/clube", roles: ["sindico", "subsindico"], key: "clube" },
-    { icon: FileText, label: "Guia do Morador", path: "/painel/guia", roles: ["sindico", "subsindico"], key: "guia" },
-    { icon: Settings, label: "Configurações", path: "/painel/configuracoes", roles: ["sindico"] },
-    { icon: ShieldAlert, label: "Painel Master", path: "/painel-master", roles: ["super_admin"] },
+  // Definição dos menus baseada na área (App ou Painel) com agrupamento em seções
+  const sectionsPainel = [
+    {
+      title: "📊 DASHBOARD",
+      items: [
+        { icon: LayoutDashboard, label: "Gestão", path: "/painel", roles: ["sindico", "subsindico"] },
+        { icon: LayoutDashboard, label: "Meu Painel", path: "/painel", roles: ["zelador"], key: "zelador-home" },
+        { icon: Package, label: "Meu Painel", path: "/portaria", roles: ["portaria"], key: "portaria-home" },
+      ]
+    },
+    {
+      title: "👥 COMUNIDADE",
+      items: [
+        { icon: Users, label: "Moradores", path: "/painel/moradores", roles: ["sindico", "subsindico"] },
+        { icon: Building2, label: "Unidades", path: "/painel/unidades", roles: ["sindico", "subsindico"] },
+        { icon: MessageSquareText, label: "Canal do Morador", path: "/painel/canal-morador", roles: ["sindico", "subsindico"] },
+      ]
+    },
+    {
+      title: "📢 COMUNICAÇÃO",
+      items: [
+        { icon: Bell, label: "Comunicados", path: "/painel/comunicados", roles: ["sindico", "subsindico"], key: "comunicados" },
+        { icon: Gavel, label: "Assembleias", path: "/painel/assembleias", roles: ["sindico", "subsindico"], key: "assembleias" },
+        { icon: CircleHelp, label: "FAQ", path: "/painel/faq", roles: ["sindico", "subsindico"], key: "faq" },
+      ]
+    },
+    {
+      title: "🛠️ OPERAÇÃO",
+      items: [
+        { icon: ClipboardList, label: "Ordens de Serviço", path: "/painel/servicos", roles: ["sindico"], key: "servicos" },
+        { icon: Calendar, label: "Agenda", path: "/painel/servicos/agenda", roles: ["zelador"], key: "servicos" },
+        { icon: Package, label: "Portaria", path: "/painel/portarias", roles: ["sindico"] },
+        { icon: Calendar, label: "Eventos Sociais", path: "/painel/eventos", roles: ["sindico"], key: "eventos" },
+        { icon: ImageIcon, label: "Galeria", path: "/painel/galeria", roles: ["sindico", "subsindico"], key: "galeria" },
+        { icon: FileText, label: "Arquivos", path: "/painel/arquivos", roles: ["sindico", "subsindico"], key: "arquivos" },
+        { icon: FileText, label: "Guia do Morador", path: "/painel/guia", roles: ["sindico", "subsindico"], key: "guia" },
+      ]
+    },
+    {
+      title: "🛍️ PARCERIAS",
+      items: [
+        { icon: Gift, label: "Clube de Vantagens", path: "/painel/clube", roles: ["sindico", "subsindico"], key: "clube" },
+      ]
+    },
+    {
+      title: "⚙️ CONFIGURAÇÕES",
+      items: [
+        { icon: Settings, label: "Configurações", path: "/painel/configuracoes", roles: ["sindico"] },
+        { icon: ShieldAlert, label: "Painel Master", path: "/painel-master", roles: ["super_admin"] },
+      ]
+    }
   ];
 
   const menuItemsApp = [
@@ -78,22 +108,40 @@ export function Sidebar() {
     { icon: FileText, label: "Guia do Morador", path: "/portal/guia", roles: ["morador", "sindico", "subsindico"], key: "guia" },
   ];
 
-  const menuItems = isPainelPath ? menuItemsPainel : menuItemsApp;
+  // Processa as seções do painel aplicando filtros de permissões e módulos ativos
+  const filteredSections = sectionsPainel.map(section => {
+    const filteredItems = section.items.filter(item => {
+      if (isMaster) return true;
+      
+      const hasRole = item.roles.includes(userRole);
+      if (!hasRole) return false;
 
-  const filteredMenu = menuItems.filter(item => {
+      if (item.key && tenant?.modulos_ativos) {
+         return tenant.modulos_ativos[item.key] !== false;
+      }
+
+      return true;
+    });
+
+    return {
+      ...section,
+      items: filteredItems
+    };
+  }).filter(section => section.items.length > 0);
+
+  // Processa o menu do morador aplicando filtros de permissões e módulos ativos
+  const filteredMenuApp = menuItemsApp.filter(item => {
     if (isMaster) return true;
     
-    // Filtro por Role
     const hasRole = item.roles.includes(userRole);
     if (!hasRole) return false;
 
-    // Filtro por Módulo Ativo (se houver chave de módulo)
     if (item.key && tenant?.modulos_ativos) {
        return tenant.modulos_ativos[item.key] !== false;
     }
 
     return true;
-  })
+  });
 
   const isActive = (path: string) => {
     const fullPath = withTenantPrefix(path, tenantSlug)
@@ -153,29 +201,70 @@ export function Sidebar() {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar pt-1">
-        {filteredMenu.map((item) => {
-          const active = isActive(item.path)
-          return (
-            <Link
-              key={item.path}
-              to={withTenantPrefix(item.path, tenantSlug)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg transition-all group",
-                active 
-                  ? "bg-[#C5D932] text-[#1a2e25] font-bold shadow-lg shadow-lime-900/10" 
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
+      <nav className="flex-1 px-3 space-y-4 overflow-y-auto custom-scrollbar pt-4">
+        {isPainelPath ? (
+          filteredSections.map((section, sIdx) => (
+            <div key={section.title || sIdx} className="space-y-1">
+              {!collapsed && section.title && (
+                <div className="px-3 pt-2 pb-1 text-[10px] font-black text-white/30 uppercase tracking-widest select-none">
+                  {section.title}
+                </div>
               )}
-              title={collapsed ? item.label : ""}
-            >
-              <item.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", !active && "group-hover:scale-110")} />
-              {!collapsed && <span className="text-sm tracking-tight font-medium">{item.label}</span>}
-              {!collapsed && active && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1a2e25]" />
+              {collapsed && sIdx > 0 && (
+                <div className="h-[1px] bg-white/5 my-2 mx-2 animate-in fade-in duration-300" />
               )}
-            </Link>
-          )
-        })}
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const active = isActive(item.path)
+                  return (
+                    <Link
+                      key={item.path}
+                      to={withTenantPrefix(item.path, tenantSlug)}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg transition-all group",
+                        active 
+                          ? "bg-[#C5D932] text-[#1a2e25] font-bold shadow-lg shadow-lime-900/10" 
+                          : "text-white/70 hover:bg-white/5 hover:text-white"
+                      )}
+                      title={collapsed ? item.label : ""}
+                    >
+                      <item.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", !active && "group-hover:scale-110")} />
+                      {!collapsed && <span className="text-sm tracking-tight font-medium">{item.label}</span>}
+                      {!collapsed && active && (
+                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1a2e25]" />
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="space-y-0.5">
+            {filteredMenuApp.map((item) => {
+              const active = isActive(item.path)
+              return (
+                <Link
+                  key={item.path}
+                  to={withTenantPrefix(item.path, tenantSlug)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-all group",
+                    active 
+                      ? "bg-[#C5D932] text-[#1a2e25] font-bold shadow-lg shadow-lime-900/10" 
+                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                  )}
+                  title={collapsed ? item.label : ""}
+                >
+                  <item.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", !active && "group-hover:scale-110")} />
+                  {!collapsed && <span className="text-sm tracking-tight font-medium">{item.label}</span>}
+                  {!collapsed && active && (
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1a2e25]" />
+                  )}
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </nav>
 
       {/* Footer Actions */}

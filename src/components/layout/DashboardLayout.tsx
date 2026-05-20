@@ -107,7 +107,7 @@ export default function DashboardLayout() {
     { icon: ImageIcon, label: "Galeria de Fotos", category: "Comunicação", path: "/painel/galeria", roles: ["sindico", "subsindico"], key: "galeria" },
     { icon: FileText, label: "Arquivos / Documentos / Regimentos", category: "Administração", path: "/painel/arquivos", roles: ["sindico", "subsindico"], key: "arquivos" },
     { icon: CircleHelp, label: "FAQ / Dúvidas Frequentes", category: "Administração", path: "/painel/faq", roles: ["sindico", "subsindico"], key: "faq" },
-    { icon: Gift, label: "Clube de Descontos / Clube do Morador", category: "Vantagens", path: "/painel/clube", roles: ["sindico", "subsindico"], key: "clube" },
+    { icon: Gift, label: "Clube de Vantagens", category: "Parcerias", path: "/painel/clube", roles: ["sindico", "subsindico"], key: "clube" },
     { icon: FileText, label: "Guia do Morador / Regras", category: "Administração", path: "/painel/guia", roles: ["sindico", "subsindico"], key: "guia" },
     { icon: Settings, label: "Configurações do Condomínio", category: "Administração", path: "/painel/configuracoes", roles: ["sindico"] },
   ];
