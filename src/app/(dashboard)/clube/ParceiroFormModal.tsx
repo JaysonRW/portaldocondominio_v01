@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { useAuthStore } from "../../../stores/authStore"
 import { useTenantStore } from "../../../stores/tenantStore"
 import { supabase } from "../../../lib/supabase"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { Button } from "../../../components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
@@ -27,6 +27,21 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
                        user?.app_metadata?.role === 'super_admin' ||
                        isMasterMode || 
                        user?.email === 'propagoumkd@gmail.com'
+
+  const [condominioId, setCondominioId] = useState<string | null>(null)
+
+  const { data: condominios } = useQuery({
+    queryKey: ['all_condominios_for_partner_form'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('condominios')
+        .select('id, nome')
+        .order('nome')
+      if (error) throw error
+      return data || []
+    },
+    enabled: isSuperAdmin,
+  })
 
   const [nomeForm, setNomeForm] = useState("")
   const [descForm, setDescForm] = useState("")
@@ -64,6 +79,7 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
         setSiteForm(parceiroToEdit.link_site || "")
         setWhatsappForm(parceiroToEdit.whatapp_parceiro || "")
         setIsGlobalForm(parceiroToEdit.condominio_id === null)
+        setCondominioId(parceiroToEdit.condominio_id || null)
         
         setTipoAnunciante(parceiroToEdit.tipo_anunciante || "parceiro_oficial")
         setTipoOferta(parceiroToEdit.tipo_oferta || "servico")
@@ -87,6 +103,7 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
         setSiteForm("")
         setWhatsappForm("")
         setIsGlobalForm(false)
+        setCondominioId(tenant?.id || null)
         setTipoAnunciante("parceiro_oficial")
         setTipoOferta("servico")
         setCategoria("")
@@ -103,7 +120,7 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
         setPrecoForm("")
       }
     }
-  }, [open, parceiroToEdit])
+  }, [open, parceiroToEdit, tenant])
 
   const handleFileUpload = async (file: File, type: 'logo' | 'banner' | 'banner_premium') => {
     try {
@@ -142,9 +159,12 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
   const saveParceiro = useMutation({
     mutationFn: async () => {
       if (!nomeForm || !descontoForm) throw new Error("Preencha Nome e Desconto!")
+      if (!isGlobalForm && !condominioId && !tenant?.id) {
+        throw new Error("Selecione um condomínio ou marque como Parceiro Global!")
+      }
       
       const payload = {
-        condominio_id: isGlobalForm ? null : tenant?.id,
+        condominio_id: isGlobalForm ? null : (condominioId || tenant?.id || null),
         nome: nomeForm,
         descricao: descForm,
         desconto_info: descontoForm,
@@ -432,6 +452,22 @@ export function ParceiroFormModal({ open, onOpenChange, parceiroToEdit, onSucces
                 </div>
               )}
             </div>
+
+            {isSuperAdmin && !isGlobalForm && (
+              <div className="grid gap-2 mt-2 w-full animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="text-sm font-bold text-slate-700">Vincular ao Condomínio</label>
+                <select 
+                  value={condominioId || ""} 
+                  onChange={(e) => setCondominioId(e.target.value || null)}
+                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:ring-primary outline-none animate-in fade-in duration-300"
+                >
+                  <option value="">Selecione um condomínio...</option>
+                  {condominios?.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.nome}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {isSuperAdmin && (
               <div className="grid gap-2 mt-2">

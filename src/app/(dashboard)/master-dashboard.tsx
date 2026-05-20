@@ -7,14 +7,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
-import { UserCircle, Building2, Plus, Settings2, Globe, ShieldCheck, Layers, Search, Mail, ExternalLink, CheckCircle, Clock, Copy, Trash2, Power, MoreVertical, XCircle } from "lucide-react"
+import { UserCircle, Building2, Plus, Settings2, Globe, ShieldCheck, Layers, Search, Mail, ExternalLink, CheckCircle, Clock, Copy, Trash2, Power, MoreVertical, XCircle, Pencil, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
 import { Skeleton } from "../../components/ui/skeleton"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Badge } from "../../components/ui/badge"
 import { isLocalhostHost, cn } from "../../lib/utils"
+import { ParceiroFormModal } from "./clube/ParceiroFormModal"
 
-type Tab = "condos" | "users" | "approvals" | "settings"
+type Tab = "condos" | "users" | "approvals" | "partners" | "settings"
 
 export default function MasterDashboard() {
   const { perfil: perfilFromStore, user } = useAuthStore()
@@ -25,6 +26,11 @@ export default function MasterDashboard() {
   const [openModal, setOpenModal] = useState(false)
   const [manageCondo, setManageCondo] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
+
+  const [openPartnerModal, setOpenPartnerModal] = useState(false)
+  const [partnerToEdit, setPartnerToEdit] = useState<any | null>(null)
+  const [partnerSearchTerm, setPartnerSearchTerm] = useState("")
+  const [partnerCondoFilter, setPartnerCondoFilter] = useState<string>("all")
 
   // Form states for new Condo
   const [nome, setNome] = useState("")
@@ -340,6 +346,50 @@ export default function MasterDashboard() {
     navigate(targetPath)
   }
 
+  // Queries & Mutations para Gerenciamento de Parceiros (Clube)
+  const { data: allPartners, isLoading: loadingPartners } = useQuery({
+    queryKey: ['all_partners'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('clube_parceiros')
+        .select('*, condominios(nome, slug)')
+        .order('criado_em', { ascending: false })
+      if (error) {
+        console.error('[Master] Erro ao buscar parceiros:', error)
+        throw error
+      }
+      return data || []
+    },
+    enabled: activeTab === "partners",
+  })
+
+  const deletePartner = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('clube_parceiros')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      toast.success("Parceiro excluído com sucesso!")
+      queryClient.invalidateQueries({ queryKey: ['all_partners'] })
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao excluir parceiro: " + error.message)
+    }
+  })
+
+  const filteredPartners = allPartners?.filter((p: any) => {
+    const matchesSearch = p.nome?.toLowerCase().includes(partnerSearchTerm.toLowerCase()) ||
+                          p.descricao?.toLowerCase().includes(partnerSearchTerm.toLowerCase()) ||
+                          p.categoria?.toLowerCase().includes(partnerSearchTerm.toLowerCase());
+    
+    if (partnerCondoFilter === "all") return matchesSearch;
+    if (partnerCondoFilter === "global") return matchesSearch && p.condominio_id === null;
+    return matchesSearch && p.condominio_id === partnerCondoFilter;
+  });
+
   const MASTER_EMAIL = "propagoumkd@gmail.com"
   const isMaster = meuPerfil?.role === 'super_admin' || user?.email === MASTER_EMAIL
 
@@ -533,6 +583,13 @@ export default function MasterDashboard() {
               {solicitacoes.length}
             </span>
           )}
+        </Button>
+        <Button 
+          variant={activeTab === "partners" ? "default" : "ghost"} 
+          onClick={() => setActiveTab("partners")}
+          className="rounded-lg px-6"
+        >
+          Parceiros (Clube)
         </Button>
         <Button 
           variant={activeTab === "settings" ? "default" : "ghost"} 
@@ -808,6 +865,137 @@ export default function MasterDashboard() {
           </div>
         )}
 
+        {activeTab === "partners" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-[24px] border border-slate-100/50 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                <div className="relative w-full sm:w-72">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Buscar por parceiro ou categoria..." 
+                    className="pl-9 h-10 rounded-xl text-sm"
+                    value={partnerSearchTerm}
+                    onChange={(e) => setPartnerSearchTerm(e.target.value)}
+                  />
+                </div>
+                
+                <select 
+                  value={partnerCondoFilter} 
+                  onChange={(e) => setPartnerCondoFilter(e.target.value)}
+                  className="flex h-10 w-full sm:w-64 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:ring-primary outline-none"
+                >
+                  <option value="all">Filtrar por Condomínio (Todos)</option>
+                  <option value="global">Apenas Globais</option>
+                  {condominios?.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.nome}</option>
+                  ))}
+                </select>
+              </div>
+
+              <Button 
+                onClick={() => {
+                  setPartnerToEdit(null)
+                  setOpenPartnerModal(true)
+                }} 
+                className="bg-primary hover:opacity-90 text-white rounded-xl px-6 h-10 gap-2 shadow-lg shadow-primary/10 w-full sm:w-auto font-bold"
+              >
+                <Plus className="h-4 w-4" />
+                Novo Parceiro
+              </Button>
+            </div>
+
+            {loadingPartners ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-64 rounded-[32px]" />
+                ))}
+              </div>
+            ) : filteredPartners?.length === 0 ? (
+              <div className="text-center p-20 bg-white border border-dashed border-slate-100 rounded-[32px]">
+                <ShoppingBag className="mx-auto h-12 w-12 text-slate-200 mb-4" />
+                <h3 className="text-lg font-black text-slate-800">Nenhum parceiro encontrado</h3>
+                <p className="text-slate-500 font-medium mt-2">Cadastre um parceiro ou altere os filtros de busca.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredPartners?.map((partner: any) => (
+                  <Card key={partner.id} className="overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 bg-white flex flex-col rounded-[32px] group relative">
+                    <div className="h-32 bg-slate-50 flex items-center justify-center relative overflow-hidden">
+                      {partner.imagem_banner_url || partner.logo_url ? (
+                        <img src={partner.imagem_banner_url || partner.logo_url} alt={partner.nome} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-slate-200 font-black text-3xl uppercase tracking-widest">{partner.nome.substring(0,2)}</span>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+                      
+                      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+                        <Badge className="bg-white/90 text-primary border-none font-bold text-[9px] uppercase tracking-widest shadow-sm w-fit backdrop-blur-sm">
+                          {partner.selo === 'morador_empreendedor' ? 'Morador' : 'Oficial'}
+                        </Badge>
+                        {partner.condominio_id === null ? (
+                          <Badge className="bg-purple-100 text-purple-700 border-none font-black text-[9px] uppercase tracking-widest shadow-sm w-fit">
+                            Global
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-blue-100 text-blue-700 border-none font-black text-[9px] uppercase tracking-widest shadow-sm w-fit max-w-[120px] truncate">
+                            {partner.condominios?.nome || "Local"}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex gap-2">
+                        <Button 
+                          variant="secondary" 
+                          size="icon" 
+                          className="h-8 w-8 rounded-lg shadow bg-white/90 hover:bg-white"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setPartnerToEdit(partner)
+                            setOpenPartnerModal(true)
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-slate-700" />
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="icon" 
+                          className="h-8 w-8 rounded-lg shadow"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (confirm(`Remover o parceiro ${partner.nome}?`)) {
+                              deletePartner.mutate(partner.id)
+                            }
+                          }}
+                          disabled={deletePartner.isPending}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    <CardHeader className="pt-5 pb-2 px-6">
+                      <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{partner.categoria}</span>
+                      <CardTitle className="text-lg font-bold text-slate-800 line-clamp-1">{partner.nome}</CardTitle>
+                    </CardHeader>
+                    
+                    <CardContent className="flex-1 py-2 px-6 text-xs text-slate-500 font-medium">
+                      <p className="line-clamp-2 leading-relaxed">{partner.descricao}</p>
+                      <div className="mt-3 text-[10px] font-bold text-slate-700 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 w-fit">
+                        Desconto: <span className="text-primary font-black">{partner.desconto_info}</span>
+                      </div>
+                    </CardContent>
+
+                    <div className="p-6 pt-2 border-t mt-4 flex items-center justify-between text-[10px] text-slate-400 font-bold bg-slate-50/50">
+                      <span>Criado em {new Date(partner.criado_em).toLocaleDateString()}</span>
+                      <span className="capitalize">{partner.status}</span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === "settings" && (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
              <Card className="border-none shadow-sm bg-white rounded-[32px] overflow-hidden">
@@ -861,6 +1049,15 @@ export default function MasterDashboard() {
           </div>
         )}
       </div>
+
+      <ParceiroFormModal
+        open={openPartnerModal}
+        onOpenChange={setOpenPartnerModal}
+        parceiroToEdit={partnerToEdit}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['all_partners'] })
+        }}
+      />
 
       {/* Modal de Gerenciamento do Condomínio */}
       <Dialog open={!!manageCondo} onOpenChange={(open) => !open && setManageCondo(null)}>

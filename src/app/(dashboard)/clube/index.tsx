@@ -28,12 +28,7 @@ export default function ClubeVantagens() {
                        isMasterMode || 
                        user?.email === 'propagoumkd@gmail.com'
 
-  const canAddPartner = isSuperAdmin || 
-                        perfil?.role === 'sindico' || 
-                        user?.app_metadata?.role === 'sindico' ||
-                        perfil?.role === 'subsindico' ||
-                        user?.app_metadata?.role === 'subsindico' ||
-                        perfil?.role === 'morador' // Permitir morador cadastrar? Doc diz que o sindico aprova.
+  const canAddPartner = isSuperAdmin
 
   const { data: parceiros, isLoading } = useQuery({
     queryKey: ['parceiros', tenant?.id, isSuperAdmin],
