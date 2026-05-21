@@ -2,6 +2,11 @@ import { isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestora
 import "./../index.css"; // Global styles
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const ogImagePath = "/Logo-collina-painel%20adm.jpg"
+  const ogTitle = "Condomínio Smart"
+  const ogDescription =
+    "Portal do condomínio: comunicados, encomendas, documentos, eventos e mais."
+
   return (
     <html lang="pt-BR" className="h-full">
       <head>
@@ -18,6 +23,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <link rel="apple-touch-icon" href="/favicon.svg" />
         <link rel="manifest" href="/manifest.json" />
+        <title>{ogTitle}</title>
+        <meta name="description" content={ogDescription} />
+
+        {/* Open Graph (WhatsApp/Facebook/Instagram/etc.) */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImagePath} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={ogDescription} />
+        <meta name="twitter:image" content={ogImagePath} />
         <Meta />
         <Links />
       </head>
