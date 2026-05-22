@@ -43,6 +43,9 @@ export default function PublicFAQ() {
       })
       if (error) throw error
     },
+    onError: (error: any) => {
+      toast.error(error?.message || "Não foi possível registrar a interação no FAQ.")
+    },
   })
 
   return (

@@ -47,7 +47,33 @@ export default function FAQ() {
       return (data as any) ?? null
     },
     enabled: !!tenant?.id && !!canAdmin,
+    refetchOnWindowFocus: true,
+    refetchInterval: 15000,
   })
+
+  useEffect(() => {
+    if (!tenant?.id || !canAdmin) return
+
+    const channel = supabase
+      .channel(`faq_interactions_${tenant.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'faq_interactions',
+          filter: `condominio_id=eq.${tenant.id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['faq-kpis', tenant.id] })
+        },
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [tenant?.id, canAdmin, queryClient])
 
   const { data: faqs, isLoading } = useQuery({
     queryKey: ['faqs', tenant?.id],
