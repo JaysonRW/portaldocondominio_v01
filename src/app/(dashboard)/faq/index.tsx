@@ -219,7 +219,7 @@ export default function FAQ() {
           <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">EficiÃªncia de ResoluÃ§Ã£o (mÃªs)</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Eficiência de Resolução</p>
                 <div className="mt-2 flex items-baseline gap-2">
                   {isLoadingKpis ? (
                     <Skeleton className="h-8 w-20 rounded-xl" />
@@ -240,14 +240,14 @@ export default function FAQ() {
               </div>
             </div>
             <p className="mt-3 text-xs text-slate-500 font-medium leading-relaxed">
-              Mede quantas dÃºvidas foram resolvidas automaticamente pelo FAQ.
+              Mede quantas dúvidas foram resolvidas automaticamente pelo FAQ.
             </p>
           </Card>
 
           <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total de VisualizaÃ§Ãµes (mÃªs)</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total de Visualizações</p>
                 <div className="mt-2">
                   {isLoadingKpis ? (
                     <Skeleton className="h-8 w-20 rounded-xl" />
@@ -268,7 +268,7 @@ export default function FAQ() {
           <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">TÃ³pico mais crÃ­tico (7 dias)</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tópico mais Crítico</p>
                 <div className="mt-2">
                   {isLoadingKpis ? (
                     <Skeleton className="h-8 w-40 rounded-xl" />
@@ -289,7 +289,7 @@ export default function FAQ() {
               </div>
             </div>
             <p className="mt-3 text-xs text-slate-500 font-medium leading-relaxed">
-              Ajuda a identificar as maiores dores do prÃ©dio para aÃ§Ã£o preventiva.
+              Ajuda a identificar as maiores dores dos moradores para ação preventiva.
             </p>
           </Card>
         </div>
