@@ -1,13 +1,18 @@
 import { PublicHeader } from "../../components/layout/PublicHeader"
 import { useTenantStore } from "../../stores/tenantStore"
-import { HelpCircle, ChevronDown, Loader2 } from "lucide-react"
-import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useAuthStore } from "../../stores/authStore"
+import { HelpCircle, ChevronDown, Loader2, ThumbsUp, ThumbsDown } from "lucide-react"
+import { useMemo, useState } from "react"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { supabase } from "../../lib/supabase"
+import { toast } from "sonner"
 
 export default function PublicFAQ() {
   const { tenant } = useTenantStore()
+  const { user } = useAuthStore()
   const [openIndex, setOpenIndex] = useState<string | null>(null)
+
+  const canTrack = useMemo(() => !!tenant?.id, [tenant?.id])
 
   const { data: faqs, isLoading } = useQuery({
     queryKey: ['faqs_publicas', tenant?.id],
@@ -24,6 +29,20 @@ export default function PublicFAQ() {
       return data || []
     },
     enabled: !!tenant?.id,
+  })
+
+  const trackInteraction = useMutation({
+    mutationFn: async (payload: { faq_id: string; event_type: 'view' | 'feedback'; resolved?: boolean | null }) => {
+      if (!tenant?.id) return
+      const { error } = await supabase.from('faq_interactions').insert({
+        condominio_id: tenant.id,
+        faq_id: payload.faq_id,
+        user_id: user?.id ?? null,
+        event_type: payload.event_type,
+        resolved: payload.event_type === 'feedback' ? (payload.resolved ?? null) : null,
+      })
+      if (error) throw error
+    },
   })
 
   return (
@@ -53,7 +72,13 @@ export default function PublicFAQ() {
               <div key={faq.id} className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all">
                 <button 
                   className="w-full px-10 py-8 text-left flex justify-between items-center hover:bg-slate-50 transition-colors group"
-                  onClick={() => setOpenIndex(openIndex === faq.id ? null : faq.id)}
+                  onClick={() => {
+                    const next = openIndex === faq.id ? null : faq.id
+                    setOpenIndex(next)
+                    if (next && canTrack) {
+                      trackInteraction.mutate({ faq_id: faq.id, event_type: 'view' })
+                    }
+                  }}
                 >
                   <span className="text-xl font-black text-slate-800 group-hover:text-[#1a2e25]">{faq.pergunta}</span>
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${openIndex === faq.id ? 'bg-[#1a2e25] text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-[#C5D932] group-hover:text-[#1a2e25]'}`}>
@@ -64,6 +89,40 @@ export default function PublicFAQ() {
                   <div className="px-10 pb-10 pt-0 text-slate-500 font-medium text-lg leading-relaxed animate-in slide-in-from-top-2 duration-300">
                     <div className="pt-6 border-t border-slate-50 whitespace-pre-wrap">
                       {faq.resposta}
+                    </div>
+
+                    <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4">
+                      <div className="text-sm font-black text-slate-700 uppercase tracking-tight">
+                        Isso resolveu sua dúvida?
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            trackInteraction.mutate(
+                              { faq_id: faq.id, event_type: 'feedback', resolved: true },
+                              { onSuccess: () => toast.success("Obrigado pelo feedback!") }
+                            )
+                          }}
+                          className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-700 hover:bg-slate-100 transition-colors"
+                          disabled={trackInteraction.isPending}
+                        >
+                          <ThumbsUp className="w-4 h-4" /> Sim
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            trackInteraction.mutate(
+                              { faq_id: faq.id, event_type: 'feedback', resolved: false },
+                              { onSuccess: () => toast.success("Obrigado pelo feedback!") }
+                            )
+                          }}
+                          className="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-700 hover:bg-slate-100 transition-colors"
+                          disabled={trackInteraction.isPending}
+                        >
+                          <ThumbsDown className="w-4 h-4" /> Não
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}

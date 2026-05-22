@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useLocation } from "react-router"
 import { Card } from "../../../components/ui/card"
 import { Button } from "../../../components/ui/button"
-import { CircleHelp, PlusCircle, Trash2, Edit2, ChevronDown, Info } from "lucide-react"
+import { CircleHelp, PlusCircle, Trash2, Edit2, ChevronDown, Info, TrendingUp, Eye, AlertTriangle } from "lucide-react"
 import { Skeleton } from "../../../components/ui/skeleton"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../components/ui/dialog"
@@ -36,6 +36,18 @@ export default function FAQ() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const canAdmin = perfil?.role === 'sindico' || perfil?.role === 'subsindico' || perfil?.role === 'super_admin'
+
+  const { data: kpis, isLoading: isLoadingKpis } = useQuery({
+    queryKey: ['faq-kpis', tenant?.id],
+    queryFn: async () => {
+      if (!tenant?.id) return null
+      const { data, error } = await supabase.rpc('faq_kpis', { p_condominio_id: tenant.id })
+      if (error) throw error
+      if (Array.isArray(data)) return data[0] ?? null
+      return (data as any) ?? null
+    },
+    enabled: !!tenant?.id && !!canAdmin,
+  })
 
   const { data: faqs, isLoading } = useQuery({
     queryKey: ['faqs', tenant?.id],
@@ -201,6 +213,87 @@ export default function FAQ() {
           </Dialog>
         )}
       </div>
+
+      {canAdmin && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">EficiÃªncia de ResoluÃ§Ã£o (mÃªs)</p>
+                <div className="mt-2 flex items-baseline gap-2">
+                  {isLoadingKpis ? (
+                    <Skeleton className="h-8 w-20 rounded-xl" />
+                  ) : (
+                    <span className="text-3xl font-black text-slate-900">
+                      {typeof (kpis as any)?.efficiency_pct === 'number' ? `${(kpis as any).efficiency_pct}%` : '—'}
+                    </span>
+                  )}
+                  {!isLoadingKpis && (
+                    <span className="text-xs font-bold text-slate-400">
+                      ({(kpis as any)?.feedback_yes ?? 0}/{(kpis as any)?.feedback_total ?? 0} feedbacks)
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-500 font-medium leading-relaxed">
+              Mede quantas dÃºvidas foram resolvidas automaticamente pelo FAQ.
+            </p>
+          </Card>
+
+          <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total de VisualizaÃ§Ãµes (mÃªs)</p>
+                <div className="mt-2">
+                  {isLoadingKpis ? (
+                    <Skeleton className="h-8 w-20 rounded-xl" />
+                  ) : (
+                    <span className="text-3xl font-black text-slate-900">{(kpis as any)?.views_month ?? 0}</span>
+                  )}
+                </div>
+              </div>
+              <div className="p-3 rounded-2xl bg-sky-50 text-sky-600">
+                <Eye className="w-6 h-6" />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-500 font-medium leading-relaxed">
+              Indica engajamento dos moradores usando o portal como primeira consulta.
+            </p>
+          </Card>
+
+          <Card className="rounded-[28px] border-none bg-white shadow-sm p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">TÃ³pico mais crÃ­tico (7 dias)</p>
+                <div className="mt-2">
+                  {isLoadingKpis ? (
+                    <Skeleton className="h-8 w-40 rounded-xl" />
+                  ) : (kpis as any)?.top_pergunta ? (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm font-black text-slate-900 truncate">{(kpis as any).top_pergunta}</span>
+                      <span className="text-xs font-bold text-slate-400 truncate">
+                        {(kpis as any).top_categoria ? `${(kpis as any).top_categoria} â€¢ ` : ''}{(kpis as any).top_views_week ?? 0} views
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-sm font-black text-slate-500">Sem dados</span>
+                  )}
+                </div>
+              </div>
+              <div className="p-3 rounded-2xl bg-amber-50 text-amber-600">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-500 font-medium leading-relaxed">
+              Ajuda a identificar as maiores dores do prÃ©dio para aÃ§Ã£o preventiva.
+            </p>
+          </Card>
+        </div>
+      )}
 
       <div className="bg-blue-50 border border-blue-100 p-6 rounded-[32px] flex items-start gap-4 mb-2">
          <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-600 shrink-0">
