@@ -1,5 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router"
-import { useQuery } from "@tanstack/react-query"
+import { Link, useLocation } from "react-router"
 import { useTenantStore } from "../../stores/tenantStore"
 import { useAuthStore } from "../../stores/authStore"
 import { Button } from "../ui/button"
@@ -16,26 +15,11 @@ export function PublicHeader() {
   const { user, perfil } = useAuthStore()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [accessOpen, setAccessOpen] = useState(false)
-  const [accessSlug, setAccessSlug] = useState("")
   const dropdownRef = useRef<HTMLDivElement>(null)
   const tenantSlug = tenant?.slug
   const location = useLocation()
-  const navigate = useNavigate()
-
-  const { data: condominiosList, isLoading: isLoadingCondominios } = useQuery({
-    queryKey: ['condominios_lista_publica'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('condominios')
-        .select('id, nome, slug')
-        .eq('ativo', true)
-        .order('nome', { ascending: true })
-      
-      if (error) throw error
-      return data || []
-    }
-  })
+  const demoHref =
+    "https://wa.me/5541995343245?text=Ol%C3%A1!%20Sou%20s%C3%ADndico(a)%20e%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Condom%C3%ADnio%20Smart."
 
   const isActive = (path: string) => {
     const fullPath = withTenantPrefix(path, tenantSlug)
@@ -82,15 +66,6 @@ export function PublicHeader() {
     { label: "Funcionalidades", path: "/#features" },
     { label: "Contato", path: "/#contato" },
   ]
-
-  const handleAccessCondo = () => {
-    const slug = accessSlug.trim().toLowerCase()
-    if (!slug) return
-    setAccessOpen(false)
-    setMobileMenuOpen(false)
-    setAccessSlug("")
-    navigate(`/${slug}`)
-  }
 
   return (
     <header className="sticky top-4 z-50 w-full px-4 sm:px-6 flex justify-center transition-all duration-300">
@@ -222,60 +197,13 @@ export function PublicHeader() {
               ) : (
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-end gap-0.5">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Já é cliente?</span>
-                    <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
-                      <DialogTrigger asChild>
-                        <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-5 py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-[#C5D932]/20 hover:scale-105 transition-all">
-                          Acessar condomínio
-                        </Button>
-                      </DialogTrigger>
-                    <DialogContent className="sm:max-w-[480px] bg-white/95 backdrop-blur-xl border-white/20">
-                      <DialogHeader>
-                        <DialogTitle className="text-base font-black uppercase tracking-widest text-slate-800">
-                          Acessar meu condomínio
-                        </DialogTitle>
-                        <DialogDescription className="sr-only">Digite o slug para acessar seu condomínio</DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4">
-                        <div className="text-sm font-medium text-slate-500">
-                          Selecione o seu condomínio para abrir o portal.
-                        </div>
-                        {isLoadingCondominios ? (
-                          <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
-                            Carregando condomínios...
-                          </div>
-                        ) : (
-                          <select
-                            value={accessSlug}
-                            onChange={(e) => setAccessSlug(e.target.value)}
-                            className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
-                            aria-label="Selecione o condomínio"
-                          >
-                            <option value="">Selecione o seu condomínio...</option>
-                            {condominiosList?.map((c) => (
-                              <option key={c.id} value={c.slug}>
-                                {c.nome}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            className="rounded-xl font-bold"
-                            onClick={() => setAccessOpen(false)}
-                            type="button"
-                          >
-                            Cancelar
-                          </Button>
-                          <Button className="rounded-xl font-black bg-[#1a2e25] text-white hover:bg-[#2a4237]" onClick={handleAccessCondo} type="button">
-                            Abrir portal
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                  </div>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">É síndico?</span>
+                    <Button asChild className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-5 py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-[#C5D932]/20 hover:scale-105 transition-all">
+                      <a href={demoHref} target="_blank" rel="noreferrer">
+                        Agendar demonstração
+                      </a>
+                    </Button>
+</div>
                 </div>
               )
             )}
@@ -286,55 +214,13 @@ export function PublicHeader() {
         {!tenant ? (
           <div className="flex items-center gap-3 md:hidden">
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Já é cliente?</span>
-              <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-[#C5D932]/20">
-                    Acessar
-                  </Button>
-                </DialogTrigger>
-              <DialogContent className="sm:max-w-[480px] w-[90vw] mx-auto rounded-3xl bg-white/95 backdrop-blur-xl border-white/20">
-                <DialogHeader>
-                  <DialogTitle className="text-base font-black uppercase tracking-widest text-slate-800">
-                    Acessar meu condomínio
-                  </DialogTitle>
-                  <DialogDescription className="sr-only">Digite o slug para acessar seu condomínio</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4">
-                  <div className="text-sm font-medium text-slate-500">
-                    Selecione o seu condomínio para abrir o portal.
-                  </div>
-                  {isLoadingCondominios ? (
-                    <div className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-slate-50 text-sm text-slate-500">
-                      Carregando condomínios...
-                    </div>
-                  ) : (
-                    <select
-                      value={accessSlug}
-                      onChange={(e) => setAccessSlug(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-1 text-base shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-sm"
-                      aria-label="Selecione o condomínio"
-                    >
-                      <option value="">Selecione o seu condomínio...</option>
-                      {condominiosList?.map((c) => (
-                        <option key={c.id} value={c.slug}>
-                          {c.nome}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="outline" className="rounded-xl font-bold" onClick={() => setAccessOpen(false)} type="button">
-                      Cancelar
-                    </Button>
-                    <Button className="rounded-xl font-black bg-[#1a2e25] text-white hover:bg-[#2a4237]" onClick={handleAccessCondo} type="button">
-                      Abrir portal
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-            </div>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">É síndico?</span>
+              <Button asChild className="bg-[#C5D932] text-[#1a2e25] hover:bg-[#b3c62d] font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-[#C5D932]/20">
+                <a href={demoHref} target="_blank" rel="noreferrer">
+                  Agendar
+                </a>
+              </Button>
+</div>
             <button className="text-white p-2 rounded-xl hover:bg-white/10 transition-colors bg-white/5 border border-white/10" onClick={() => setMobileMenuOpen(true)} type="button" aria-label="Abrir menu">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
