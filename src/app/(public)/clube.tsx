@@ -9,10 +9,13 @@ import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
 import { Skeleton } from "../../components/ui/skeleton"
 import { Badge } from "../../components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 
 export default function PublicClube() {
   const { tenant } = useTenantStore()
   const [activeFilter, setActiveFilter] = useState("todos")
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const [selectedPartner, setSelectedPartner] = useState<any | null>(null)
 
   const { data: anunciantes, isLoading } = useQuery({
     queryKey: ['parceiros_publicos', tenant?.id],
@@ -51,6 +54,11 @@ export default function PublicClube() {
     const numbersOnly = link.replace(/\D/g, '')
     if (numbersOnly.length >= 10) return `https://wa.me/${numbersOnly}`
     return link
+  }
+
+  const openDetails = (partner: any) => {
+    setSelectedPartner(partner)
+    setDetailsOpen(true)
   }
 
   return (
@@ -208,18 +216,28 @@ export default function PublicClube() {
                   <p className="text-slate-500 font-medium text-base mb-10 flex-1 leading-relaxed line-clamp-3">
                     {item.descricao}
                   </p>
+
+                  {item.descricao && item.descricao.length > 120 && (
+                    <button
+                      type="button"
+                      onClick={() => openDetails(item)}
+                      className="mb-6 text-left text-xs font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors"
+                    >
+                      Ler todos os detalhes
+                    </button>
+                  )}
                   
                   <div className="grid grid-cols-2 gap-4 mb-2">
                     <Button className="bg-[#1a2e25] text-white hover:opacity-90 font-black py-7 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-slate-200" asChild>
                       <a href={formatWhatsAppLink(item.whatapp_parceiro)} target="_blank" rel="noopener noreferrer">
                         <MessageCircle className="w-5 h-5" />
-                        <span className="text-[9px] uppercase tracking-widest">WhatsApp</span>
+                        <span className="text-[9px] uppercase tracking-widest">Enviar Whats</span>
                       </a>
                     </Button>
                     <Button variant="outline" className="border-slate-200 text-[#1a2e25] hover:bg-slate-50 font-black py-7 rounded-2xl flex flex-col items-center justify-center gap-1" asChild>
                       <a href={item.link_site || "#"} target="_blank" rel="noopener noreferrer">
                         <Globe className="w-5 h-5" />
-                        <span className="text-[9px] uppercase tracking-widest">Ver Oferta</span>
+                        <span className="text-[9px] uppercase tracking-widest">Abrir site</span>
                       </a>
                     </Button>
                   </div>
@@ -251,6 +269,65 @@ export default function PublicClube() {
           </p>
         </div>
       </footer>
+
+      <Dialog
+        open={detailsOpen}
+        onOpenChange={(open) => {
+          setDetailsOpen(open)
+          if (!open) setSelectedPartner(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-[620px] rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-base font-black uppercase tracking-widest text-slate-800">
+              {selectedPartner?.nome || "Detalhes da oferta"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedPartner && (
+            <div className="grid gap-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">
+                    {selectedPartner.categoria || selectedPartner.desconto_info || "Vantagem"}
+                  </div>
+                  <div className="mt-1 text-2xl font-black text-[#1a2e25] leading-tight">
+                    {selectedPartner.nome}
+                  </div>
+                  {selectedPartner.tipo_oferta === "produto" && selectedPartner.preco && (
+                    <div className="mt-2 text-lg font-black text-[#1a2e25]">
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedPartner.preco)}
+                    </div>
+                  )}
+                </div>
+
+                {selectedPartner.logo_url && (
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-white">
+                    <img src={selectedPartner.logo_url} alt={selectedPartner.nome} className="h-full w-full object-cover" />
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-600 font-medium leading-relaxed whitespace-pre-wrap max-h-[45vh] overflow-auto">
+                {selectedPartner.descricao || "Sem detalhes adicionais."}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button className="rounded-2xl h-12 bg-[#1a2e25] text-white hover:opacity-90 font-black" asChild>
+                  <a href={formatWhatsAppLink(selectedPartner.whatapp_parceiro)} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" /> Enviar Whats
+                  </a>
+                </Button>
+                <Button variant="outline" className="rounded-2xl h-12 border-slate-200 font-black" asChild>
+                  <a href={selectedPartner.link_site || "#"} target="_blank" rel="noopener noreferrer">
+                    <Globe className="mr-2 h-4 w-4" /> Abrir site
+                  </a>
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
