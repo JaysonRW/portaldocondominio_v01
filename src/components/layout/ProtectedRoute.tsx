@@ -56,7 +56,11 @@ export default function ProtectedRoute() {
 
   // 4. Caso MASTER: Sempre entra — nunca vai para onboarding ou aprovação
   if (isMasterAdmin) {
-    if (normalizedPath === "/") return <Navigate to="/painel-master" replace />
+    // Evita cair em painéis do tenant (ex.: /painel) ao acessar URLs com slug.
+    // MASTER sempre navega pelo painel master.
+    if (!normalizedPath.startsWith("/painel-master")) {
+      return <Navigate to="/painel-master" replace />
+    }
     return <Outlet />
   }
 
