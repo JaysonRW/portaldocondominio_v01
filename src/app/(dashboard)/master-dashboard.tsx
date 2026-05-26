@@ -355,9 +355,11 @@ export default function MasterDashboard() {
       const hostingDomains = ["vercel.app", "netlify.app", "pages.dev"]
       const isHostingDomain = hostingDomains.some((d) => hostname.endsWith(d))
 
+      // Para o magic link funcionar bem no multi-tenant, redirecione para o callback com slug.
+      // Assim o app consegue identificar o tenant pelo URL e navegar para a rota correta.
       const redirectTo = isLocal || isHostingDomain
-        ? `${window.location.origin}/${condo.slug}/painel`
-        : `${window.location.protocol}//${condo.slug}.${window.location.host}/painel`
+        ? `${window.location.origin}/${condo.slug}/auth/callback`
+        : `${window.location.protocol}//${condo.slug}.${window.location.host}/auth/callback`
 
       const { data, error } = await supabase.functions.invoke("support-impersonate", {
         body: { condominio_id: condo.id, redirectTo },
