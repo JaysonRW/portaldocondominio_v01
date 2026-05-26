@@ -143,7 +143,15 @@ export default function MasterDashboard() {
         .select('id, slug')
         .single()
 
-      if (error) throw error
+      if (error) {
+        let message = error.message
+        const ctx: any = (error as any)?.context
+        if (ctx && typeof ctx.json === "function") {
+          const body = await ctx.json().catch(() => null)
+          if (body?.error) message = String(body.error)
+        }
+        throw new Error(message)
+      }
       if (!created?.id) throw new Error("Falha ao criar condomínio")
 
       const isLocal = isLocalhostHost(window.location.hostname)
@@ -338,6 +346,10 @@ export default function MasterDashboard() {
 
   const handleImpersonate = async (condo: any) => {
     try {
+      if (!condo?.id || !condo?.slug) {
+        toast.error("Condomínio inválido para suporte.")
+        return
+      }
       const hostname = window.location.hostname
       const isLocal = isLocalhostHost(hostname)
       const hostingDomains = ["vercel.app", "netlify.app", "pages.dev"]
