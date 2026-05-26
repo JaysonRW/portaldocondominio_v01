@@ -1,5 +1,4 @@
-import { useTenantStore } from "../../stores/tenantStore"
-import { useNavigate } from "react-router"
+
 import { useState, useMemo } from "react"
 import { useAuthStore } from "../../stores/authStore"
 import { supabase } from "../../lib/supabase"
@@ -18,8 +17,6 @@ import { ParceiroFormModal } from "./clube/ParceiroFormModal"
 
 export default function MasterDashboard() {
   const { perfil: perfilFromStore, user } = useAuthStore()
-  const { setTenant, setIsMasterMode } = useTenantStore()
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [activeSection, setActiveSection] = useState<MasterSection>("dashboard")
   const [settingsTab, setSettingsTab] = useState<"system" | "users">("system")
@@ -339,12 +336,29 @@ export default function MasterDashboard() {
     }
   })
 
-  const handleImpersonate = (condo: any) => {
-    setTenant(condo)
-    setIsMasterMode(true)
-    const isLocal = isLocalhostHost(window.location.hostname)
-    const targetPath = isLocal ? `/${condo.slug}/painel` : `/painel`
-    navigate(targetPath)
+  const handleImpersonate = async (condo: any) => {
+    try {
+      const hostname = window.location.hostname
+      const isLocal = isLocalhostHost(hostname)
+      const hostingDomains = ["vercel.app", "netlify.app", "pages.dev"]
+      const isHostingDomain = hostingDomains.some((d) => hostname.endsWith(d))
+
+      const redirectTo = isLocal || isHostingDomain
+        ? `${window.location.origin}/${condo.slug}/painel`
+        : `${window.location.protocol}//${condo.slug}.${window.location.host}/painel`
+
+      const { data, error } = await supabase.functions.invoke("support-impersonate", {
+        body: { condominio_id: condo.id, redirectTo },
+      })
+
+      if (error) throw error
+      if (!data?.action_link) throw new Error("Link de acesso não retornado pela função.")
+
+      window.open(data.action_link, "_blank", "noopener,noreferrer")
+      toast.success("Abrindo painel do síndico em nova aba…")
+    } catch (e: any) {
+      toast.error("Erro ao acessar painel: " + (e?.message || "Falha inesperada"))
+    }
   }
 
   const isMaster = isMasterUser(user, meuPerfil)
