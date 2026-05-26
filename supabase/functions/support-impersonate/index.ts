@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
       .select("id, email, role, status_aprovacao, ativo")
       .eq("condominio_id", condominioId)
       .in("role", ["sindico", "subsindico"])
-      .eq("status_aprovacao", true)
-      .eq("ativo", true)
+      .not("email", "is", null)
+      // NÃ£o filtramos por `ativo`/`status_aprovacao` aqui porque registros antigos podem estar NULL.
       .order("role", { ascending: true }) // sindico antes de subsindico (lexicographic)
       .limit(1)
       .maybeSingle()
@@ -130,4 +130,3 @@ Deno.serve(async (req) => {
     return jsonResponse(400, { error: message })
   }
 })
-
