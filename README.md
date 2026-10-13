@@ -16,17 +16,22 @@ Plataforma **multi-tenant** para gestão condominial, com portal público do con
 
 ## Como rodar localmente
 
-1) Instalar dependências:
+Pré-requisitos:
+
+- Node.js `22.15.0` (veja `.nvmrc`)
+- npm `10.x`
+
+1) Instalar exatamente as dependências do lockfile:
 
 ```bash
-npm install
+npm ci
 ```
 
-2) Criar `.env.local` (frontend):
+2) Copiar `.env.example` para `.env.local` e preencher a chave pública do projeto:
 
 ```bash
-VITE_SUPABASE_URL="https://<seu-projeto>.supabase.co"
-VITE_SUPABASE_ANON_KEY="<sua-anon-key>"
+VITE_SUPABASE_URL="https://aiagyzatiibqsziekqdh.supabase.co"
+VITE_SUPABASE_ANON_KEY="<sua-publishable-ou-anon-key>"
 ```
 
 3) Subir o servidor:
@@ -34,6 +39,19 @@ VITE_SUPABASE_ANON_KEY="<sua-anon-key>"
 ```bash
 npm run dev
 ```
+
+4) Validar antes de enviar alterações:
+
+```bash
+npm run check
+```
+
+## Banco de dados
+
+- Projeto Supabase: `aiagyzatiibqsziekqdh`
+- Alterações de schema devem entrar como migrations em `supabase/migrations`.
+- Não execute `supabase db reset` ou `supabase db push` até a migration-base ser reconciliada com o schema remoto. O histórico atual começa por alterações sobre tabelas que já existiam.
+- Nunca exponha `SUPABASE_SERVICE_ROLE_KEY` no frontend ou em arquivos `.env` versionados.
 
 ## URLs úteis (dev)
 

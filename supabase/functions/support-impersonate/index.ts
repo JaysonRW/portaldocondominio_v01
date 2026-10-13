@@ -16,8 +16,6 @@ function jsonResponse(status: number, body: unknown) {
   })
 }
 
-const MASTER_EMAIL = "propagoumkd@gmail.com"
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders })
   if (req.method !== "POST") return jsonResponse(405, { error: "Método não permitido" })
@@ -31,8 +29,16 @@ Deno.serve(async (req) => {
   }
 
   const authHeader = req.headers.get("Authorization") ?? ""
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return jsonResponse(401, { error: "Não autenticado" })
+  }
+
   const caller = createClient(supabaseUrl, supabaseAnonKey, {
     global: { headers: { Authorization: authHeader } },
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
+  const admin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
   })
 
   const { data: callerUserData, error: callerUserError } = await caller.auth.getUser()
@@ -51,19 +57,33 @@ Deno.serve(async (req) => {
   if (!condominioId) return jsonResponse(400, { error: "condominio_id é obrigatório" })
   if (!redirectTo) return jsonResponse(400, { error: "redirectTo é obrigatório" })
 
-  const { data: callerProfile } = await caller
+  try {
+    const redirectUrl = new URL(redirectTo)
+    if (redirectUrl.protocol !== "https:" && redirectUrl.protocol !== "http:") {
+      return jsonResponse(400, { error: "redirectTo inválido" })
+    }
+  } catch {
+    return jsonResponse(400, { error: "redirectTo inválido" })
+  }
+
+  const { data: callerProfile, error: callerProfileError } = await admin
     .from("perfis")
-    .select("id, role, condominio_id, email")
+    .select("id, role, ativo, status_aprovacao")
     .eq("id", callerUserData.user.id)
     .maybeSingle()
 
-  const isMaster =
-    callerProfile?.role === "super_admin" ||
-    callerUserData.user.email?.toLowerCase() === MASTER_EMAIL
+  if (callerProfileError) {
+    console.error("Erro ao validar perfil do chamador:", callerProfileError)
+    return jsonResponse(500, { error: "Não foi possível validar as permissões" })
+  }
 
-  if (!isMaster) return jsonResponse(403, { error: "Sem permissão" })
-
-  const admin = createClient(supabaseUrl, supabaseServiceRoleKey)
+  if (
+    callerProfile?.role !== "super_admin" ||
+    callerProfile.ativo !== true ||
+    callerProfile.status_aprovacao !== true
+  ) {
+    return jsonResponse(403, { error: "Sem permissão" })
+  }
 
   const logBase = {
     master_user_id: callerUserData.user.id,
@@ -85,8 +105,9 @@ Deno.serve(async (req) => {
       .select("id, email, role, status_aprovacao, ativo")
       .eq("condominio_id", condominioId)
       .in("role", ["sindico", "subsindico"])
+      .eq("ativo", true)
+      .eq("status_aprovacao", true)
       .not("email", "is", null)
-      // NÃ£o filtramos por `ativo`/`status_aprovacao` aqui porque registros antigos podem estar NULL.
       .order("role", { ascending: true }) // sindico antes de subsindico (lexicographic)
       .limit(1)
       .maybeSingle()

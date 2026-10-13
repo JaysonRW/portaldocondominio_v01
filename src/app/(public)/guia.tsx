@@ -85,8 +85,8 @@ export default function PublicGuiaMorador() {
       const wpp = item.whatsapp.replace(/\D/g, '')
       window.open(`https://wa.me/${wpp}`, '_blank')
     }
-    if (item.tipo_acao === 'telefone' && item.telefone) window.location.href = `tel:${item.telefone}`
-    if (item.tipo_acao === 'email' && item.email) window.location.href = `mailto:${item.email}`
+    if (item.tipo_acao === 'telefone' && item.telefone) window.location.assign(`tel:${item.telefone}`)
+    if (item.tipo_acao === 'email' && item.email) window.location.assign(`mailto:${item.email}`)
     if (item.tipo_acao === 'endereco' && item.endereco) window.open(`https://maps.google.com/?q=${encodeURIComponent(item.endereco)}`, '_blank')
   }
 

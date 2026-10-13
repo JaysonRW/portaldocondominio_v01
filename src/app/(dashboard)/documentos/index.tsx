@@ -96,8 +96,8 @@ export default function DocumentosVault() {
       if (!tenant?.id) throw new Error("Condomínio não identificado.")
       if (!user?.id) throw new Error("Usuário não identificado.")
 
-      let storagePath = link
-      let fileSize = editingDoc?.tamanho_bytes || null
+      const storagePath = link
+      const fileSize = editingDoc?.tamanho_bytes || null
 
       const payload: any = {
         titulo,

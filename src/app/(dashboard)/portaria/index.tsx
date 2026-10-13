@@ -53,11 +53,7 @@ export default function GestaoPortaria() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [zoomPhoto, setZoomPhoto] = useState<string | null>(null)
-
-  // Segurança de role - Síndico apenas
-  if (perfil?.role !== 'sindico') {
-    return <div className="p-8 font-black text-red-600">Acesso negado. Apenas o Síndico Administrador pode acessar este console.</div>
-  }
+  const isSindico = perfil?.role === 'sindico'
 
   // Limpar formulário
   const handleOpenChange = (open: boolean) => {
@@ -83,7 +79,7 @@ export default function GestaoPortaria() {
       if (error) throw error
       return data || []
     },
-    enabled: !!tenant?.id,
+    enabled: isSindico && !!tenant?.id,
   })
 
   // Busca todas as encomendas do condomínio (Auditoria Geral)
@@ -102,7 +98,7 @@ export default function GestaoPortaria() {
       if (error) throw error
       return data || []
     },
-    enabled: !!tenant?.id && activeTab === 'auditoria',
+    enabled: isSindico && !!tenant?.id && activeTab === 'auditoria',
   })
 
   // Criar conta de Portaria
@@ -127,7 +123,9 @@ export default function GestaoPortaria() {
               message = body.error
             }
           }
-        } catch (_) {}
+        } catch {
+          // Mantém a mensagem original quando o corpo da resposta não está disponível.
+        }
         throw new Error(message)
       }
       return data
@@ -179,6 +177,11 @@ export default function GestaoPortaria() {
       toast.error("Erro ao excluir encomenda: " + error.message)
     }
   })
+
+  // Segurança de role - Síndico apenas
+  if (!isSindico) {
+    return <div className="p-8 font-black text-red-600">Acesso negado. Apenas o Síndico Administrador pode acessar este console.</div>
+  }
 
   // Filtros
   const filteredPortarias = portarias?.filter(p => 

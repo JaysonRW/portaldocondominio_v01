@@ -95,7 +95,9 @@ export default function GestaoZeladores() {
                 message = body.error
               }
             }
-          } catch (_) {}
+          } catch {
+            // Mantém a mensagem original quando o corpo do erro não pode ser lido.
+          }
           throw new Error(message)
         }
         return data

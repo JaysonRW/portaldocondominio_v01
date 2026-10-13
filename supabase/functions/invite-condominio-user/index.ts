@@ -1,5 +1,22 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.100.1"
 
+type CallerProfile = {
+  role: string
+  condominio_id: string | null
+  ativo: boolean | null
+  status_aprovacao: boolean | null
+}
+
+const assignableBySindico = new Set([
+  "morador",
+  "subsindico",
+  "zelador",
+  "portaria",
+  "fornecedor",
+  "clube_gestor",
+])
+const assignableByMaster = new Set([...assignableBySindico, "sindico"])
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -36,10 +53,17 @@ Deno.serve(async (req) => {
       return jsonResponse(500, { error: "Variáveis de ambiente do Supabase não configuradas" })
     }
 
-    // 1. Validar o chamador
     const authHeader = req.headers.get("Authorization") ?? ""
+    if (!authHeader.toLowerCase().startsWith("bearer ")) {
+      return jsonResponse(401, { error: "Não autenticado" })
+    }
+
     const caller = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+    const admin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
     })
 
     const { data: { user: callerUser }, error: callerUserError } = await caller.auth.getUser()
@@ -48,16 +72,26 @@ Deno.serve(async (req) => {
       return jsonResponse(401, { error: "Não autenticado" })
     }
 
-    // Buscar perfil do chamador para validar permissão
-    const { data: callerProfile, error: profileError } = await caller
+    const { data: callerProfileData, error: profileError } = await admin
       .from("perfis")
-      .select("role, condominio_id")
+      .select("role, condominio_id, ativo, status_aprovacao")
       .eq("id", callerUser.id)
-      .single()
+      .maybeSingle()
 
-    if (profileError || !callerProfile) {
+    if (profileError) {
       console.error("Erro ao buscar perfil do chamador:", profileError);
-      return jsonResponse(403, { error: "Perfil do chamador não encontrado" })
+      return jsonResponse(500, { error: "Não foi possível validar as permissões" })
+    }
+
+    const callerProfile = callerProfileData as CallerProfile | null
+    const isMaster = callerProfile?.role === "super_admin"
+    if (
+      !callerProfile ||
+      callerProfile.ativo !== true ||
+      callerProfile.status_aprovacao !== true ||
+      (!isMaster && callerProfile.role !== "sindico")
+    ) {
+      return jsonResponse(403, { error: "Sem permissão" })
     }
 
     // 2. Ler payload
@@ -69,9 +103,9 @@ Deno.serve(async (req) => {
     }
 
     const { 
-      email, 
+      email: rawEmail,
       nome, 
-      role = 'morador', 
+      role: requestedRole = 'morador',
       condominio_id,
       tenantSlug,
       telefone,
@@ -81,70 +115,65 @@ Deno.serve(async (req) => {
       password
     } = payload
 
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : ""
     if (!email) return jsonResponse(400, { error: "E-mail é obrigatório" })
+    const normalizedPassword = typeof password === "string" && password.trim()
+      ? password.trim()
+      : null
 
-    // 3. Validar permissões de convite
     const targetCondominioId = condominio_id || callerProfile.condominio_id
-    
-    if (callerProfile.role === 'super_admin') {
-      // Master pode tudo
-    } else if (callerProfile.role === 'sindico') {
-      // Síndico só convida para o próprio condomínio e não pode convidar super_admin
-      if (targetCondominioId !== callerProfile.condominio_id) {
-        return jsonResponse(403, { error: "Você só pode convidar usuários para o seu próprio condomínio." })
-      }
-      if (role === 'super_admin') {
-        return jsonResponse(403, { error: "Você não tem permissão para criar um Super Admin." })
-      }
-    } else {
-      // Moradores e Fornecedores não convidam ninguém
-      return jsonResponse(403, { error: "Você não tem permissão para convidar usuários." })
-    }
+    const role = String(requestedRole).trim().toLowerCase()
 
-    // 4. Executar convite (Admin API)
-    const admin = createClient(supabaseUrl, supabaseServiceRoleKey)
+    if (!targetCondominioId) return jsonResponse(400, { error: "Condomínio é obrigatório" })
+    if (!(isMaster ? assignableByMaster : assignableBySindico).has(role)) {
+      return jsonResponse(403, { error: "Papel não permitido" })
+    }
+    if (!isMaster && targetCondominioId !== callerProfile.condominio_id) {
+      return jsonResponse(403, { error: "Sem permissão para outro condomínio" })
+    }
 
     let invited: any
     let inviteError: any
 
-    if (password) {
+    if (normalizedPassword) {
       const { data, error } = await admin.auth.admin.createUser({
         email,
-        password,
+        password: normalizedPassword,
         email_confirm: true,
         user_metadata: {
-          role,
-          condominio_id: targetCondominioId,
           nome: nome || email.split('@')[0]
         }
       })
       invited = data
       inviteError = error
     } else {
-      // Determinar a URL de redirecionamento correta baseada no tenant e ambiente
-      const isLocal = payload.origin?.includes('localhost') || payload.origin?.includes('127.0.0.1')
-      const baseUrl = payload.origin || ''
-      let redirectUrl = `${baseUrl}/set-password`
+      const requestedOrigin = typeof payload.origin === "string"
+        ? payload.origin
+        : req.headers.get("Origin")
+      let redirectUrl: string | undefined
 
-      if (tenantSlug) {
-        if (isLocal) {
-          redirectUrl = `${baseUrl}/${tenantSlug}/set-password`
-        } else {
-          try {
-            const url = new URL(baseUrl)
-            const domain = url.hostname.split('.').slice(-2).join('.')
-            redirectUrl = `${url.protocol}//${tenantSlug}.${domain}/set-password`
-          } catch (e) {
-            console.error("URL Base inválida:", baseUrl);
+      if (requestedOrigin) {
+        try {
+          const url = new URL(requestedOrigin)
+          if (url.protocol === "https:" || url.protocol === "http:") {
+            const isLocal = url.hostname === "localhost" || url.hostname === "127.0.0.1"
+            if (tenantSlug && !isLocal) {
+              const domain = url.hostname.split('.').slice(-2).join('.')
+              url.hostname = `${tenantSlug}.${domain}`
+            }
+            url.pathname = tenantSlug && isLocal ? `/${tenantSlug}/set-password` : "/set-password"
+            url.search = ""
+            url.hash = ""
+            redirectUrl = url.toString()
           }
+        } catch {
+          redirectUrl = undefined
         }
       }
 
       const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
         redirectTo: redirectUrl,
         data: {
-          role,
-          condominio_id: targetCondominioId,
           nome: nome || email.split('@')[0]
         },
       })
@@ -174,7 +203,8 @@ Deno.serve(async (req) => {
         unidade,
         horario_trabalho,
         status_aprovacao: true, // Convidados pelo admin já nascem aprovados
-        primeiro_acesso: password ? false : true // Força definição de senha se convidado sem senha
+        ativo: true,
+        primeiro_acesso: !normalizedPassword
       }, { onConflict: 'id' })
 
     if (upsertError) {

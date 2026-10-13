@@ -1,5 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.100.1"
 
+type JsonObject = Record<string, unknown>
+
+type CallerProfile = {
+  id: string
+  role: string
+  condominio_id: string | null
+  ativo: boolean | null
+  status_aprovacao: boolean | null
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -14,6 +24,18 @@ function jsonResponse(status: number, body: unknown) {
       ...corsHeaders,
     },
   })
+}
+
+function asJsonObject(value: unknown): JsonObject | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? value as JsonObject
+    : null
+}
+
+function optionalString(value: unknown): string | null {
+  if (typeof value !== "string") return null
+  const normalized = value.trim()
+  return normalized.length > 0 ? normalized : null
 }
 
 Deno.serve(async (req) => {
@@ -31,8 +53,16 @@ Deno.serve(async (req) => {
   }
 
   const authHeader = req.headers.get("Authorization") ?? ""
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return jsonResponse(401, { error: "Não autenticado" })
+  }
+
+  const admin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
   const caller = createClient(supabaseUrl, supabaseAnonKey, {
     global: { headers: { Authorization: authHeader } },
+    auth: { autoRefreshToken: false, persistSession: false },
   })
 
   const { data: callerUserData, error: callerUserError } = await caller.auth.getUser()
@@ -40,47 +70,54 @@ Deno.serve(async (req) => {
     return jsonResponse(401, { error: "Não autenticado" })
   }
 
-  const { data: callerProfile, error: callerProfileError } = await caller
+  // O JWT identifica o usuário; a autorização sempre usa o estado atual do banco.
+  const { data: callerProfileData, error: callerProfileError } = await admin
     .from("perfis")
-    .select("id, role, condominio_id")
+    .select("id, role, condominio_id, ativo, status_aprovacao")
     .eq("id", callerUserData.user.id)
-    .single()
+    .maybeSingle()
 
-  console.log("Caller Profile:", callerProfile)
-
-  if (callerProfileError || !callerProfile) {
+  if (callerProfileError) {
     console.error("Erro ao buscar perfil do chamador:", callerProfileError)
-    return jsonResponse(403, { error: "Perfil do administrador não encontrado no banco de dados." })
+    return jsonResponse(500, { error: "Não foi possível validar as permissões" })
+  }
+
+  const callerProfile = callerProfileData as CallerProfile | null
+  if (
+    !callerProfile ||
+    callerProfile.ativo !== true ||
+    callerProfile.status_aprovacao !== true
+  ) {
+    return jsonResponse(403, { error: "Perfil inativo, pendente ou não encontrado" })
   }
 
   if (callerProfile.role !== "sindico" && callerProfile.role !== "super_admin") {
     return jsonResponse(403, { error: "Sem permissão" })
   }
 
-  let payload: any
+  let payload: JsonObject
   try {
-    payload = await req.json()
-    console.log("Payload recebido:", payload)
+    const parsedPayload = asJsonObject(await req.json())
+    if (!parsedPayload) return jsonResponse(400, { error: "JSON inválido" })
+    payload = parsedPayload
   } catch {
     return jsonResponse(400, { error: "JSON inválido" })
   }
 
   const email = String(payload?.email ?? "").trim().toLowerCase()
   const telefone = String(payload?.telefone ?? "").trim()
-  const nome = payload?.nome ? String(payload.nome).trim() : null
-  const bloco = payload?.bloco ? String(payload.bloco).trim() : null
-  const unidade = payload?.unidade ? String(payload.unidade).trim() : null
-  const redirectTo = payload?.redirectTo
-    ? String(payload.redirectTo).trim()
-    : payload?.redirect_to
-      ? String(payload.redirect_to).trim()
-      : null
-  const requestedRoleRaw = payload?.role ? String(payload.role).trim().toLowerCase() : "morador"
-  const requestedRole = requestedRoleRaw === "sindico" ? "sindico" : "morador"
-  const requestedCondominioId = payload?.condominio_id ? String(payload.condominio_id).trim() : null
+  const nome = optionalString(payload.nome)
+  const bloco = optionalString(payload.bloco)
+  const unidade = optionalString(payload.unidade)
+  const redirectTo = optionalString(payload.redirectTo) ?? optionalString(payload.redirect_to)
+  const requestedRole = (optionalString(payload.role) ?? "morador").toLowerCase()
+  const requestedCondominioId = optionalString(payload.condominio_id)
 
   if (!email) return jsonResponse(400, { error: "E-mail é obrigatório" })
   if (!telefone) return jsonResponse(400, { error: "Telefone é obrigatório" })
+  if (requestedRole !== "morador" && requestedRole !== "sindico") {
+    return jsonResponse(400, { error: "Papel inválido para esta operação" })
+  }
 
   if (requestedRole === "sindico" && callerProfile.role !== "super_admin") {
     return jsonResponse(403, { error: "Apenas o master pode criar síndico" })
@@ -95,13 +132,10 @@ Deno.serve(async (req) => {
     return jsonResponse(403, { error: "Sem permissão para vincular a outro condomínio" })
   }
 
-  const admin = createClient(supabaseUrl, supabaseServiceRoleKey)
-
   const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
     redirectTo: redirectTo ?? undefined,
     data: {
-      role: requestedRole,
-      condominio_id: targetCondominioId,
+      nome: nome ?? email.split("@")[0],
     },
   })
 
@@ -130,6 +164,7 @@ Deno.serve(async (req) => {
         bloco,
         unidade,
         status_aprovacao: true,
+        ativo: true,
       },
       { onConflict: "id" },
     )
